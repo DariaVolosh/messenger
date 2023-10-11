@@ -17,6 +17,10 @@ class MessagesViewModel(val app: MyApp): ViewModel() {
     val existingMessagesPath = MutableLiveData<DatabaseReference>()
     val messages = MutableLiveData<MutableList<Message>>()
 
+    init {
+        addMessagesListener()
+    }
+
     fun getUserObjectById(id: String) {
         model.getUserObjectById(id, friendObject)
     }
@@ -35,7 +39,7 @@ class MessagesViewModel(val app: MyApp): ViewModel() {
 
     fun getCurrentUserId() = model.getCurrentUserUId()
 
-    fun addMessagesListener() {
+    private fun addMessagesListener() {
         existingMessagesPath.value?.let { model.addMessagesListener(it, messages) }
     }
 

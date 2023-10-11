@@ -1,4 +1,4 @@
-package com.example.messenger.fragments
+package com.example.messenger.signUp
 
 import android.Manifest
 import android.app.Activity
@@ -16,23 +16,38 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.messenger.MyApp
 import com.example.messenger.R
-import com.example.messenger.data.User
+import com.example.messenger.ViewModelFactory
 import com.example.messenger.databinding.FragmentSignUpBinding
-import java.lang.Exception
 
 
-class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
-    lateinit var app : MyApp
-    private lateinit var binding : FragmentSignUpBinding
+class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
+    lateinit var app: MyApp
+    private lateinit var binding: FragmentSignUpBinding
+    private lateinit var viewModel: SignUpViewModel
 
     private var photoUri : Uri? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         app = requireActivity().application as MyApp
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSignUpBinding.inflate(layoutInflater)
+        val factory = ViewModelFactory(app, SignUpViewModel::class.java)
+        viewModel = ViewModelProvider(this, factory)[SignUpViewModel::class.java]
+
+        binding.mainPhoto.setOnClickListener{checkPermission()}
+        binding.registerButton.setOnClickListener{createUser()}
+        return binding.root
     }
 
     // launcher used to request permission
@@ -74,56 +89,12 @@ class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
         }
     }
 
-    private fun describeError(e: Exception) {
-        Toast.makeText(
-            requireContext(),
-            e.localizedMessage,
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-
     private fun createUser() {
         val email = binding.email.text.toString()
+        val login = binding.login.text.toString()
         val password = binding.password.text.toString()
         val fullName = binding.fullName.text.toString()
-        val login = binding.login.text.toString()
 
-        app.auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val userId = app.auth.currentUser?.uid
-                    val user = User(
-                        fullName, email, login, userId.toString(),
-                        mutableListOf(), mutableListOf(), mutableListOf()
-                    )
-
-                    if (userId != null) {
-                        app.database.getReference("users").child(userId).setValue(user)
-                        uploadPhoto(userId)
-                    }
-                } else {
-                    task.exception?.also { describeError(it) }
-                }
-            }
-    }
-
-    private fun uploadPhoto(userId: String) {
-        photoUri?.let { app.storage.getReference("avatars/$userId")
-            .putFile(it).addOnCompleteListener { task ->
-                if (task.isSuccessful) findNavController().navigate(R.id.chats_fragment)
-                else task.exception?.also { it1 -> describeError(it1) }
-            }
-        }
-    }
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentSignUpBinding.inflate(layoutInflater)
-
-        binding.mainPhoto.setOnClickListener{checkPermission()}
-        binding.registerButton.setOnClickListener{createUser()}
-        return binding.root
+        photoUri?.let { viewModel.createUser(email, login, fullName, password, it, findNavController()) }
     }
 }

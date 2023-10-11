@@ -54,7 +54,6 @@ class MessagesFragment : Fragment() {
     }
 
     private fun listenForMessages() {
-        viewModel.addMessagesListener()
         viewModel.messages.observe(viewLifecycleOwner) {messages ->
             binding.messages.scrollToPosition(messages.size - 1)
             adapter.setData(messages)
@@ -63,7 +62,7 @@ class MessagesFragment : Fragment() {
 
     private fun initializeIds() {
         friendId = requireArguments().getString(FRIEND_UID)!!
-        currentUserUId = viewModel.getCurrentUserId()
+        currentUserUId = viewModel.getCurrentUserId()!!
     }
 
     private fun populateToolbarWithFriendInfo() {

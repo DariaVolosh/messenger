@@ -119,7 +119,7 @@ class FriendsSearchAdapter(
 
     private fun sendFriendRequest(clickedUser: User) {
         // add current user's uId to clicked user's receivedFriendRequests
-        clickedUser.receivedFriendRequests += currentUId
+        clickedUser.receivedFriendRequests += currentUId!!
 
         // update clickedUser in database
         viewModel.updateUser(clickedUser)

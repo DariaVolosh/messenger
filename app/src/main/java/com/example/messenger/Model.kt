@@ -2,6 +2,7 @@ package com.example.messenger
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavController
 import com.example.messenger.chats.ChatsAdapter
 import com.example.messenger.data.Message
 import com.example.messenger.data.User
@@ -26,11 +27,13 @@ class Model(val app: MyApp) {
     var currentUserObject = MutableLiveData<User>()
 
     private fun getCurrentUserObject() {
-        app.database.getReference("users").child(getCurrentUserUId()).get()
-            .addOnSuccessListener { userSnapshot ->
-                val user = userSnapshot.getValue(User::class.java)!!
-                currentUserObject.postValue(user)
-            }
+        getCurrentUserUId()?.let {
+            app.database.getReference("users").child(it).get()
+                .addOnSuccessListener { userSnapshot ->
+                    val user = userSnapshot.getValue(User::class.java)!!
+                    currentUserObject.postValue(user)
+                }
+        }
     }
 
     fun getUserObjectById(id: String, friend: MutableLiveData<User>) {
@@ -61,7 +64,7 @@ class Model(val app: MyApp) {
         } else liveData.postValue(mutableListOf())
     }
 
-    fun getCurrentUserUId() = app.auth.currentUser!!.uid
+    fun getCurrentUserUId() = app.auth.currentUser?.uid
 
     fun downloadMyMainPhoto(photoUriLiveData: MutableLiveData<Uri>) {
         app.storage.getReference("avatars/${getCurrentUserUId()}").downloadUrl
@@ -136,7 +139,7 @@ class Model(val app: MyApp) {
         friendId: String,
         holder: ChatsAdapter.ViewHolder
     ) {
-        val conversationId = getConversationId(getCurrentUserUId(), friendId)
+        val conversationId = getCurrentUserUId()?.let { getConversationId(it, friendId) }
         app.database.getReference("messages/$conversationId/lastMessage").addValueEventListener(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -162,7 +165,7 @@ class Model(val app: MyApp) {
             .addOnSuccessListener {dataSnapshot ->
                 val user = dataSnapshot.getValue(User::class.java)!!
                 if (!user.chats.contains(getCurrentUserUId())) {
-                    user.chats.add(getCurrentUserUId())
+                    getCurrentUserUId()?.let { user.chats.add(it) }
                     app.database.getReference("users/$friendId").setValue(user)
                 }
             }
@@ -171,7 +174,9 @@ class Model(val app: MyApp) {
     fun getExistingMessagesPath(friendId: String, path: MutableLiveData<DatabaseReference>) {
         path.postValue(
             app.database
-                .getReference("messages/${getConversationId(getCurrentUserUId(), friendId)}")
+                .getReference(
+                    "messages/${getCurrentUserUId()?.let { getConversationId(it, friendId) }}"
+                )
         )
     }
 
@@ -241,5 +246,30 @@ class Model(val app: MyApp) {
                 override fun onCancelled(error: DatabaseError) {}
 
             })
+    }
+
+    private fun uploadPhoto(photoUri: Uri, navController: NavController) {
+        app.storage.getReference("avatars/${getCurrentUserUId()}")
+            .putFile(photoUri).addOnSuccessListener {
+                navController.navigate(R.id.chats_fragment)
+            }
+    }
+
+    fun createUser(email: String, login: String, fullName: String, password: String, photoUri: Uri,
+                   navController: NavController) {
+        app.auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
+            val user = User(
+                fullName, email, login, getCurrentUserUId()!!,
+                mutableListOf(), mutableListOf(), mutableListOf()
+            )
+            updateUser(user)
+            uploadPhoto(photoUri, navController)
+        }
+    }
+
+    fun signInUser(email: String, password: String, navController: NavController) {
+        app.auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+            navController.navigate(R.id.chats_fragment)
+        }
     }
 }

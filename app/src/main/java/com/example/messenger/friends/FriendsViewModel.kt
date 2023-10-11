@@ -19,7 +19,7 @@ class FriendsViewModel(val app: MyApp): ViewModel() {
     val friendRequests = MutableLiveData<MutableList<String>>()
 
     init {
-        model.listenForNewFriendRequests(friendRequests)
+        listenForNewFriendRequests()
     }
 
     fun getUsersFromUId(list: List<String>, friends: Boolean) {
@@ -38,5 +38,9 @@ class FriendsViewModel(val app: MyApp): ViewModel() {
 
     fun getUserObjectById(id: String) {
         model.getUserObjectById(id, friend)
+    }
+
+    fun listenForNewFriendRequests() {
+        model.listenForNewFriendRequests(friendRequests)
     }
 }
