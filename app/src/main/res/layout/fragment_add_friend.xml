@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".addFriend.AddFriendFragment"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80dp"
+        app:title="@string/add_friend_toolbar_title"
+        app:navigationIcon="@drawable/ic_back"
+        app:buttonGravity="center_vertical"
+        app:titleTextAppearance="@style/toolbar_title_style"/>
+
+    <EditText
+        android:id="@+id/friends_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_15dp"
+        android:layout_marginEnd="@dimen/_15dp"
+        android:hint="@string/enter_username_hint"
+        android:autofillHints="username"
+        android:inputType="text"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_margin="@dimen/_15dp"
+        android:id="@+id/friends"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

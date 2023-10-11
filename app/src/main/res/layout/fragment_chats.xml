@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".chats.ChatsFragment"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_80dp"
+            app:buttonGravity="center_vertical"
+            app:menu="@menu/toolbar_menu">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/main_photo"
+                android:layout_width="@dimen/_50dp"
+                android:layout_height="@dimen/_50dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kufam_regular"
+                android:includeFontPadding="false"
+                android:paddingStart="@dimen/_10dp"
+                android:paddingEnd="@dimen/_10dp"
+                android:text="@string/chats_toolbar_header"
+                android:textSize="@dimen/_20sp"
+                android:textColor="@color/black"/>
+        </com.google.android.material.appbar.MaterialToolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chats_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="@dimen/_15dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60dp"
+        android:background="@color/turquoise"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:itemRippleColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_add_friend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_15dp"
+        android:layout_marginEnd="@dimen/_15dp"
+        app:backgroundTint="@color/turquoise"
+        app:icon="@drawable/ic_add_friend"
+        app:iconTint="@color/white"
+        android:includeFontPadding="false"
+        android:fontFamily="@font/kufam_semi_bold"
+        android:textSize="@dimen/_13sp"
+        android:textColor="@color/white"
+        android:text="@string/add_friend_fab_text"
+        android:textAllCaps="false"
+        app:rippleColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/chats_list"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/sign_out"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign out"
+        android:layout_marginBottom="@dimen/_15dp"
+        android:layout_marginEnd="@dimen/_15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/chats_list"
+        app:layout_constraintEnd_toStartOf="@+id/fab_add_friend" />
+</androidx.constraintlayout.widget.ConstraintLayout>

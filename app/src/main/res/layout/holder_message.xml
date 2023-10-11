@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="@dimen/_15dp">
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_10dp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14sp"
+        android:fontFamily="@font/kufam_regular"
+        android:includeFontPadding="false"
+        android:background="@drawable/message_style"
+        tools:text="Lorem ipsu dolorametconsectetur"/>
+
+    <TextView
+        android:id="@+id/time_sent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_13sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/kufam_regular"
+        android:includeFontPadding="false"
+        android:layout_marginTop="@dimen/_10dp"
+        tools:text="19:00"/>
+</LinearLayout>
