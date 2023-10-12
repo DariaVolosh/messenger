@@ -46,6 +46,7 @@ class MessagesFragment : Fragment() {
         viewModel.getExistingMessagesApp(friendId)
         viewModel.existingMessagesPath.observe(viewLifecycleOwner) {path ->
             initializeAdapter()
+            viewModel.addMessagesListener()
         }
 
         binding.sendMessageButton.setOnClickListener { sendMessage() }

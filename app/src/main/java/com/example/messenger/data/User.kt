@@ -1,5 +1,4 @@
 package com.example.messenger.data
-
 data class User(
     var fullName: String,
     var email: String,

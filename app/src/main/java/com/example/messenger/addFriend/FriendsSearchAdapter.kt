@@ -42,16 +42,14 @@ class FriendsSearchAdapter(
         return true
     }
 
-    init {
-        viewModel.foundUsers.observe(lifecycleOwner) {foundUsers ->
-            this.foundUsers = foundUsers
 
-            viewModel.downloadImages(foundUsers)
-            viewModel.images.observe(lifecycleOwner) {images ->
-                if (!areListsEqual(images)) {
-                    this.photoUris = images
-                    notifyDataSetChanged()
-                }
+    fun setData(foundUsers: List<User>) {
+        this.foundUsers = foundUsers
+        viewModel.downloadImages(foundUsers)
+        viewModel.images.observe(lifecycleOwner) {images ->
+            if (!areListsEqual(images)) {
+                this.photoUris = images
+                notifyDataSetChanged()
             }
         }
     }

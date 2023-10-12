@@ -30,15 +30,19 @@ class AddFriendFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddFriendBinding.inflate(layoutInflater)
-
         val factory = ViewModelFactory(app, AddFriendViewModel::class.java)
         viewModel = ViewModelProvider(this, factory)[AddFriendViewModel::class.java]
+
         initializeRecyclerViewAdapter()
 
         binding.friendsSearch.addTextChangedListener {loginQuery ->
             if (loginQuery.toString() != viewModel.previousQuery) {
                 viewModel.searchUserByLogin(loginQuery.toString())
             }
+        }
+
+        viewModel.foundUsers.observe(viewLifecycleOwner) {users ->
+            adapter.setData(users)
         }
 
         return binding.root

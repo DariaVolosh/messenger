@@ -18,7 +18,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 class ChatsAdapter(private val navController: NavController,
                    private val viewModel: ChatsViewModel,
                    private val context: Context,
-                   lifecycleOwner: LifecycleOwner):
+                   private val lifecycleOwner: LifecycleOwner):
     RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
     private var chats = listOf<User>()
 
@@ -28,15 +28,12 @@ class ChatsAdapter(private val navController: NavController,
         val message: TextView = view.findViewById(R.id.message)
     }
 
-    init {
-        viewModel.photoUris.observe(lifecycleOwner) {
-            notifyDataSetChanged()
-        }
-    }
-
     fun setChatList(newChats: List<User>) {
         this.chats = newChats
         viewModel.downloadImages(newChats)
+        viewModel.photoUris.observe(lifecycleOwner) {
+            notifyDataSetChanged()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
