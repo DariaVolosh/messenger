@@ -2,6 +2,7 @@ package com.example.messenger.chats
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,6 @@ import com.example.messenger.MyApp
 import com.example.messenger.R
 import com.example.messenger.ViewModelFactory
 import com.example.messenger.databinding.FragmentChatsBinding
-
 
 class ChatsFragment : Fragment(){
     lateinit var app : MyApp
@@ -36,7 +36,17 @@ class ChatsFragment : Fragment(){
         val factory = ViewModelFactory(app, ChatsViewModel::class.java)
         viewModel = ViewModelProvider(this, factory)[ChatsViewModel::class.java]
 
-        if (!viewModel.mainPhotoUri.isInitialized) { viewModel.downloadImage() }
+        viewModel.downloadImage(viewLifecycleOwner)
+        viewModel.mainPhotoBitmap.observe(viewLifecycleOwner) {bitmap ->
+            binding.mainPhoto.setImageBitmap(bitmap)
+        }
+        viewModel.mainPhotoUri.observe(viewLifecycleOwner) {uri ->
+            Log.i("LOL", uri.toString())
+            Glide.with(requireContext())
+                .load(uri)
+                .into(binding.mainPhoto)
+        }
+
 
         viewModel.chatList.observe(viewLifecycleOwner) { users ->
             adapter.setChatList(users)
@@ -44,7 +54,6 @@ class ChatsFragment : Fragment(){
 
         setNavigationBarOnItemListener()
         initializeAdapter()
-        loadImage()
 
         binding.fabAddFriend.setOnClickListener {
             findNavController().navigate(R.id.add_friends_fragment)
@@ -69,16 +78,10 @@ class ChatsFragment : Fragment(){
         binding.bottomNavigationView.setOnItemSelectedListener {item ->
             when (item.itemId) {
                 R.id.friends -> findNavController().navigate(R.id.friends_fragment)
+                R.id.chats -> findNavController().navigate(R.id.chats_fragment)
+                R.id.settings -> findNavController().navigate(R.id.settings_fragment)
             }
             true
-        }
-    }
-
-    private fun loadImage() {
-        viewModel.mainPhotoUri.observe(viewLifecycleOwner) {uri ->
-            Glide.with(requireContext())
-                .load(uri)
-                .into(binding.mainPhoto)
         }
     }
 }

@@ -17,7 +17,7 @@
     <string name="register_button_text">Register</string>
     <string name="chats_toolbar_header">Messages</string>
     <string name="search_icon_title">search icon</string>
-    <string name="friends">Friends</string>
+    <string name="friends">friends</string>
     <string name="chats">chats</string>
     <string name="settings">settings</string>
     <string name="write_a_message_hint">Write a message</string>
@@ -32,4 +32,7 @@
     <string name="your_friends">Your friends:</string>
     <string name="write_a_message_button_text">Message</string>
     <string name="add_to_friends_button">Add to friends button</string>
+    <string name="settings_toolbar_title">Settings</string>
+    <string name="set_color_for_my_messages_button_text">Set color for my messages</string>
+    <string name="set_color_for_friends_messages_button_text">Set color for friend\'s messages</string>
 </resources>

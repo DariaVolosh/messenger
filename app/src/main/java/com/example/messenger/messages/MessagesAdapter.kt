@@ -1,5 +1,6 @@
 package com.example.messenger.messages
 
+import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +14,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MessagesAdapter(private val currentUId: String)
+class MessagesAdapter(private val currentUId: String, val context: Context)
     : RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
-    var messages = listOf<Message>()
+    private var messages = listOf<Message>()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val message: TextView = view.findViewById(R.id.message)
@@ -53,12 +54,20 @@ class MessagesAdapter(private val currentUId: String)
     private fun setMessageGravity(holder: ViewHolder, from: String ) {
         val messageLayoutParams = holder.message.layoutParams as LinearLayout.LayoutParams
         val timeLayoutParams = holder.timeSent.layoutParams as LinearLayout.LayoutParams
+        val sharedPrefs = context.getSharedPreferences("colors", Context.MODE_PRIVATE)
+
         if (from == currentUId) {
             messageLayoutParams.gravity = Gravity.END
             timeLayoutParams.gravity = Gravity.END
+            holder.message.setBackgroundColor(
+                sharedPrefs.getInt("myColor$currentUId", R.color.turquoise)
+            )
         } else {
             messageLayoutParams.gravity = Gravity.START
             timeLayoutParams.gravity = Gravity.START
+            holder.message.setBackgroundColor(
+                sharedPrefs.getInt("friendsColor$currentUId", R.color.turquoise)
+            )
         }
         holder.message.layoutParams = messageLayoutParams
         holder.timeSent.layoutParams = timeLayoutParams

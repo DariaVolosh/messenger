@@ -35,6 +35,7 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
         binding = FragmentFriendsBinding.inflate(layoutInflater)
 
         setFriendRequestsQuantity()
+        setNavigationBarOnItemListener()
 
         return binding.root
     }
@@ -62,5 +63,16 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
                 viewModel, viewLifecycleOwner)
         binding.friendRequestsList.adapter = adapter
         binding.friendRequestsList.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    private fun setNavigationBarOnItemListener() {
+        binding.bottomNavigationView.setOnItemSelectedListener {item ->
+            when (item.itemId) {
+                R.id.friends -> findNavController().navigate(R.id.friends_fragment)
+                R.id.chats -> findNavController().navigate(R.id.chats_fragment)
+                R.id.settings -> findNavController().navigate(R.id.settings_fragment)
+            }
+            true
+        }
     }
 }

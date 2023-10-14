@@ -71,8 +71,8 @@ class FriendsRequestsAdapter(
     }
 
     private fun addFriend(clickedUserId: String) {
-        val currentUser = viewModel.currentUser.value!!
-        currentUser.receivedFriendRequests.remove(clickedUserId)
+        val currentUser = viewModel.currentUser.value
+        currentUser!!.receivedFriendRequests.remove(clickedUserId)
         currentUser.friends += clickedUserId
         viewModel.updateUser(currentUser)
 

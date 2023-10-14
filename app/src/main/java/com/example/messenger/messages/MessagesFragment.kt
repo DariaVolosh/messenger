@@ -89,7 +89,7 @@ class MessagesFragment : Fragment() {
 
     private fun initializeAdapter() {
         listenForMessages()
-        adapter = MessagesAdapter(currentUserUId)
+        adapter = MessagesAdapter(currentUserUId, requireContext())
         binding.messages.adapter = adapter
         binding.messages.layoutManager = LinearLayoutManager(requireContext())
     }

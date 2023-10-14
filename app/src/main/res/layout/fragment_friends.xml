@@ -12,8 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_80dp"
         app:title="@string/friends_toolbar_title"
-        app:navigationIcon="@drawable/ic_back"
-        app:buttonGravity="center_vertical"
         app:titleTextAppearance="@style/toolbar_title_style"/>
     
     <TextView
@@ -47,5 +45,16 @@
         android:id="@+id/friends_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_15dp"/>
+        android:layout_marginTop="@dimen/_15dp"
+        android:layout_weight="1"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60dp"
+        android:background="@color/turquoise"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:itemRippleColor="@color/white"
+        app:menu="@menu/bottom_navigation_menu" />
 </LinearLayout>

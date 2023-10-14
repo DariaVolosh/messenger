@@ -37,6 +37,9 @@
         <action
             android:id="@+id/to_friends_fragment"
             app:destination="@id/friends_fragment" />
+        <action
+            android:id="@+id/to_settings_fragment"
+            app:destination="@id/settings_fragment" />
     </fragment>
     <fragment
         android:id="@+id/add_friends_fragment"
@@ -61,4 +64,9 @@
         android:name="com.example.messenger.messages.MessagesFragment"
         android:label="fragment_messages"
         tools:layout="@layout/fragment_messages" />
+    <fragment
+        android:id="@+id/settings_fragment"
+        android:name="com.example.messenger.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

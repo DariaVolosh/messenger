@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("kotlin-kapt")
 }
 
 android {
@@ -59,4 +60,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("androidx.room:room-runtime:2.5.2")
     annotationProcessor("androidx.room:room-compiler:2.5.2")
+    kapt("androidx.room:room-compiler:2.5.2")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.github.skydoves:colorpickerview:2.3.0")
 }
