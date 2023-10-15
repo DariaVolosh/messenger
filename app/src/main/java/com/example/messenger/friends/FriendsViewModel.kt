@@ -4,11 +4,10 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.messenger.Model
-import com.example.messenger.MyApp
 import com.example.messenger.data.User
+import javax.inject.Inject
 
-class FriendsViewModel(val app: MyApp): ViewModel() {
-    private val model = Model(app)
+class FriendsViewModel @Inject constructor(private val model: Model): ViewModel() {
     val friendsList = MutableLiveData<MutableList<User>>()
     val requestsList = MutableLiveData<MutableList<User>>()
     val friendsImages = MutableLiveData<List<Uri>>()
@@ -40,7 +39,7 @@ class FriendsViewModel(val app: MyApp): ViewModel() {
         model.getUserObjectById(id, friend)
     }
 
-    fun listenForNewFriendRequests() {
+    private fun listenForNewFriendRequests() {
         model.listenForNewFriendRequests(friendRequests)
     }
 }

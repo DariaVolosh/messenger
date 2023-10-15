@@ -2,7 +2,6 @@ package com.example.messenger.signUp
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -16,25 +15,18 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.messenger.MyApp
 import com.example.messenger.R
-import com.example.messenger.ViewModelFactory
 import com.example.messenger.databinding.FragmentSignUpBinding
+import javax.inject.Inject
 
 
 class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
-    lateinit var app: MyApp
     private lateinit var binding: FragmentSignUpBinding
-    private lateinit var viewModel: SignUpViewModel
-
     private var photoUri : Uri? = null
+    @Inject lateinit var viewModel: SignUpViewModel
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        app = requireActivity().application as MyApp
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,8 +34,12 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSignUpBinding.inflate(layoutInflater)
-        val factory = ViewModelFactory(app, SignUpViewModel::class.java)
-        viewModel = ViewModelProvider(this, factory)[SignUpViewModel::class.java]
+        (requireActivity().application as MyApp).appComponent.create(
+            requireContext(),
+            layoutInflater,
+            viewLifecycleOwner,
+            findNavController()
+        ).inject(this)
 
         binding.mainPhoto.setOnClickListener{checkPermission()}
         binding.registerButton.setOnClickListener{createUser()}

@@ -14,8 +14,9 @@ import com.example.messenger.data.User
 import com.example.messenger.databinding.DialogProfileDetailsBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.hdodenhof.circleimageview.CircleImageView
+import javax.inject.Inject
 
-class FriendsSearchAdapter(
+class FriendsSearchAdapter @Inject constructor(
     private val context: Context,
     private val layoutInflater: LayoutInflater,
     private val viewModel: AddFriendViewModel,

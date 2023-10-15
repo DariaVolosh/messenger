@@ -16,11 +16,12 @@ import com.example.messenger.data.User
 import com.example.messenger.messages.MessagesFragment
 import com.google.android.material.button.MaterialButton
 import de.hdodenhof.circleimageview.CircleImageView
+import javax.inject.Inject
 
-class FriendsListAdapter(private val navController: NavController,
-                         private val viewModel: FriendsViewModel,
-                         private val lifecycleOwner: LifecycleOwner,
-                         private val context: Context):
+class FriendsListAdapter @Inject constructor(private val navController: NavController,
+                                             private val viewModel: FriendsViewModel,
+                                             private val lifecycleOwner: LifecycleOwner,
+                                             private val context: Context):
     RecyclerView.Adapter<FriendsListAdapter.ViewHolder>() {
 
     private var friends = listOf<User>()
@@ -70,8 +71,7 @@ class FriendsListAdapter(private val navController: NavController,
         viewType: Int
     ): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context)
-                .inflate(R.layout.holder_friend, parent, false)
-        )
+                .inflate(R.layout.holder_friend, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

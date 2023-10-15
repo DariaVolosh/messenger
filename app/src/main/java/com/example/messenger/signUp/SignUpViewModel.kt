@@ -4,11 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.messenger.Model
-import com.example.messenger.MyApp
+import javax.inject.Inject
 
-class SignUpViewModel(val app: MyApp): ViewModel() {
-    private val model = Model(app)
-
+class SignUpViewModel @Inject constructor(private val model: Model): ViewModel() {
     fun createUser(email: String, login: String, fullName: String, password: String, photoUri: Uri,
                    navController: NavController) {
         model.createUser(email, login, fullName, password, photoUri, navController)

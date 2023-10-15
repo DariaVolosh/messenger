@@ -6,11 +6,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.messenger.Model
-import com.example.messenger.MyApp
 import com.example.messenger.data.User
+import javax.inject.Inject
 
-class ChatsViewModel(val app: MyApp) : ViewModel() {
-    private val model = Model(app)
+class ChatsViewModel @Inject constructor(private val model: Model) : ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
     val mainPhotoBitmap = MutableLiveData<Bitmap>()
     val chatList = MutableLiveData<MutableList<User>>()

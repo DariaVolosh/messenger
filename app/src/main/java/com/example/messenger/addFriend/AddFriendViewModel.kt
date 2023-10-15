@@ -4,11 +4,10 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.messenger.Model
-import com.example.messenger.MyApp
 import com.example.messenger.data.User
+import javax.inject.Inject
 
-class AddFriendViewModel(val app: MyApp) : ViewModel() {
-    private val model = Model(app)
+class AddFriendViewModel @Inject constructor(private val model: Model) : ViewModel() {
     val foundUsers = MutableLiveData<List<User>>()
     var previousQuery: String = ""
     val images = MutableLiveData<List<Uri>>()

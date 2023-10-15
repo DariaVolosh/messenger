@@ -13,12 +13,13 @@ import com.bumptech.glide.Glide
 import com.example.messenger.R
 import com.example.messenger.data.User
 import de.hdodenhof.circleimageview.CircleImageView
+import javax.inject.Inject
 
-class FriendsRequestsAdapter(
+class FriendsRequestsAdapter @Inject constructor(
     private val context: Context,
-    private val friendRequestsText: TextView,
     private val viewModel: FriendsViewModel,
-    private val lifecycleOwner: LifecycleOwner
+    private val lifecycleOwner: LifecycleOwner,
+    private val setRequestsTextListener: SetRequestsText
 ) :
     RecyclerView.Adapter<FriendsRequestsAdapter.ViewHolder>() {
     private var receivedRequests = mutableListOf<User>()
@@ -41,7 +42,7 @@ class FriendsRequestsAdapter(
                 viewModel.requestsImages.observe(lifecycleOwner) {images ->
                     this.images = images
                     notifyDataSetChanged()
-                    friendRequestsText.text = "You have ${receivedRequests.size} new requests"
+                    setRequestsTextListener.setText(receivedRequests.size)
                 }
             }
         }
@@ -85,9 +86,13 @@ class FriendsRequestsAdapter(
             receivedRequests.clear()
             receivedRequests.addAll(updatedList)
             notifyDataSetChanged()
-            friendRequestsText.text = "You have ${receivedRequests.size} new requests"
+            setRequestsTextListener.setText(receivedRequests.size)
         }
     }
 
     override fun getItemCount() = receivedRequests.size
+
+    interface SetRequestsText {
+        fun setText(size: Int)
+    }
 }

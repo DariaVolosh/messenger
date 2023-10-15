@@ -16,11 +16,14 @@ import com.example.messenger.data.Message
 import com.example.messenger.data.User
 import com.example.messenger.room.Repository
 import com.example.messenger.room.UserEntity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,10 +32,15 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.File
+import javax.inject.Inject
 
 
-class Model(val app: MyApp) {
-    private val roomRepository = Repository(app.applicationContext)
+class Model @Inject constructor(
+    private val roomRepository: Repository,
+    private val firebaseAuth: FirebaseAuth,
+    private val firebaseDatabase: FirebaseDatabase,
+    private val firebaseStorage: FirebaseStorage,
+    private val context: Context) {
 
     init {
         getCurrentUserObject()
@@ -44,7 +52,7 @@ class Model(val app: MyApp) {
 
     private fun getCurrentUserObject() {
         getCurrentUserUId()?.let {
-            app.database.getReference("users/$it").get()
+            firebaseDatabase.getReference("users/$it").get()
                 .addOnSuccessListener { userSnapshot ->
                     val user = userSnapshot.getValue(User::class.java)!!
                     currentUserObject.postValue(user)
@@ -53,7 +61,7 @@ class Model(val app: MyApp) {
     }
 
     fun getUserObjectById(id: String, friend: MutableLiveData<User>) {
-        app.database.getReference("users/$id").get().addOnSuccessListener { userDataSnapshot ->
+        firebaseDatabase.getReference("users/$id").get().addOnSuccessListener { userDataSnapshot ->
             val user = userDataSnapshot.getValue(User::class.java)!!
             friend.postValue(user)
         }
@@ -63,7 +71,7 @@ class Model(val app: MyApp) {
         val foundUsers = mutableListOf<User>()
 
         if (loginQuery.isNotEmpty()) {
-            app.database.getReference("users").get().addOnSuccessListener { usersSnapshot ->
+            firebaseDatabase.getReference("users").get().addOnSuccessListener { usersSnapshot ->
                 for (snap in usersSnapshot.children) {
                     val user = snap.getValue(User::class.java)
 
@@ -80,11 +88,11 @@ class Model(val app: MyApp) {
         } else liveData.postValue(mutableListOf())
     }
 
-    fun getCurrentUserUId() = app.auth.currentUser?.uid
+    fun getCurrentUserUId() = firebaseAuth.currentUser?.uid
 
     fun isInternetAvailable(): Boolean {
         val connectivityManager =
-            app.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE)
+            context.getSystemService(Context.CONNECTIVITY_SERVICE)
                     as ConnectivityManager
         val networkCapabilities = connectivityManager.activeNetwork
         val actNw = connectivityManager.getNetworkCapabilities(networkCapabilities)
@@ -110,7 +118,7 @@ class Model(val app: MyApp) {
         lifecycleOwner: LifecycleOwner,
     ) {
         if (isInternetAvailable()) {
-            app.storage.getReference("avatars/${getCurrentUserUId()}").downloadUrl
+            firebaseStorage.getReference("avatars/${getCurrentUserUId()}").downloadUrl
                 .addOnSuccessListener { photoUri ->
                     photoUriLiveData.postValue(photoUri)
                 }
@@ -125,7 +133,7 @@ class Model(val app: MyApp) {
     }
 
     fun downloadFriendMainPhoto(photoUriLiveData: MutableLiveData<Uri>, id: String) {
-        app.storage.getReference("avatars/$id").downloadUrl
+        firebaseStorage.getReference("avatars/$id").downloadUrl
             .addOnSuccessListener { photoUri ->
                 photoUriLiveData.postValue(photoUri)
             }
@@ -135,7 +143,7 @@ class Model(val app: MyApp) {
         val scope = CoroutineScope(Dispatchers.IO)
         val deferredUris = list.map { user ->
             scope.async {
-                val uri = app.storage.getReference("avatars/${user.userId}").downloadUrl.await()
+                val uri = firebaseStorage.getReference("avatars/${user.userId}").downloadUrl.await()
                 uri
             }
         }
@@ -147,23 +155,23 @@ class Model(val app: MyApp) {
     }
 
     fun updateUser(updatedUser: User) {
-        app.database.getReference("users/${updatedUser.userId}").setValue(updatedUser)
+        firebaseDatabase.getReference("users/${updatedUser.userId}").setValue(updatedUser)
     }
 
     fun listenForNewChat(chats: MutableLiveData<MutableList<User>>) {
         val newList = chats.value ?: mutableListOf()
         var count = 0
-        app.database.getReference("users/${getCurrentUserUId()}/chats")
+        firebaseDatabase.getReference("users/${getCurrentUserUId()}/chats")
             .addChildEventListener(
                 object : ChildEventListener {
                     override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                        app.database.getReference("users/${getCurrentUserUId()}/chats").get()
+                        firebaseDatabase.getReference("users/${getCurrentUserUId()}/chats").get()
                             .addOnSuccessListener { chatsSnapshot ->
                                 count = chatsSnapshot.children.count()
                             }
 
                         val uId = snapshot.getValue(String::class.java)
-                        app.database.getReference("users/$uId").get()
+                        firebaseDatabase.getReference("users/$uId").get()
                             .addOnSuccessListener {userSnapshot ->
                                 val user = userSnapshot.getValue(User::class.java)!!
                                 newList.add(user)
@@ -191,7 +199,7 @@ class Model(val app: MyApp) {
         holder: ChatsAdapter.ViewHolder,
     ) {
         val conversationId = getCurrentUserUId()?.let { getConversationId(it, friendId) }
-        app.database.getReference("messages/$conversationId/lastMessage").addValueEventListener(
+        firebaseDatabase.getReference("messages/$conversationId/lastMessage").addValueEventListener(
             object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val messageData = snapshot.getValue(Message::class.java)!!
@@ -204,27 +212,27 @@ class Model(val app: MyApp) {
     }
 
     fun addChatToChatsList(friendId: String) {
-        app.database.getReference("users/${getCurrentUserUId()}").get()
+        firebaseDatabase.getReference("users/${getCurrentUserUId()}").get()
             .addOnSuccessListener {dataSnapshot ->
                 val user = dataSnapshot.getValue(User::class.java)!!
                 if (!user.chats.contains(friendId)) {
                     user.chats.add(friendId)
-                    app.database.getReference("users/${getCurrentUserUId()}").setValue(user)
+                    firebaseDatabase.getReference("users/${getCurrentUserUId()}").setValue(user)
                 }
             }
-        app.database.getReference("users/$friendId").get()
+        firebaseDatabase.getReference("users/$friendId").get()
             .addOnSuccessListener {dataSnapshot ->
                 val user = dataSnapshot.getValue(User::class.java)!!
                 if (!user.chats.contains(getCurrentUserUId())) {
                     getCurrentUserUId()?.let { user.chats.add(it) }
-                    app.database.getReference("users/$friendId").setValue(user)
+                    firebaseDatabase.getReference("users/$friendId").setValue(user)
                 }
             }
     }
 
     fun getExistingMessagesPath(friendId: String, path: MutableLiveData<DatabaseReference>) {
         path.postValue(
-            app.database
+            firebaseDatabase
                 .getReference(
                     "messages/${getCurrentUserUId()?.let { getConversationId(it, friendId) }}"
                 )
@@ -269,7 +277,7 @@ class Model(val app: MyApp) {
         val scope = CoroutineScope(Dispatchers.IO)
         val deferredUsers = list.map { id ->
             scope.async {
-                val userSnapshot = app.database.getReference("users/$id").get().await()
+                val userSnapshot = firebaseDatabase.getReference("users/$id").get().await()
                 userSnapshot.getValue(User::class.java)!!
             }
         }
@@ -281,7 +289,7 @@ class Model(val app: MyApp) {
     }
 
     fun listenForNewFriendRequests(friendRequestsLiveData: MutableLiveData<MutableList<String>>) {
-        app.database.getReference("users/${getCurrentUserUId()}/receivedFriendRequests")
+        firebaseDatabase.getReference("users/${getCurrentUserUId()}/receivedFriendRequests")
             .addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<String>()
@@ -304,7 +312,7 @@ class Model(val app: MyApp) {
                             login: String,
                             email: String,
                             fullName: String) {
-        app.storage.getReference("avatars/${getCurrentUserUId()}")
+        firebaseStorage.getReference("avatars/${getCurrentUserUId()}")
             .putFile(photoUri).addOnSuccessListener {
                 navController.navigate(R.id.chats_fragment)
                 insertUserInRoom(
@@ -333,7 +341,7 @@ class Model(val app: MyApp) {
         callback: (String) -> Unit,
     ) {
         val localFile = File.createTempFile(getCurrentUserUId()!!, "jpeg")
-        app.storage.getReference("avatars/${getCurrentUserUId()}").getFile(localFile).addOnSuccessListener {
+        firebaseStorage.getReference("avatars/${getCurrentUserUId()}").getFile(localFile).addOnSuccessListener {
             callback(localFile.absolutePath)
         }.addOnFailureListener {exception ->
             if (exception is StorageException) {
@@ -346,7 +354,7 @@ class Model(val app: MyApp) {
         email: String, login: String, fullName: String, password: String, photoUri: Uri,
         navController: NavController,
     ) {
-        app.auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
             val user = User(
                 fullName, email, login, getCurrentUserUId()!!,
                 mutableListOf(), mutableListOf(), mutableListOf()
@@ -357,7 +365,7 @@ class Model(val app: MyApp) {
     }
 
     fun signInUser(email: String, password: String, navController: NavController) {
-        app.auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
+        firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             navController.navigate(R.id.chats_fragment)
         }
     }

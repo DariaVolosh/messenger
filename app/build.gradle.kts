@@ -63,4 +63,6 @@ dependencies {
     kapt("androidx.room:room-compiler:2.5.2")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.github.skydoves:colorpickerview:2.3.0")
+    implementation("com.google.dagger:dagger:2.48")
+    kapt("com.google.dagger:dagger-compiler:2.48")
 }

@@ -13,8 +13,11 @@ import com.example.messenger.data.Message
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 
-class MessagesAdapter(private val currentUId: String, val context: Context)
+class MessagesAdapter @Inject constructor(
+    private val context: Context,
+    private val viewModel: MessagesViewModel)
     : RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
     private var messages = listOf<Message>()
 
@@ -56,17 +59,17 @@ class MessagesAdapter(private val currentUId: String, val context: Context)
         val timeLayoutParams = holder.timeSent.layoutParams as LinearLayout.LayoutParams
         val sharedPrefs = context.getSharedPreferences("colors", Context.MODE_PRIVATE)
 
-        if (from == currentUId) {
+        if (from == viewModel.getCurrentUserUId()) {
             messageLayoutParams.gravity = Gravity.END
             timeLayoutParams.gravity = Gravity.END
             holder.message.setBackgroundColor(
-                sharedPrefs.getInt("myColor$currentUId", R.color.turquoise)
+                sharedPrefs.getInt("myColor${viewModel.getCurrentUserUId()}", R.color.turquoise)
             )
         } else {
             messageLayoutParams.gravity = Gravity.START
             timeLayoutParams.gravity = Gravity.START
             holder.message.setBackgroundColor(
-                sharedPrefs.getInt("friendsColor$currentUId", R.color.turquoise)
+                sharedPrefs.getInt("friendsColor${viewModel.getCurrentUserUId()}", R.color.turquoise)
             )
         }
         holder.message.layoutParams = messageLayoutParams

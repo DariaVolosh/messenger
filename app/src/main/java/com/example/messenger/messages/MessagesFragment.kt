@@ -1,31 +1,24 @@
 package com.example.messenger.messages
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.messenger.MyApp
-import com.example.messenger.ViewModelFactory
 import com.example.messenger.databinding.FragmentMessagesBinding
 import com.example.messenger.data.Message
+import javax.inject.Inject
 
 class MessagesFragment : Fragment() {
     private lateinit var binding: FragmentMessagesBinding
-    private lateinit var app: MyApp
     private lateinit var friendId: String
     private lateinit var currentUserUId: String
-    private lateinit var adapter: MessagesAdapter
-    private lateinit var viewModel: MessagesViewModel
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        app = requireActivity().application as MyApp
-    }
+    @Inject lateinit var adapter: MessagesAdapter
+    @Inject lateinit var viewModel: MessagesViewModel
 
     companion object {
         const val FRIEND_UID = "friend_uId"
@@ -37,13 +30,17 @@ class MessagesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMessagesBinding.inflate(layoutInflater)
-        val factory = ViewModelFactory(app, MessagesViewModel::class.java)
-        viewModel = ViewModelProvider(this, factory)[MessagesViewModel::class.java]
+        (requireActivity().application as MyApp).appComponent.create(
+            requireContext(),
+            layoutInflater,
+            viewLifecycleOwner,
+            findNavController()
+        ).inject(this)
 
         initializeIds()
         populateToolbarWithFriendInfo()
 
-        viewModel.getExistingMessagesApp(friendId)
+        viewModel.getExistingMessagesPath(friendId)
         viewModel.existingMessagesPath.observe(viewLifecycleOwner) {path ->
             initializeAdapter()
             viewModel.addMessagesListener()
@@ -63,7 +60,7 @@ class MessagesFragment : Fragment() {
 
     private fun initializeIds() {
         friendId = requireArguments().getString(FRIEND_UID)!!
-        currentUserUId = viewModel.getCurrentUserId()!!
+        currentUserUId = viewModel.getCurrentUserUId()!!
     }
 
     private fun populateToolbarWithFriendInfo() {
@@ -89,7 +86,6 @@ class MessagesFragment : Fragment() {
 
     private fun initializeAdapter() {
         listenForMessages()
-        adapter = MessagesAdapter(currentUserUId, requireContext())
         binding.messages.adapter = adapter
         binding.messages.layoutManager = LinearLayoutManager(requireContext())
     }

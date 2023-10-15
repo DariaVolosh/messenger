@@ -14,11 +14,12 @@ import com.example.messenger.R
 import com.example.messenger.data.User
 import com.example.messenger.messages.MessagesFragment
 import de.hdodenhof.circleimageview.CircleImageView
+import javax.inject.Inject
 
-class ChatsAdapter(private val navController: NavController,
-                   private val viewModel: ChatsViewModel,
-                   private val context: Context,
-                   private val lifecycleOwner: LifecycleOwner):
+class ChatsAdapter @Inject constructor(private val navController: NavController,
+                                       private val viewModel: ChatsViewModel,
+                                       private val context: Context,
+                                       private val lifecycleOwner: LifecycleOwner):
     RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
     private var chats = listOf<User>()
 
