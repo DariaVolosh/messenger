@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".settings.SettingsFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:fillViewport="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/_60dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80dp"
+                app:title="@string/settings_toolbar_title"
+                app:titleTextAppearance="@style/toolbar_title_style" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/main_photo"
+                android:layout_width="@dimen/_70dp"
+                android:layout_height="@dimen/_70dp"
+                app:civ_border_color="@color/turquoise"
+                android:layout_below="@+id/toolbar"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/my_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kufam_regular"
+                android:textSize="@dimen/_15sp"
+                android:layout_below="@id/main_photo"
+                android:paddingTop="@dimen/_15dp"
+                android:layout_centerHorizontal="true"
+                android:includeFontPadding="false"
+                tools:text="Name"/>
+
+            <TextView
+                android:id="@+id/login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kufam_regular"
+                android:textSize="@dimen/_15sp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/my_name"
+                android:includeFontPadding="false"
+                android:paddingTop="@dimen/_10dp"
+                tools:text="Login"/>
+
+            <TextView
+                android:id="@+id/my_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kufam_regular"
+                android:textSize="@dimen/_15sp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/login"
+                android:includeFontPadding="false"
+                android:paddingTop="@dimen/_10dp"
+                tools:text="email@gmail.com"/>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1dp"
+                android:background="@color/turquoise"
+                android:layout_marginTop="@dimen/_20dp"
+                android:layout_below="@id/my_email"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/my_messages_color_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:text="@string/set_color_for_my_messages_button_text"
+                android:textColor="@color/turquoise"
+                android:textAllCaps="false"
+                android:textSize="@dimen/_15sp"
+                android:fontFamily="@font/kufam_regular"
+                android:includeFontPadding="false"
+                app:icon="@drawable/my_messages_color_icon"
+                app:iconTint="@color/turquoise"
+                app:iconGravity="start"
+                style="@android:style/Widget.Holo.Button.Borderless"
+                android:layout_marginTop="@dimen/_25dp"
+                android:layout_below="@id/divider"
+                android:layout_centerHorizontal="true"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/friends_messages_color_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent"
+                android:text="@string/set_color_for_friends_messages_button_text"
+                android:textColor="@color/turquoise"
+                android:textAllCaps="false"
+                android:textSize="@dimen/_15sp"
+                android:fontFamily="@font/kufam_regular"
+                android:includeFontPadding="false"
+                app:icon="@drawable/friends_messages_color_icon"
+                app:iconTint="@color/turquoise"
+                app:iconGravity="start"
+                style="@android:style/Widget.Holo.Button.Borderless"
+                android:layout_below="@id/my_messages_color_button"
+                android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_60dp"
+        android:background="@color/turquoise"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:itemRippleColor="@color/white"
+        app:menu="@menu/bottom_navigation_menu"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>
