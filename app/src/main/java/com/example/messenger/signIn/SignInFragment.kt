@@ -43,8 +43,8 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
 
         binding.loginButton.setOnClickListener {
             viewModel.signInUser(
-                binding.email.text.toString(),
-                binding.password.text.toString(),
+                binding.emailSignIn.text.toString(),
+                binding.passwordSignIn.text.toString(),
                 findNavController()
             )
         }

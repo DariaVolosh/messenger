@@ -46,7 +46,7 @@ class AddFriendFragment : Fragment() {
     }
 
     private fun initializeRecyclerViewAdapter() {
-        binding.friends.adapter = adapter
-        binding.friends.layoutManager = LinearLayoutManager(requireContext())
+        binding.foundUsers.adapter = adapter
+        binding.foundUsers.layoutManager = LinearLayoutManager(requireContext())
     }
 }

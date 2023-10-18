@@ -26,7 +26,7 @@ class FriendsViewModel @Inject constructor(private val model: Model): ViewModel(
         else model.getUsersFromUId(list, requestsList)
     }
 
-    fun downloadImages(list: List<User>, friends: Boolean) {
+   fun downloadImages(list: List<User>, friends: Boolean) {
         if (friends) model.downloadImages(list, friendsImages)
         else model.downloadImages(list, requestsImages)
     }

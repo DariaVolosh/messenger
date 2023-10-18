@@ -39,16 +39,31 @@ class FriendsFragment: Fragment(R.layout.fragment_friends), FriendsRequestsAdapt
         return binding.root
     }
 
+    private fun listenForFriendRequests(currentUser: User) {
+        viewModel.getUsersFromUId(currentUser.friends, true)
+        viewModel.getUsersFromUId(currentUser.receivedFriendRequests, false)
+
+        viewModel.requestsList.observe(viewLifecycleOwner) { requests ->
+            friendsRequestsAdapter.setUsers(requests)
+            viewModel.downloadImages(requests, false)
+        }
+
+        viewModel.requestsImages.observe(viewLifecycleOwner) {images ->
+            friendsRequestsAdapter.setImages(images)
+            friendsRequestsAdapter.notifyDataSetChanged()
+        }
+    }
+
     private fun setFriendRequestsQuantity() {
         viewModel.currentUser.observe(viewLifecycleOwner) {currentUser ->
             binding.friendRequestsText.text =
                 "You have ${currentUser.receivedFriendRequests.size} new requests"
-            initializeFriendsListAdapter(currentUser)
+            initializeFriendsListAdapter()
+            listenForFriendRequests(currentUser)
         }
     }
 
-    private fun initializeFriendsListAdapter(currentUser: User) {
-        viewModel.getUsersFromUId(currentUser.friends, true)
+    private fun initializeFriendsListAdapter() {
         binding.friendsList.adapter = friendsListAdapter
         binding.friendsList.layoutManager = LinearLayoutManager(requireContext())
     }

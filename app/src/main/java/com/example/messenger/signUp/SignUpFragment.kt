@@ -86,9 +86,9 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
     }
 
     private fun createUser() {
-        val email = binding.email.text.toString()
+        val email = binding.emailSignUp.text.toString()
         val login = binding.login.text.toString()
-        val password = binding.password.text.toString()
+        val password = binding.passwordSignUp.text.toString()
         val fullName = binding.fullName.text.toString()
 
         photoUri?.let { viewModel.createUser(email, login, fullName, password, it, findNavController()) }

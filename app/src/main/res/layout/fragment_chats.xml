@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".chats.ChatsFragment"
-    android:orientation="vertical">
+    tools:context=".chats.ChatsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -20,6 +19,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
             android:layout_height="@dimen/_80dp"
+            android:minHeight="?attr/actionBarSize"
             app:buttonGravity="center_vertical"
             app:menu="@menu/toolbar_menu">
 

@@ -35,4 +35,5 @@
     <string name="settings_toolbar_title">Settings</string>
     <string name="set_color_for_my_messages_button_text">Set color for my messages</string>
     <string name="set_color_for_friends_messages_button_text">Set color for friend\'s messages</string>
+    <string name="sign_out_button_text">Sign out</string>
 </resources>

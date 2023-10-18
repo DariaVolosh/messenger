@@ -65,4 +65,6 @@ dependencies {
     implementation("com.github.skydoves:colorpickerview:2.3.0")
     implementation("com.google.dagger:dagger:2.48")
     kapt("com.google.dagger:dagger-compiler:2.48")
+    androidTestImplementation("org.mockito:mockito-core:3.11.2")
+    implementation("androidx.test.espresso:espresso-idling-resource:3.5.1")
 }

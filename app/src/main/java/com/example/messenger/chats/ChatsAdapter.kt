@@ -5,21 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.messenger.R
 import com.example.messenger.data.User
-import com.example.messenger.messages.MessagesFragment
 import de.hdodenhof.circleimageview.CircleImageView
-import javax.inject.Inject
-
-class ChatsAdapter @Inject constructor(private val navController: NavController,
-                                       private val viewModel: ChatsViewModel,
-                                       private val context: Context,
-                                       private val lifecycleOwner: LifecycleOwner):
+class ChatsAdapter constructor(private val viewModel: ChatsViewModel,
+                               private val context: Context,
+                               private val lifecycleOwner: LifecycleOwner,
+                               private val messagesDisplay: MessageDisplayListener):
     RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
     private var chats = listOf<User>()
 
@@ -51,12 +46,14 @@ class ChatsAdapter @Inject constructor(private val navController: NavController,
             .into(holder.mainPhoto)
 
         holder.view.setOnClickListener {
-            val bundle = bundleOf()
-            bundle.putString(MessagesFragment.FRIEND_UID, friend.userId)
-            navController.navigate(R.id.messages_fragment, bundle)
+            messagesDisplay.onDisplayMessages(friend)
         }
 
         viewModel.listenForNewMessage(friend.userId, holder)
     }
     override fun getItemCount() = chats.size
+
+    interface MessageDisplayListener {
+        fun onDisplayMessages(friend: User)
+    }
 }

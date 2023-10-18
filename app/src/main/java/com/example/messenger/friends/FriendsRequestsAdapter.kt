@@ -23,7 +23,7 @@ class FriendsRequestsAdapter @Inject constructor(
 ) :
     RecyclerView.Adapter<FriendsRequestsAdapter.ViewHolder>() {
     private var receivedRequests = mutableListOf<User>()
-    private var images = listOf<Uri>()
+    private var requestsImages = listOf<Uri>()
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val button: ImageButton = view.findViewById(R.id.add_to_friends_button)
@@ -32,20 +32,12 @@ class FriendsRequestsAdapter @Inject constructor(
         val mainPhoto: CircleImageView = view.findViewById(R.id.main_photo)
     }
 
-    init {
-        viewModel.friendRequests.observe(lifecycleOwner) {requests ->
-            viewModel.getUsersFromUId(requests, false)
-            viewModel.requestsList.observe(lifecycleOwner) { users ->
-                this.receivedRequests = users
+    fun setImages(requestsImages: List<Uri>) {
+        this.requestsImages = requestsImages
+    }
 
-                viewModel.downloadImages(users, false)
-                viewModel.requestsImages.observe(lifecycleOwner) {images ->
-                    this.images = images
-                    notifyDataSetChanged()
-                    setRequestsTextListener.setText(receivedRequests.size)
-                }
-            }
-        }
+    fun setUsers(receivedRequests: MutableList<User>) {
+        this.receivedRequests = receivedRequests
     }
 
     override fun onCreateViewHolder(
@@ -62,7 +54,7 @@ class FriendsRequestsAdapter @Inject constructor(
         holder.button.setOnClickListener { addFriend(user.userId) }
         holder.name.text = user.fullName
         holder.login.text = user.login
-        loadImage(images[position], holder)
+        loadImage(requestsImages[position], holder)
     }
 
     private fun loadImage(uri: Uri, holder: ViewHolder) {
