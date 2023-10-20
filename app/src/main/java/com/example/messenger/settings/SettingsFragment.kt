@@ -29,17 +29,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSettingsBinding.inflate(layoutInflater)
-        (requireActivity().application as MyApp).appComponent.create(
-            requireContext(),
-            layoutInflater,
-            viewLifecycleOwner,
-            findNavController()
-        ).inject(this)
+        injectDependencies()
+        currentUId = viewModel.getCurrentUserId()!!
 
         setNavigationBarOnItemListener()
         getInfoAboutUser()
         setPhoto()
-        currentUId = viewModel.getCurrentUserId()!!
         getSavedMessagesColors()
 
         binding.friendsMessagesColorButton.setOnClickListener { openColorPicker(false) }
@@ -47,7 +42,17 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         return binding.root
     }
 
+    private fun injectDependencies() {
+        (requireActivity().application as MyApp).appComponent.create(
+            requireContext(),
+            layoutInflater,
+            viewLifecycleOwner,
+            findNavController()
+        ).inject(this)
+    }
+
     private fun getSavedMessagesColors() {
+        currentUId
         val sharedPrefs = activity?.getSharedPreferences("colors", Context.MODE_PRIVATE)
         val myColor = sharedPrefs?.getInt("myColor$currentUId", R.color.turquoise)
         val friendColor = sharedPrefs?.getInt("friendsColor$currentUId", R.color.turquoise)

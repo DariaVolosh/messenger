@@ -30,25 +30,33 @@ class MessagesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMessagesBinding.inflate(layoutInflater)
+
+        injectDependencies()
+        initializeIds()
+        getCurrentMessagesPath()
+        populateToolbarWithFriendInfo()
+
+        binding.sendMessageButton.setOnClickListener { sendMessage() }
+
+        return binding.root
+    }
+
+    private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.create(
             requireContext(),
             layoutInflater,
             viewLifecycleOwner,
             findNavController()
         ).inject(this)
+    }
 
-        initializeIds()
-        populateToolbarWithFriendInfo()
-
+    private fun getCurrentMessagesPath() {
         viewModel.getExistingMessagesPath(friendId)
         viewModel.existingMessagesPath.observe(viewLifecycleOwner) {path ->
             initializeAdapter()
+            listenForMessages()
             viewModel.addMessagesListener()
         }
-
-        binding.sendMessageButton.setOnClickListener { sendMessage() }
-
-        return binding.root
     }
 
     private fun listenForMessages() {
@@ -85,7 +93,6 @@ class MessagesFragment : Fragment() {
     }
 
     private fun initializeAdapter() {
-        listenForMessages()
         binding.messages.adapter = adapter
         binding.messages.layoutManager = LinearLayoutManager(requireContext())
     }

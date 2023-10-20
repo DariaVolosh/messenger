@@ -34,16 +34,20 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSignUpBinding.inflate(layoutInflater)
+        injectDependencies()
+
+        binding.mainPhoto.setOnClickListener{checkPermission()}
+        binding.registerButton.setOnClickListener{createUser()}
+        return binding.root
+    }
+
+    private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.create(
             requireContext(),
             layoutInflater,
             viewLifecycleOwner,
             findNavController()
         ).inject(this)
-
-        binding.mainPhoto.setOnClickListener{checkPermission()}
-        binding.registerButton.setOnClickListener{createUser()}
-        return binding.root
     }
 
     // launcher used to request permission
