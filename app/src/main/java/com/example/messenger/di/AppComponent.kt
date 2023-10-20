@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.messenger.addFriend.AddFriendFragment
 import com.example.messenger.chats.ChatsFragment
-import com.example.messenger.friends.FriendsFragment
+import com.example.messenger.friends_and_requests.FriendsFragment
 import com.example.messenger.messages.MessagesFragment
 import com.example.messenger.settings.SettingsFragment
 import com.example.messenger.signIn.SignInFragment

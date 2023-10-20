@@ -1,4 +1,4 @@
-package com.example.messenger.friends
+package com.example.messenger.friends_and_requests
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
@@ -8,28 +8,24 @@ import com.example.messenger.data.User
 import javax.inject.Inject
 
 class FriendsViewModel @Inject constructor(private val model: Model): ViewModel() {
-    val friendsList = MutableLiveData<MutableList<User>>()
-    val requestsList = MutableLiveData<MutableList<User>>()
-    val friendsImages = MutableLiveData<List<Uri>>()
-    val requestsImages = MutableLiveData<List<Uri>>()
+    val friendsAndRequestsList = MutableLiveData<MutableList<User>>()
+    val images = MutableLiveData<List<Uri>>()
+    val friendRequests = MutableLiveData<MutableList<String>>()
     val friend = MutableLiveData<User>()
 
     val currentUser = model.currentUserObject
-    val friendRequests = MutableLiveData<MutableList<String>>()
 
     init {
         listenForNewFriendRequests()
     }
 
-    fun getUsersFromUId(list: List<String>, friends: Boolean) {
-        if (friends) model.getUsersFromUId(list, friendsList)
-        else model.getUsersFromUId(list, requestsList)
+    fun getUsersFromUId(list: List<String>) {
+        model.getUsersFromUId(list, friendsAndRequestsList)
     }
 
-   fun downloadImages(list: List<User>, friends: Boolean) {
-        if (friends) model.downloadImages(list, friendsImages)
-        else model.downloadImages(list, requestsImages)
-    }
+   fun downloadImages(list: List<User>) {
+       model.downloadImages(list, images)
+   }
 
     fun updateUser(user: User) {
         model.updateUser(user)

@@ -37,6 +37,7 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
 
         injectDependencies()
         observeChatList()
+        observeImages()
         observeMainPhoto()
         setNavigationBarOnItemListener()
         initializeAdapter()
@@ -48,7 +49,14 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
 
     private fun observeChatList() {
         viewModel.chatList.observe(viewLifecycleOwner) { users ->
-            adapter.setChatList(users)
+            adapter.setChatsList(users)
+            viewModel.downloadImages(users)
+        }
+    }
+
+    private fun observeImages() {
+        viewModel.photoUris.observe(viewLifecycleOwner) {list ->
+            adapter.setImages(list)
         }
     }
 
@@ -66,6 +74,7 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
         viewModel.mainPhotoBitmap.observe(viewLifecycleOwner) {bitmap ->
             binding.mainPhoto.setImageBitmap(bitmap)
         }
+
         viewModel.mainPhotoUri.observe(viewLifecycleOwner) {uri ->
             Glide.with(requireContext())
                 .load(uri)
@@ -99,7 +108,6 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
         adapter = ChatsAdapter(
             viewModel,
             requireContext(),
-            viewLifecycleOwner,
             this)
         binding.chatsList.adapter = adapter
         binding.chatsList.layoutManager = LinearLayoutManager(requireContext())

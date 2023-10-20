@@ -1,7 +1,6 @@
 package com.example.messenger.messages
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,11 +23,7 @@ class MessagesFragment : Fragment() {
     companion object {
         const val FRIEND_UID = "friend_uId"
     }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        Log.i("LOL", hidden.toString())
-    }
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

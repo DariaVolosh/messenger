@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.messenger.R
@@ -19,41 +18,12 @@ import javax.inject.Inject
 class FriendsSearchAdapter @Inject constructor(
     private val context: Context,
     private val layoutInflater: LayoutInflater,
-    private val viewModel: AddFriendViewModel,
-    private val lifecycleOwner: LifecycleOwner) :
+    private val viewModel: AddFriendViewModel) :
     RecyclerView.Adapter<FriendsSearchAdapter.ViewHolder>() {
 
-    private var foundUsers: List<User> = listOf()
-    private var photoUris: List<Uri> = listOf()
     private val currentUId = viewModel.getCurrentUserId()
-
-    fun areListsEqual(images: List<Uri>): Boolean {
-        if (photoUris.size == images.size) {
-            val sorted1 = photoUris.sorted()
-            val sorted2 = images.sorted()
-            for (i in sorted1.indices) {
-                if (sorted1[i] != sorted2[i]) {
-                    return false
-                }
-            }
-        } else {
-            return false
-        }
-
-        return true
-    }
-
-
-    fun setData(foundUsers: List<User>) {
-        this.foundUsers = foundUsers
-        viewModel.downloadImages(foundUsers)
-        viewModel.images.observe(lifecycleOwner) {images ->
-            if (!areListsEqual(images)) {
-                this.photoUris = images
-                notifyDataSetChanged()
-            }
-        }
-    }
+    private var foundUsers = listOf<User>()
+    private var images = listOf<Uri>()
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.name)
@@ -74,15 +44,28 @@ class FriendsSearchAdapter @Inject constructor(
         )
     }
 
+    fun setFoundUsers(users: List<User>) {
+        this.foundUsers = users
+    }
+
+    fun setImages(images: List<Uri>) {
+        this.images = images
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = foundUsers[position]
         holder.name.text = user.fullName
         holder.login.text = user.login
 
-        Glide.with(context)
-            .load(photoUris[position])
-            .into(holder.mainPhoto)
+        loadImage(images[position], holder)
         holder.view.setOnClickListener { createDialogWithProfileDetails(user, position)}
+    }
+
+    private fun loadImage(uri: Uri, holder: ViewHolder) {
+        Glide.with(context)
+            .load(uri)
+            .into(holder.mainPhoto)
     }
 
     private fun disableAddFriendButton(view: DialogProfileDetailsBinding) {
@@ -98,7 +81,7 @@ class FriendsSearchAdapter @Inject constructor(
         view.friends.text = "${clickedUser.friends.size} friends"
 
         Glide.with(context)
-            .load(photoUris[position])
+            .load(images[position])
             .into(view.mainPhoto)
 
         // checking if friend request has been already sent to this user

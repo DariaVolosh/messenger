@@ -23,26 +23,42 @@ class AddFriendFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAddFriendBinding.inflate(layoutInflater)
+        injectDependencies()
+        addLoginRequestChangedListener()
+        observeFoundUsers()
+        observeDownloadedImages()
+        initializeRecyclerViewAdapter()
+
+        return binding.root
+    }
+
+    private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.create(
             requireContext(),
             layoutInflater,
             viewLifecycleOwner,
             findNavController()
         ).inject(this)
+    }
 
-        initializeRecyclerViewAdapter()
+    private fun observeDownloadedImages() {
+        viewModel.images.observe(viewLifecycleOwner) {images ->
+            adapter.setImages(images)
+        }
+    }
+    private fun observeFoundUsers() {
+        viewModel.foundUsers.observe(viewLifecycleOwner) {users ->
+            adapter.setFoundUsers(users)
+            viewModel.downloadImages(users)
+        }
+    }
 
+    private fun addLoginRequestChangedListener() {
         binding.friendsSearch.addTextChangedListener {loginQuery ->
             if (loginQuery.toString() != viewModel.previousQuery) {
                 viewModel.searchUserByLogin(loginQuery.toString())
             }
         }
-
-        viewModel.foundUsers.observe(viewLifecycleOwner) {users ->
-            adapter.setData(users)
-        }
-
-        return binding.root
     }
 
     private fun initializeRecyclerViewAdapter() {

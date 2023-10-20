@@ -273,7 +273,7 @@ class Model @Inject constructor(
         existingMessagesPath.child("lastMessage").setValue(message)
     }
 
-    fun getUsersFromUId(list: List<String>, userListLiveData: MutableLiveData<MutableList<User>>) {
+    fun getUsersFromUId (list: List<String>, userListLiveData: MutableLiveData<MutableList<User>>) {
         val scope = CoroutineScope(Dispatchers.IO)
         val deferredUsers = list.map { id ->
             scope.async {
