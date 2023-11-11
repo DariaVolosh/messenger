@@ -1,13 +1,26 @@
 package com.example.messenger.signIn
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
-import com.example.messenger.Model
+import com.example.messenger.domainLayer.GetCurrentUserObjectUseCase
+import com.example.messenger.domainLayer.SignInUserUseCase
+import com.google.firebase.auth.FirebaseUser
 import javax.inject.Inject
 
-class SignInViewModel @Inject constructor(private val model: Model): ViewModel() {
+class SignInViewModel @Inject constructor(
+    private val signInUserUseCase: SignInUserUseCase,
+    private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase
+): ViewModel() {
+    val currentUser = MutableLiveData<FirebaseUser?>()
 
-    fun signInUser(email: String, password: String, navController: NavController) {
-        model.signInUser(email, password, navController)
+    init {
+        getCurrentUserObject()
+    }
+
+    private fun getCurrentUserObject() {
+        currentUser.value = getCurrentUserObjectUseCase.getFirebaseUser()
+    }
+    fun signInUser(email: String, password: String) {
+        signInUserUseCase.signInUser(email, password)
     }
 }

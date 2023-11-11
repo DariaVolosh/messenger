@@ -67,4 +67,5 @@ dependencies {
     kapt("com.google.dagger:dagger-compiler:2.48")
     androidTestImplementation("org.mockito:mockito-core:3.11.2")
     implementation("androidx.test.espresso:espresso-idling-resource:3.5.1")
+    implementation("androidx.activity:activity-ktx:1.3.1")
 }

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".chats.ChatsFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".chats.ChatsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/chats_fragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/messages_fragment"
+        app:layout_constraintEnd_toStartOf="@+id/details_fragment"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -101,43 +101,12 @@
             app:layout_constraintEnd_toStartOf="@+id/fab_add_friend" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include
-        android:id="@+id/messages_fragment"
-        layout="@layout/fragment_messages"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/details_fragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/chats_fragment"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"/>
-
-    <include
-        android:id="@+id/settings_fragment"
-        layout="@layout/fragment_settings"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/chats_fragment"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"/>
-
-    <include
-        android:id="@+id/friends_fragment"
-        layout="@layout/fragment_friends"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/chats_fragment"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"/>
-
-    <include
-        android:id="@+id/add_friends_fragment"
-        layout="@layout/fragment_add_friend"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/chats_fragment"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"/>
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

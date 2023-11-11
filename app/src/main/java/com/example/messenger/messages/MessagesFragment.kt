@@ -16,7 +16,6 @@ import javax.inject.Inject
 class MessagesFragment : Fragment() {
     private lateinit var binding: FragmentMessagesBinding
     private lateinit var friendId: String
-    private lateinit var currentUserUId: String
     @Inject lateinit var adapter: MessagesAdapter
     @Inject lateinit var viewModel: MessagesViewModel
 
@@ -52,7 +51,7 @@ class MessagesFragment : Fragment() {
 
     private fun getCurrentMessagesPath() {
         viewModel.getExistingMessagesPath(friendId)
-        viewModel.existingMessagesPath.observe(viewLifecycleOwner) {path ->
+        viewModel.existingMessagesPath.observe(viewLifecycleOwner) {
             initializeAdapter()
             listenForMessages()
             viewModel.addMessagesListener()
@@ -68,7 +67,6 @@ class MessagesFragment : Fragment() {
 
     private fun initializeIds() {
         friendId = requireArguments().getString(FRIEND_UID)!!
-        currentUserUId = viewModel.getCurrentUserUId()!!
     }
 
     private fun populateToolbarWithFriendInfo() {
@@ -99,12 +97,14 @@ class MessagesFragment : Fragment() {
 
     private fun sendMessage() {
         val messageId = viewModel.existingMessagesPath.value?.push()?.key!!
-        val message = Message(
-            System.currentTimeMillis(), binding.messageEditText.text.toString(),
-            currentUserUId, friendId, messageId
-        )
-        viewModel.sendMessage(message, messageId)
-        binding.messageEditText.text.clear()
-        viewModel.addChatToChatsList(friendId)
+        viewModel.currentUserId.value?.let { id ->
+            val message = Message(
+                System.currentTimeMillis(), binding.messageEditText.text.toString(),
+                id, friendId, messageId
+            )
+            viewModel.sendMessage(message)
+            binding.messageEditText.text.clear()
+            viewModel.addChatToChatsList(friendId)
+        }
     }
 }

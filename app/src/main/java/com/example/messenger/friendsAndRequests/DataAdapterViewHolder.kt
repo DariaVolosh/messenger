@@ -1,4 +1,4 @@
-package com.example.messenger.friends_and_requests
+package com.example.messenger.friendsAndRequests
 
 import android.net.Uri
 import android.view.View
@@ -12,9 +12,8 @@ import com.bumptech.glide.Glide
 import com.example.messenger.R
 import com.example.messenger.messages.MessagesFragment
 import de.hdodenhof.circleimageview.CircleImageView
-
 class DataAdapterViewHolder(
-    private val itemView: View,
+    itemView: View,
     private val viewModel: FriendsViewModel,
     private val lifecycleOwner: LifecycleOwner,
     private val navController: NavController

@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.messenger.MyApp
 import com.example.messenger.R
+import com.example.messenger.addFriend.AddFriendFragment
 import com.example.messenger.data.User
 import com.example.messenger.databinding.FragmentChatsBinding
+import com.example.messenger.friendsAndRequests.FriendsFragment
 import com.example.messenger.messages.MessagesFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.messenger.settings.SettingsFragment
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
@@ -39,6 +41,7 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
         observeChatList()
         observeImages()
         observeMainPhoto()
+        observeLastMessages()
         setNavigationBarOnItemListener()
         initializeAdapter()
         setFabAddFriendButtonListener()
@@ -47,10 +50,14 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
         return binding.root
     }
 
+    private fun observeLastMessages() {
+        viewModel.lastMessages.observe(viewLifecycleOwner) {messages ->
+            adapter.setLastMessages(messages)
+        }
+    }
     private fun observeChatList() {
         viewModel.chatList.observe(viewLifecycleOwner) { users ->
             adapter.setChatsList(users)
-            viewModel.downloadImages(users)
         }
     }
 
@@ -70,7 +77,6 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
     }
 
     private fun observeMainPhoto() {
-        viewModel.downloadImage(viewLifecycleOwner)
         viewModel.mainPhotoBitmap.observe(viewLifecycleOwner) {bitmap ->
             binding.mainPhoto.setImageBitmap(bitmap)
         }
@@ -80,16 +86,15 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
                 .load(uri)
                 .into(binding.mainPhoto)
         }
-
     }
 
     private fun setFabAddFriendButtonListener() {
         binding.fabAddFriend.setOnClickListener {
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                binding.addFriendsFragment?.root?.visibility = View.VISIBLE
-                binding.friendsFragment?.root?.visibility = View.INVISIBLE
-                binding.settingsFragment?.root?.visibility = View.INVISIBLE
-                binding.messagesFragment?.root?.visibility = View.INVISIBLE
+                val addFriendFragment = AddFriendFragment()
+                childFragmentManager.beginTransaction()
+                    .replace(R.id.details_fragment, addFriendFragment)
+                    .commitNow()
             } else {
                 findNavController().navigate(R.id.add_friends_fragment)
             }
@@ -106,7 +111,6 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
     private fun initializeAdapter() {
         // manually inject adapter, because i need to pass a listener to it
         adapter = ChatsAdapter(
-            viewModel,
             requireContext(),
             this)
         binding.chatsList.adapter = adapter
@@ -118,38 +122,32 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
             when (item.itemId) {
                 R.id.friends -> {
                     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        binding.friendsFragment?.root?.apply {
-                            visibility = View.VISIBLE
-                            findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-                                .visibility = View.GONE
-                        }
-                        binding.addFriendsFragment?.root?.visibility = View.INVISIBLE
-                        binding.settingsFragment?.root?.visibility = View.INVISIBLE
-                        binding.messagesFragment?.root?.visibility = View.INVISIBLE
+                        val friendsFragment = FriendsFragment()
+                        childFragmentManager.beginTransaction()
+                            .replace(R.id.details_fragment, friendsFragment)
+                            .commitNow()
                     } else {
                         findNavController().navigate(R.id.friends_fragment)
                     }
                 }
                 R.id.chats -> {
                     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        binding.addFriendsFragment?.root?.visibility = View.INVISIBLE
-                        binding.friendsFragment?.root?.visibility = View.INVISIBLE
-                        binding.settingsFragment?.root?.visibility = View.INVISIBLE
-                        binding.messagesFragment?.root?.visibility = View.INVISIBLE
+                        val fragment = childFragmentManager.findFragmentById(R.id.details_fragment)
+                        fragment?.let {
+                            childFragmentManager.beginTransaction()
+                                .remove(fragment)
+                                .commitNow()
+                        }
                     } else {
                         findNavController().navigate(R.id.chats_fragment)
                     }
                 }
                 R.id.settings -> {
                     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        binding.settingsFragment?.root?.apply {
-                            visibility = View.VISIBLE
-                            findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-                                .visibility = View.GONE
-                        }
-                        binding.addFriendsFragment?.root?.visibility = View.INVISIBLE
-                        binding.friendsFragment?.root?.visibility = View.INVISIBLE
-                        binding.messagesFragment?.root?.visibility = View.INVISIBLE
+                        val settingsFragment = SettingsFragment()
+                        childFragmentManager.beginTransaction()
+                            .replace(R.id.details_fragment, settingsFragment)
+                            .commitNow()
                     } else {
                         findNavController().navigate(R.id.settings_fragment)
                     }
@@ -163,10 +161,10 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
         val bundle = bundleOf()
         bundle.putString(MessagesFragment.FRIEND_UID, friend.userId)
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            binding.messagesFragment?.root?.visibility = View.VISIBLE
-            binding.addFriendsFragment?.root?.visibility = View.INVISIBLE
-            binding.friendsFragment?.root?.visibility = View.INVISIBLE
-            binding.settingsFragment?.root?.visibility = View.INVISIBLE
+            val messagesFragment = MessagesFragment()
+            childFragmentManager.beginTransaction()
+                .replace(R.id.details_fragment, messagesFragment)
+                .commitNow()
         } else {
             findNavController().navigate(R.id.messages_fragment, bundle)
         }

@@ -55,9 +55,7 @@ class AddFriendFragment : Fragment() {
 
     private fun addLoginRequestChangedListener() {
         binding.friendsSearch.addTextChangedListener {loginQuery ->
-            if (loginQuery.toString() != viewModel.previousQuery) {
-                viewModel.searchUserByLogin(loginQuery.toString())
-            }
+            viewModel.searchUserByLogin(loginQuery.toString())
         }
     }
 

@@ -10,7 +10,7 @@ import javax.inject.Singleton
 class RoomDatabaseModule {
     @Provides
     @Singleton
-    fun provideUserAndChatDatabase(context: Context)= UserAndChatDatabase.getInstance(context)
+    fun provideUserAndChatDatabase(context: Context) = UserAndChatDatabase.getInstance(context)
 
     @Provides
     @Singleton

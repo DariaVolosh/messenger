@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.messenger.MyApp
 import com.example.messenger.R
+import com.example.messenger.data.User
 import com.example.messenger.databinding.FragmentSignUpBinding
 import javax.inject.Inject
 
@@ -58,7 +59,7 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
             } else {
                 Toast.makeText(
                     context,
-                    "You have to grant storage permission to upload photo",
+                    getString(R.string.grant_permission_toast_text),
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -95,6 +96,8 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
         val password = binding.passwordSignUp.text.toString()
         val fullName = binding.fullName.text.toString()
 
-        photoUri?.let { viewModel.createUser(email, login, fullName, password, it, findNavController()) }
+        val user = User(fullName, email, login, "", mutableListOf(), mutableListOf(), mutableListOf())
+
+        photoUri?.let { photoUri -> viewModel.signUpUser(user, password, photoUri) }
     }
 }

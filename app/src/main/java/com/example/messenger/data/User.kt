@@ -3,7 +3,7 @@ data class User(
     var fullName: String,
     var email: String,
     val login: String,
-    val userId: String,
+    var userId: String,
     var friends: MutableList<String>,
     var receivedFriendRequests: MutableList<String>,
     var chats: MutableList<String>) {

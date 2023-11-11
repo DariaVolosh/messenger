@@ -1,4 +1,4 @@
-package com.example.messenger.friends_and_requests
+package com.example.messenger.friendsAndRequests
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -59,7 +59,9 @@ class DataAdapter @Inject constructor (
                     }
                 )
             }
-            holder.bind(friendsAndRequestsList[position], images[indexOfImage])
+            if (friendsAndRequestsList.isNotEmpty()) {
+                holder.bind(friendsAndRequestsList[position], images[indexOfImage])
+            }
         } else {
             holder.bind(friendsAndRequestsList[position], null)
         }

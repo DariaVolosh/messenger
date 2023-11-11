@@ -3,27 +3,48 @@ package com.example.messenger.addFriend
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.messenger.Model
+import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.User
+import com.example.messenger.domainLayer.DownloadImagesUseCase
+import com.example.messenger.domainLayer.GetCurrentUserIdUseCase
+import com.example.messenger.domainLayer.SearchUsersByLoginUseCase
+import com.example.messenger.domainLayer.UpdateUserUseCase
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class AddFriendViewModel @Inject constructor(private val model: Model) : ViewModel() {
+class AddFriendViewModel @Inject constructor(
+    private val searchUsersByLoginUseCase: SearchUsersByLoginUseCase,
+    private val downloadImagesUseCase: DownloadImagesUseCase,
+    private val updateUserUseCase: UpdateUserUseCase,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
+) : ViewModel() {
     val foundUsers = MutableLiveData<List<User>>()
-    var previousQuery: String = ""
     val images = MutableLiveData<List<Uri>>()
+    val currentUserId = MutableLiveData<String>()
 
-    fun searchUserByLogin(loginQuery: String) {
-        previousQuery = loginQuery
-        model.searchUserByLogin(loginQuery, foundUsers)
+    init {
+        getCurrentUserId()
     }
 
-    fun getCurrentUserId() = model.getCurrentUserUId()
+    fun searchUserByLogin(loginQuery: String) {
+        viewModelScope.launch {
+            val list = searchUsersByLoginUseCase.getUsersByLogin(loginQuery).await()
+            foundUsers.value = list
+        }
+    }
 
     fun downloadImages(list: List<User>) {
-        model.downloadImages(list, images)
+        viewModelScope.launch {
+            val uris = downloadImagesUseCase.getImages(list).await()
+            images.value = uris
+        }
     }
 
     fun updateUser(updatedUser: User) {
-        model.updateUser(updatedUser)
+        updateUserUseCase.updateUser(updatedUser)
+    }
+
+    private fun getCurrentUserId() {
+        currentUserId.value = getCurrentUserIdUseCase.getCurrentUserId()
     }
 }

@@ -59,18 +59,20 @@ class MessagesAdapter @Inject constructor(
         val timeLayoutParams = holder.timeSent.layoutParams as LinearLayout.LayoutParams
         val sharedPrefs = context.getSharedPreferences("colors", Context.MODE_PRIVATE)
 
-        if (from == viewModel.getCurrentUserUId()) {
-            messageLayoutParams.gravity = Gravity.END
-            timeLayoutParams.gravity = Gravity.END
-            holder.message.setBackgroundColor(
-                sharedPrefs.getInt("myColor${viewModel.getCurrentUserUId()}", R.color.turquoise)
-            )
-        } else {
-            messageLayoutParams.gravity = Gravity.START
-            timeLayoutParams.gravity = Gravity.START
-            holder.message.setBackgroundColor(
-                sharedPrefs.getInt("friendsColor${viewModel.getCurrentUserUId()}", R.color.turquoise)
-            )
+        viewModel.currentUserId.value?.let { id ->
+            if (from == id) {
+                messageLayoutParams.gravity = Gravity.END
+                timeLayoutParams.gravity = Gravity.END
+                holder.message.setBackgroundColor(
+                    sharedPrefs.getInt("myColor$id", R.color.turquoise)
+                )
+            } else {
+                messageLayoutParams.gravity = Gravity.START
+                timeLayoutParams.gravity = Gravity.START
+                holder.message.setBackgroundColor(
+                    sharedPrefs.getInt("friendsColor$id", R.color.turquoise)
+                )
+            }
         }
         holder.message.layoutParams = messageLayoutParams
         holder.timeSent.layoutParams = timeLayoutParams

@@ -21,7 +21,6 @@ class FriendsSearchAdapter @Inject constructor(
     private val viewModel: AddFriendViewModel) :
     RecyclerView.Adapter<FriendsSearchAdapter.ViewHolder>() {
 
-    private val currentUId = viewModel.getCurrentUserId()
     private var foundUsers = listOf<User>()
     private var images = listOf<Uri>()
 
@@ -78,19 +77,22 @@ class FriendsSearchAdapter @Inject constructor(
 
         view.fullName.text = clickedUser.fullName
         view.login.text = clickedUser.login
-        view.friends.text = "${clickedUser.friends.size} friends"
+        view.friends.text =
+            context.getString(R.string.dialog_friends_quantity_text, clickedUser.friends.size)
 
         Glide.with(context)
             .load(images[position])
             .into(view.mainPhoto)
 
         // checking if friend request has been already sent to this user
-        if (clickedUser.receivedFriendRequests.contains(currentUId)) {
-            disableAddFriendButton(view)
-        } else {
-            view.addToFriendsButton.setOnClickListener {
-                sendFriendRequest(clickedUser)
+        viewModel.currentUserId.value?.let { id ->
+            if (clickedUser.receivedFriendRequests.contains(id)) {
                 disableAddFriendButton(view)
+            } else {
+                view.addToFriendsButton.setOnClickListener {
+                    sendFriendRequest(clickedUser)
+                    disableAddFriendButton(view)
+                }
             }
         }
 
@@ -101,7 +103,9 @@ class FriendsSearchAdapter @Inject constructor(
 
     private fun sendFriendRequest(clickedUser: User) {
         // add current user's uId to clicked user's receivedFriendRequests
-        clickedUser.receivedFriendRequests += currentUId!!
+        viewModel.currentUserId.value?.let { id ->
+            clickedUser.receivedFriendRequests += id
+        }
 
         // update clickedUser in database
         viewModel.updateUser(clickedUser)

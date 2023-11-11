@@ -52,7 +52,7 @@
     </fragment>
     <fragment
         android:id="@+id/friends_fragment"
-        android:name="com.example.messenger.friends_and_requests.FriendsFragment"
+        android:name="com.example.messenger.friendsAndRequests.FriendsFragment"
         android:label="fragment_friends"
         tools:layout="@layout/fragment_friends" >
         <action

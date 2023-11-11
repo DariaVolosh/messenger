@@ -19,9 +19,8 @@ import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import javax.inject.Inject
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
-    private lateinit var binding: FragmentSettingsBinding
-    private lateinit var currentUId: String
     @Inject lateinit var viewModel: SettingsViewModel
+    private lateinit var binding: FragmentSettingsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,7 +29,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     ): View {
         binding = FragmentSettingsBinding.inflate(layoutInflater)
         injectDependencies()
-        currentUId = viewModel.getCurrentUserId()!!
 
         setNavigationBarOnItemListener()
         getInfoAboutUser()
@@ -52,49 +50,55 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun getSavedMessagesColors() {
-        currentUId
-        val sharedPrefs = activity?.getSharedPreferences("colors", Context.MODE_PRIVATE)
-        val myColor = sharedPrefs?.getInt("myColor$currentUId", R.color.turquoise)
-        val friendColor = sharedPrefs?.getInt("friendsColor$currentUId", R.color.turquoise)
+        viewModel.currentUserId.value?.let { id ->
+            val sharedPrefs = activity?.getSharedPreferences("colors", Context.MODE_PRIVATE)
+            val myColor = sharedPrefs?.getInt("myColor$id", R.color.turquoise)
+            val friendColor = sharedPrefs?.getInt("friendsColor$id", R.color.turquoise)
 
-        myColor?.also {
-            binding.myMessagesColorButton.setTextColor(myColor)
-            binding.myMessagesColorButton.iconTint = ColorStateList.valueOf(myColor)
-        }
-        friendColor?.also {
-            binding.friendsMessagesColorButton.setTextColor(friendColor)
-            binding.friendsMessagesColorButton.iconTint = ColorStateList.valueOf(friendColor)
+            myColor?.also {
+                binding.myMessagesColorButton.setTextColor(myColor)
+                binding.myMessagesColorButton.iconTint = ColorStateList.valueOf(myColor)
+            }
+            friendColor?.also {
+                binding.friendsMessagesColorButton.setTextColor(friendColor)
+                binding.friendsMessagesColorButton.iconTint = ColorStateList.valueOf(friendColor)
+            }
         }
     }
 
     private fun setChosenColorToSharedPrefs(color: Int, myColor: Boolean) {
         val sharedPrefs = activity?.getSharedPreferences("colors", Context.MODE_PRIVATE)
-        sharedPrefs?.edit()?.putInt(
-            if (myColor) "myColor$currentUId"
-            else "friendsColor$currentUId",
-            color)?.apply()
+        viewModel.currentUserId.value?.let {id ->
+            sharedPrefs?.edit()?.putInt(
+                if (myColor) "myColor$id"
+                else "friendsColor$id",
+                color
+            )?.apply()
 
-        if (myColor) {
-            binding.myMessagesColorButton.setTextColor(color)
-            binding.myMessagesColorButton.iconTint = ColorStateList.valueOf(color)
-        } else {
-            binding.friendsMessagesColorButton.setTextColor(color)
-            binding.friendsMessagesColorButton.iconTint = ColorStateList.valueOf(color)
+            if (myColor) {
+                binding.myMessagesColorButton.setTextColor(color)
+                binding.myMessagesColorButton.iconTint = ColorStateList.valueOf(color)
+            } else {
+                binding.friendsMessagesColorButton.setTextColor(color)
+                binding.friendsMessagesColorButton.iconTint = ColorStateList.valueOf(color)
+            }
         }
     }
 
     private fun openColorPicker(myColor: Boolean) {
         ColorPickerDialog.Builder(requireContext())
-            .setTitle("Pick a color")
-            .setPositiveButton("Select", object: ColorEnvelopeListener {
+            .setTitle(getString(R.string.pick_a_color_title))
+            .setPositiveButton(getString(R.string.select_button_hint), object: ColorEnvelopeListener {
                 override fun onColorSelected(envelope: ColorEnvelope?, fromUser: Boolean) {
                     envelope?.also {
-                        setChosenColorToSharedPrefs(envelope.color, myColor)
+                        viewModel.currentUserId.value?.let {_ ->
+                            setChosenColorToSharedPrefs(envelope.color, myColor)
+                        }
                     }
                 }
 
             })
-            .setNegativeButton("Cancel") {dialog, _ ->
+            .setNegativeButton(getString(R.string.cancel_button_hint)) { dialog, _ ->
                 dialog.dismiss()
             }
             .attachAlphaSlideBar(true)
@@ -102,7 +106,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .show()
     }
     private fun setPhoto() {
-        viewModel.downloadImage(viewLifecycleOwner)
         viewModel.mainPhotoBitmap.observe(viewLifecycleOwner) {bitmap ->
             binding.mainPhoto.setImageBitmap(bitmap)
         }
@@ -121,19 +124,17 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun getInfoAboutUser() {
-        if (viewModel.isInternetAvailable()) {
-            viewModel.getCurrentFirebaseUser().observe(viewLifecycleOwner) {firebaseUser ->
-                setInfoAboutUser(firebaseUser)
-            }
-        } else {
-            viewModel.getCurrentRoomUser().observe(viewLifecycleOwner) {roomUser ->
-                roomUser.apply {
-                    val user = User(fullName, email, login, firebaseUserId, mutableListOf(),
-                        mutableListOf(), mutableListOf()
-                    )
+        viewModel.currentFirebaseUser.observe(viewLifecycleOwner) {firebaseUser ->
+            setInfoAboutUser(firebaseUser)
+        }
 
-                    setInfoAboutUser(user)
-                }
+        viewModel.currentRoomUser.observe(viewLifecycleOwner) {roomUser ->
+            roomUser.apply {
+                val user = User(fullName, email, login, firebaseUserId, mutableListOf(),
+                    mutableListOf(), mutableListOf()
+                )
+
+                setInfoAboutUser(user)
             }
         }
     }
