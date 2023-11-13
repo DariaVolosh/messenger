@@ -46,15 +46,17 @@ class ChatsAdapter constructor(private val context: Context,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val friend = chats[position]
-        holder.name.text = friend.fullName
-        loadImage(images[position], holder)
+        if (position < images.size && position < lastMessages.size && position < chats.size) {
+            val friend = chats[position]
+            holder.name.text = friend.fullName
+            loadImage(images[position], holder)
 
-        holder.view.setOnClickListener {
-            messagesDisplay.onDisplayMessages(friend)
+            holder.view.setOnClickListener {
+                messagesDisplay.onDisplayMessages(friend)
+            }
+
+            holder.message.text = lastMessages[position].text
         }
-
-        holder.message.text = lastMessages[position].text
     }
 
     private fun loadImage(uri: Uri, holder: ViewHolder) {

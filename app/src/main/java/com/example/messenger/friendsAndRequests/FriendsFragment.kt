@@ -64,6 +64,7 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
     private fun setData(currentUser: User) {
         val friends = currentUser.friends
         val requests = currentUser.receivedFriendRequests
+
         val friendsAndRequests = friends + requests
         val dataModelObjects = mutableListOf<DataModel>()
 
@@ -95,6 +96,7 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
                     }
                 }
             }
+
             friendsAndRequestsAdapter.setFriendsAndRequestsList(dataModelObjects)
         }
 

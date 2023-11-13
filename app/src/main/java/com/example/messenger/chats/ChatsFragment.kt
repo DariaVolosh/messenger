@@ -18,6 +18,7 @@ import com.example.messenger.databinding.FragmentChatsBinding
 import com.example.messenger.friendsAndRequests.FriendsFragment
 import com.example.messenger.messages.MessagesFragment
 import com.example.messenger.settings.SettingsFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
@@ -126,6 +127,9 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
                         childFragmentManager.beginTransaction()
                             .replace(R.id.details_fragment, friendsFragment)
                             .commitNow()
+                        friendsFragment
+                            .view?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+                            ?.visibility = View.GONE
                     } else {
                         findNavController().navigate(R.id.friends_fragment)
                     }
@@ -148,6 +152,9 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
                         childFragmentManager.beginTransaction()
                             .replace(R.id.details_fragment, settingsFragment)
                             .commitNow()
+                        settingsFragment
+                            .view?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+                            ?.visibility = View.GONE
                     } else {
                         findNavController().navigate(R.id.settings_fragment)
                     }
@@ -162,6 +169,7 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
         bundle.putString(MessagesFragment.FRIEND_UID, friend.userId)
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             val messagesFragment = MessagesFragment()
+            messagesFragment.arguments = bundle
             childFragmentManager.beginTransaction()
                 .replace(R.id.details_fragment, messagesFragment)
                 .commitNow()
