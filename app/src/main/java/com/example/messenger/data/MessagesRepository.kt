@@ -1,15 +1,11 @@
-package com.example.messenger.dataLayer
+package com.example.messenger.data
 
-import com.example.messenger.data.Message
-import com.example.messenger.data.User
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +14,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface MessagesRepository {
-    fun fetchLastMessages(chats: List<User>, currentUserId: String): Deferred<List<Message>>
+    suspend fun fetchLastMessages(chats: List<User>, currentUserId: String): List<Message>
     fun sendMessage(message: Message, existingMessagesPath: DatabaseReference)
     fun addMessagesListener(existingMessagesPath: DatabaseReference): Flow<Message>
 }
@@ -26,18 +22,18 @@ interface MessagesRepository {
 class FirebaseMessages @Inject constructor(
     private val chatsRepository: ChatsRepository,
 ): MessagesRepository {
-    override fun fetchLastMessages(chats: List<User>, currentUserId: String): Deferred<List<Message>> =
-        CoroutineScope(Dispatchers.IO).async {
-            val lastMessages = mutableListOf<Message>()
+    override suspend fun fetchLastMessages(chats: List<User>, currentUserId: String): List<Message> {
+        val lastMessages = mutableListOf<Message>()
 
-            for (user in chats) {
-                val conversationId = chatsRepository.getConversationReference(currentUserId, user.userId)
-                val lastMessageSnapshot = conversationId.child("lastMessage").get().await()
-                val message = lastMessageSnapshot.getValue(Message::class.java)
-                message?.let { lastMessages.add(message) }
-            }
-            lastMessages
+        for (user in chats) {
+            val conversationId = chatsRepository.getConversationReference(currentUserId, user.userId)
+            val lastMessageSnapshot = conversationId.child("lastMessage").get().await()
+            val message = lastMessageSnapshot.getValue(Message::class.java)
+            message?.let { lastMessages.add(message) }
         }
+
+        return lastMessages
+    }
 
     override fun sendMessage(message: Message, existingMessagesPath: DatabaseReference) {
         existingMessagesPath.child(message.messageId).setValue(message)
@@ -49,7 +45,7 @@ class FirebaseMessages @Inject constructor(
 
         existingMessagesPath.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                snapshot.getValue(Message::class.java)?.let {message ->
+                snapshot.getValue(Message::class.java)?.let { message ->
                     CoroutineScope(Dispatchers.IO).launch {
                         if (snapshot.key != "lastMessage") {
                             flow.emit(message)

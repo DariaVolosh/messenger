@@ -10,24 +10,26 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messenger.R
 import com.example.messenger.data.Message
+import com.example.messenger.data.User
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
 class MessagesAdapter @Inject constructor(
-    private val context: Context,
-    private val viewModel: MessagesViewModel)
+    private val context: Context)
     : RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
     private var messages = listOf<Message>()
+    private lateinit var currentUser: User
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val message: TextView = view.findViewById(R.id.message)
         val timeSent: TextView = view.findViewById(R.id.time_sent)
     }
 
-    fun setData(newMessages: List<Message>) {
+    fun setData(newMessages: List<Message>, user: User) {
         messages = newMessages
+        currentUser = user
         notifyDataSetChanged()
     }
 
@@ -59,20 +61,18 @@ class MessagesAdapter @Inject constructor(
         val timeLayoutParams = holder.timeSent.layoutParams as LinearLayout.LayoutParams
         val sharedPrefs = context.getSharedPreferences("colors", Context.MODE_PRIVATE)
 
-        viewModel.currentUserId.value?.let { id ->
-            if (from == id) {
-                messageLayoutParams.gravity = Gravity.END
-                timeLayoutParams.gravity = Gravity.END
-                holder.message.setBackgroundColor(
-                    sharedPrefs.getInt("myColor$id", R.color.turquoise)
-                )
-            } else {
-                messageLayoutParams.gravity = Gravity.START
-                timeLayoutParams.gravity = Gravity.START
-                holder.message.setBackgroundColor(
-                    sharedPrefs.getInt("friendsColor$id", R.color.turquoise)
-                )
-            }
+        if (from == currentUser.userId) {
+            messageLayoutParams.gravity = Gravity.END
+            timeLayoutParams.gravity = Gravity.END
+            holder.message.setBackgroundColor(
+                sharedPrefs.getInt("myColor${currentUser.userId}", R.color.turquoise)
+            )
+        } else {
+            messageLayoutParams.gravity = Gravity.START
+            timeLayoutParams.gravity = Gravity.START
+            holder.message.setBackgroundColor(
+                sharedPrefs.getInt("friendsColor${currentUser.userId}", R.color.turquoise)
+            )
         }
         holder.message.layoutParams = messageLayoutParams
         holder.timeSent.layoutParams = timeLayoutParams

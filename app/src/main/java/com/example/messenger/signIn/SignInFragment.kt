@@ -39,6 +39,10 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                 binding.passwordSignIn.text.toString()
             )
         }
+
+        viewModel.signedIn.observe(viewLifecycleOwner) {signedIn ->
+            if (signedIn) findNavController().navigate(R.id.chats_fragment)
+        }
     }
 
     private fun navigateToSignUpScreen() {

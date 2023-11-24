@@ -1,14 +1,11 @@
-package com.example.messenger.domainLayer
+package com.example.messenger.domain
 
 import android.net.Uri
+import com.example.messenger.data.FirebaseImages
 import com.example.messenger.data.User
-import com.example.messenger.dataLayer.FirebaseImages
-import com.example.messenger.dataLayer.UserRepository
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
+import com.example.messenger.data.UserRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class GetMyImageUseCase @Inject constructor(
@@ -16,16 +13,15 @@ class GetMyImageUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase
 ) {
-    fun getMyImage(internetAvailable: Boolean): Deferred<Uri> =
-        CoroutineScope(Dispatchers.IO).async {
-            val uriDeferred = CompletableDeferred<Uri>()
-
+    suspend fun getMyImage(internetAvailable: Boolean): Uri =
+        withContext(Dispatchers.IO) {
             val currentUser: User? = if (internetAvailable) {
-                getCurrentUserObjectUseCase.currentUser?.await()
+                getCurrentUserObjectUseCase.currentUser.await()
             } else {
                 val userId = userRepository.getCurrentUserId()
                 userId?.let {
-                    User("", "", "",
+                    User(
+                        "", "", "",
                         it,
                         mutableListOf(),
                         mutableListOf(),
@@ -35,11 +31,9 @@ class GetMyImageUseCase @Inject constructor(
             }
 
             val result = currentUser?.let {
-                imagesRepository.getMyImageUri(it, internetAvailable).await()
+                imagesRepository.getMyImageUri(it, internetAvailable)
             }
-            if (result == null) uriDeferred.complete(Uri.parse(""))
-            else uriDeferred.complete(result)
 
-            uriDeferred.await()
+            result ?: Uri.parse("")
         }
 }

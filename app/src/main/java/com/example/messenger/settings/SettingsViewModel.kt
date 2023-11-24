@@ -6,12 +6,12 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.messenger.data.NetworkUtils
 import com.example.messenger.data.User
-import com.example.messenger.dataLayer.NetworkUtils
-import com.example.messenger.domainLayer.GetCurrentUserIdUseCase
-import com.example.messenger.domainLayer.GetCurrentUserObjectUseCase
-import com.example.messenger.domainLayer.GetMyImageUseCase
-import com.example.messenger.domainLayer.GetRoomUserEntityByIdUseCase
+import com.example.messenger.domain.GetCurrentUserIdUseCase
+import com.example.messenger.domain.GetCurrentUserObjectUseCase
+import com.example.messenger.domain.GetMyImageUseCase
+import com.example.messenger.domain.GetRoomUserEntityByIdUseCase
 import com.example.messenger.room.UserEntity
 import kotlinx.coroutines.launch
 import java.io.File
@@ -37,15 +37,17 @@ class SettingsViewModel @Inject constructor(
     }
 
     private fun getCurrentUserId() {
-        getCurrentUserIdUseCase.getCurrentUserId()?.let {id ->
-            currentUserId.value = id
+        viewModelScope.launch {
+            getCurrentUserIdUseCase.getCurrentUserId()?.let {id ->
+                currentUserId.value = id
+            }
         }
     }
 
     private fun downloadImage() {
         viewModelScope.launch {
             val isInternetAvailable = networkUtils.isInternetAvailable()
-            val uri = getMyImageUseCase.getMyImage(isInternetAvailable).await()
+            val uri = getMyImageUseCase.getMyImage(isInternetAvailable)
             if (isInternetAvailable) {
                 mainPhotoUri.value = uri
             } else {
@@ -59,12 +61,11 @@ class SettingsViewModel @Inject constructor(
     private fun getCurrentUser() {
         viewModelScope.launch {
             if (networkUtils.isInternetAvailable()) {
-                val currentUser = getCurrentUserObjectUseCase.currentUser?.await()
-                currentUser?.let { currentFirebaseUser.value = it }
+                val currentUser = getCurrentUserObjectUseCase.currentUser.await()
+                currentFirebaseUser.value = currentUser
             } else {
                 currentUserId.value?.let { id ->
-                    val roomUser = getRoomUserEntityByIdUseCase.getUserEntityById(id).await()
-                    roomUser?.let { currentRoomUser.value = it }
+                    currentRoomUser.value = getRoomUserEntityByIdUseCase.getUserEntityById(id)
                 }
             }
         }

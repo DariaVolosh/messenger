@@ -1,6 +1,7 @@
 package com.example.messenger.di
 
 import android.content.Context
+import androidx.room.Room
 import com.example.messenger.room.UserAndChatDatabase
 import dagger.Module
 import dagger.Provides
@@ -10,7 +11,13 @@ import javax.inject.Singleton
 class RoomDatabaseModule {
     @Provides
     @Singleton
-    fun provideUserAndChatDatabase(context: Context) = UserAndChatDatabase.getInstance(context)
+    fun provideUserAndChatDatabase(context: Context): UserAndChatDatabase =
+        Room.databaseBuilder(
+            context,
+            UserAndChatDatabase::class.java,
+            "userAndChatDatabase.db")
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     @Singleton

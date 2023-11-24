@@ -7,13 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.Message
 import com.example.messenger.data.User
 
-import com.example.messenger.domainLayer.AddChatToChatsListUseCase
-import com.example.messenger.domainLayer.AddMessagesListenerUseCase
-import com.example.messenger.domainLayer.GetConversationReferenceUseCase
-import com.example.messenger.domainLayer.GetCurrentUserIdUseCase
-import com.example.messenger.domainLayer.GetImageByUserIdUseCase
-import com.example.messenger.domainLayer.GetUserObjectByIdUseCase
-import com.example.messenger.domainLayer.SendMessageUseCase
+import com.example.messenger.domain.AddChatToChatsListUseCase
+import com.example.messenger.domain.AddMessagesListenerUseCase
+import com.example.messenger.domain.GetConversationReferenceUseCase
+import com.example.messenger.domain.GetCurrentUserObjectUseCase
+import com.example.messenger.domain.GetImageByUserIdUseCase
+import com.example.messenger.domain.GetUserObjectByIdUseCase
+import com.example.messenger.domain.SendMessageUseCase
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class MessagesViewModel @Inject constructor(
     private val addChatToChatsListUseCase: AddChatToChatsListUseCase,
     private val addMessagesListenerUseCase: AddMessagesListenerUseCase,
-    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
+    private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase,
     private val getUserObjectByIdUseCase: GetUserObjectByIdUseCase,
     private val getImageByUserIdUseCase: GetImageByUserIdUseCase,
     private val getConversationReferenceUseCase: GetConversationReferenceUseCase,
@@ -31,42 +31,46 @@ class MessagesViewModel @Inject constructor(
     val friendPhotoUri = MutableLiveData<Uri>()
     val existingMessagesPath = MutableLiveData<DatabaseReference>()
     val messages = MutableLiveData<List<Message>>()
-    val currentUserId = MutableLiveData<String>()
+    val currentUser = MutableLiveData<User>()
 
     init {
-        getCurrentUserId()
+        getCurrentUserObject()
     }
 
-    private fun getCurrentUserId() {
-        getCurrentUserIdUseCase.getCurrentUserId()?.let { id ->
-            currentUserId.value = id
+    private fun getCurrentUserObject() {
+        viewModelScope.launch {
+            currentUser.value = getCurrentUserObjectUseCase.currentUser.await()
         }
     }
 
     fun getUserObjectById(id: String) {
         viewModelScope.launch {
-            val fetchedFriend = getUserObjectByIdUseCase.getUserById(id).await()
+            val fetchedFriend = getUserObjectByIdUseCase.getUserById(id)
             friendObject.value = fetchedFriend
         }
     }
 
     fun downloadFriendMainPhoto(id: String) {
         viewModelScope.launch {
-            val fetchedUri = getImageByUserIdUseCase.getImageById(id).await()
+            val fetchedUri = getImageByUserIdUseCase.getImageById(id)
             friendPhotoUri.value = fetchedUri
         }
     }
 
     fun addChatToChatsList(friendId: String) {
-        currentUserId.value?.let { currentUserId ->
-            addChatToChatsListUseCase.addChatToChatsList(currentUserId, friendId)
+        viewModelScope.launch {
+            currentUser.value?.let {user ->
+                addChatToChatsListUseCase.addChatToChatsList(user.userId, friendId)
+            }
         }
     }
 
     fun getExistingMessagesPath(friendId: String) {
-        currentUserId.value?.let { currentUserId ->
-            existingMessagesPath.value =
-                getConversationReferenceUseCase.getConversationReference(currentUserId, friendId)
+        viewModelScope.launch {
+            currentUser.value?.let { user ->
+                existingMessagesPath.value =
+                    getConversationReferenceUseCase.getConversationReference(user.userId, friendId)
+            }
         }
     }
 
@@ -87,8 +91,10 @@ class MessagesViewModel @Inject constructor(
     }
 
     fun sendMessage(message: Message) {
-        existingMessagesPath.value?.let { existingMessagesPath ->
-            sendMessageUseCase.sendMessage(message, existingMessagesPath)
+        viewModelScope.launch {
+            existingMessagesPath.value?.let { existingMessagesPath ->
+                sendMessageUseCase.sendMessage(message, existingMessagesPath)
+            }
         }
     }
 }

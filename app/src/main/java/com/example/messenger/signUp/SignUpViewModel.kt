@@ -1,22 +1,22 @@
 package com.example.messenger.signUp
 
 import android.net.Uri
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.User
-import com.example.messenger.domainLayer.GetCurrentUserObjectUseCase
-import com.example.messenger.domainLayer.SignUpUserUseCase
-import com.example.messenger.domainLayer.UploadPhotoUseCase
+import com.example.messenger.domain.SignUpUserUseCase
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SignUpViewModel @Inject constructor(
     private val createUserUseCase: SignUpUserUseCase,
-    private val uploadPhotoUseCase: UploadPhotoUseCase,
-    private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase
 ): ViewModel() {
+    val signedUp =  MutableLiveData<Boolean>()
     fun signUpUser(user: User, password: String, photoUri: Uri) {
-        createUserUseCase.signUpUser(user, password, photoUri,
-            { uploadPhotoUseCase.uploadPhoto(photoUri, user)}
-        )
-        {getCurrentUserObjectUseCase.getCurrentUserObject() }
+        viewModelScope.launch {
+            val signedUpOrError = createUserUseCase.signUpUser(user, password, photoUri)
+            signedUp.value = signedUpOrError
+        }
     }
 }

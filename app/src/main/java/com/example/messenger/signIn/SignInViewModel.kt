@@ -2,9 +2,11 @@ package com.example.messenger.signIn
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.messenger.domainLayer.GetCurrentUserObjectUseCase
-import com.example.messenger.domainLayer.SignInUserUseCase
+import androidx.lifecycle.viewModelScope
+import com.example.messenger.domain.GetCurrentUserObjectUseCase
+import com.example.messenger.domain.SignInUserUseCase
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SignInViewModel @Inject constructor(
@@ -12,6 +14,7 @@ class SignInViewModel @Inject constructor(
     private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase
 ): ViewModel() {
     val currentUser = MutableLiveData<FirebaseUser?>()
+    val signedIn = MutableLiveData<Boolean>()
 
     init {
         getCurrentUserObject()
@@ -21,6 +24,8 @@ class SignInViewModel @Inject constructor(
         currentUser.value = getCurrentUserObjectUseCase.getFirebaseUser()
     }
     fun signInUser(email: String, password: String) {
-        signInUserUseCase.signInUser(email, password)
+        viewModelScope.launch {
+            signedIn.value = signInUserUseCase.signInUser(email, password)
+        }
     }
 }

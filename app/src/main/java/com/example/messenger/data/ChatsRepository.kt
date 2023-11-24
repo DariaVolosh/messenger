@@ -1,17 +1,12 @@
-package com.example.messenger.dataLayer
+package com.example.messenger.data
 
-import com.example.messenger.data.User
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 interface ChatsRepository {
-    fun fetchChats(currentUId: String): Deferred<List<User>>
+    suspend fun fetchChats(currentUId: String): List<User>
     fun getConversationReference(userId: String, friendId: String): DatabaseReference
     fun addChatToChatsList(currentUserId: String, friendId: String)
 }
@@ -19,21 +14,20 @@ interface ChatsRepository {
 class FirebaseChats @Inject constructor(
     private val firebaseDatabase: FirebaseDatabase
 ): ChatsRepository {
-    override fun fetchChats(currentUId: String): Deferred<List<User>> =
-        CoroutineScope(Dispatchers.IO).async {
-            val list = mutableListOf<User>()
-            val dataSnapshot =
-                firebaseDatabase.getReference("users/$currentUId/chats").get().await()
+    override suspend fun fetchChats(currentUId: String): List<User> {
+        val list = mutableListOf<User>()
+        val dataSnapshot =
+            firebaseDatabase.getReference("users/$currentUId/chats").get().await()
 
-            for (snapshot in dataSnapshot.children) {
-                val uId = snapshot.getValue(String::class.java)
-                val userSnapshot = firebaseDatabase.getReference("users/$uId").get().await()
-                val user = userSnapshot.getValue(User::class.java)
-                user?.let { list.add(it) }
-            }
-
-            list
+        for (snapshot in dataSnapshot.children) {
+            val uId = snapshot.getValue(String::class.java)
+            val userSnapshot = firebaseDatabase.getReference("users/$uId").get().await()
+            val user = userSnapshot.getValue(User::class.java)
+            user?.let { list.add(it) }
         }
+
+        return list
+    }
 
     override fun getConversationReference(currentUserId: String, friendId: String): DatabaseReference {
         val sortedUserIds = listOf(currentUserId, friendId).sorted()

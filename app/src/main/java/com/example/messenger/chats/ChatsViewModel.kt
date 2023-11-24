@@ -7,12 +7,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.Message
+import com.example.messenger.data.NetworkUtils
 import com.example.messenger.data.User
-import com.example.messenger.dataLayer.NetworkUtils
-import com.example.messenger.domainLayer.DownloadImagesUseCase
-import com.example.messenger.domainLayer.FetchChatsUseCase
-import com.example.messenger.domainLayer.FetchLastMessagesUseCase
-import com.example.messenger.domainLayer.GetMyImageUseCase
+import com.example.messenger.domain.DownloadImagesUseCase
+import com.example.messenger.domain.FetchChatsUseCase
+import com.example.messenger.domain.FetchLastMessagesUseCase
+import com.example.messenger.domain.GetCurrentUserObjectUseCase
+import com.example.messenger.domain.GetMyImageUseCase
+import com.example.messenger.domain.SignOutUserUseCase
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -22,6 +24,7 @@ class ChatsViewModel @Inject constructor(
     private val getMyImageUseCase: GetMyImageUseCase,
     private val fetchLastMessagesUseCase: FetchLastMessagesUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
+    private val signOutUserUseCase: SignOutUserUseCase,
     private val networkUtils: NetworkUtils
 ) : ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
@@ -37,7 +40,7 @@ class ChatsViewModel @Inject constructor(
 
     private fun fetchChats() {
         viewModelScope.launch {
-            val list = fetchChatsUseCase.fetchChats().await()
+            val list = fetchChatsUseCase.fetchChats()
             chatList.value = list
             downloadImages(list)
         }
@@ -46,7 +49,7 @@ class ChatsViewModel @Inject constructor(
     private fun downloadImage() {
         viewModelScope.launch {
             val isInternetAvailable = networkUtils.isInternetAvailable()
-            val uri = getMyImageUseCase.getMyImage(isInternetAvailable).await()
+            val uri = getMyImageUseCase.getMyImage(isInternetAvailable)
             if (isInternetAvailable) {
                 mainPhotoUri.value = uri
             } else {
@@ -59,7 +62,7 @@ class ChatsViewModel @Inject constructor(
 
     private fun downloadImages(list: List<User>) {
         viewModelScope.launch {
-            val uris = downloadImagesUseCase.getImages(list).await()
+            val uris = downloadImagesUseCase.getImages(list)
             photoUris.value = uris
             fetchLastMessages(chatList.value ?: listOf())
         }
@@ -67,8 +70,14 @@ class ChatsViewModel @Inject constructor(
 
     private fun fetchLastMessages(chats: List<User>) {
         viewModelScope.launch {
-            val lastMessagesList = fetchLastMessagesUseCase.fetchLastMessages(chats).await()
+            val lastMessagesList = fetchLastMessagesUseCase.fetchLastMessages(chats)
             lastMessages.value = lastMessagesList
+        }
+    }
+
+    fun signOutUser() {
+        viewModelScope.launch {
+            signOutUserUseCase.signOutUser()
         }
     }
 }

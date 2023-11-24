@@ -1,4 +1,4 @@
-package com.example.messenger.dataLayer
+package com.example.messenger.data
 
 import android.content.Context
 import android.net.ConnectivityManager

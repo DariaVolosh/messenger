@@ -9,8 +9,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.messenger.MyApp
-import com.example.messenger.databinding.FragmentMessagesBinding
 import com.example.messenger.data.Message
+import com.example.messenger.data.User
+import com.example.messenger.databinding.FragmentMessagesBinding
 import javax.inject.Inject
 
 class MessagesFragment : Fragment() {
@@ -50,23 +51,31 @@ class MessagesFragment : Fragment() {
     }
 
     private fun getCurrentMessagesPath() {
-        viewModel.getExistingMessagesPath(friendId)
+        var currentUser = User(
+            "","","","", mutableListOf(), mutableListOf(), mutableListOf()
+        )
+        viewModel.currentUser.observe(viewLifecycleOwner) {user ->
+            currentUser = user
+            viewModel.getExistingMessagesPath(friendId)
+        }
         viewModel.existingMessagesPath.observe(viewLifecycleOwner) {
             initializeAdapter()
-            listenForMessages()
+            listenForMessages(currentUser)
             viewModel.addMessagesListener()
         }
     }
 
-    private fun listenForMessages() {
+    private fun listenForMessages(user: User) {
         viewModel.messages.observe(viewLifecycleOwner) {messages ->
             binding.messages.scrollToPosition(messages.size - 1)
-            adapter.setData(messages)
+            adapter.setData(messages, user)
         }
     }
 
     private fun initializeIds() {
-        friendId = requireArguments().getString(FRIEND_UID)!!
+        requireArguments().getString(FRIEND_UID)?.let { fetchedFriendId ->
+            friendId = fetchedFriendId
+        }
     }
 
     private fun populateToolbarWithFriendInfo() {
@@ -96,11 +105,11 @@ class MessagesFragment : Fragment() {
     }
 
     private fun sendMessage() {
-        val messageId = viewModel.existingMessagesPath.value?.push()?.key!!
-        viewModel.currentUserId.value?.let { id ->
+        val messageId = viewModel.existingMessagesPath.value?.push()?.key
+        viewModel.currentUser.observe(viewLifecycleOwner) { user ->
             val message = Message(
                 System.currentTimeMillis(), binding.messageEditText.text.toString(),
-                id, friendId, messageId
+                user.userId, friendId, messageId ?: ""
             )
             viewModel.sendMessage(message)
             binding.messageEditText.text.clear()

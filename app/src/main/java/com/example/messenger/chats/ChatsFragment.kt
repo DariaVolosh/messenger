@@ -19,16 +19,13 @@ import com.example.messenger.friendsAndRequests.FriendsFragment
 import com.example.messenger.messages.MessagesFragment
 import com.example.messenger.settings.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
 class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
     private lateinit var binding: FragmentChatsBinding
     lateinit var adapter: ChatsAdapter
     private var orientation = 0
-    @Inject lateinit var app: MyApp
     @Inject lateinit var viewModel: ChatsViewModel
-    @Inject lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -104,7 +101,7 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
 
     private fun setSignOutButtonListener() {
         binding.signOut.setOnClickListener {
-            firebaseAuth.signOut()
+            viewModel.signOutUser()
             findNavController().navigate(R.id.sign_in_fragment)
         }
     }

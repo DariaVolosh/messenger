@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.User
-import com.example.messenger.domainLayer.DownloadImagesUseCase
-import com.example.messenger.domainLayer.GetCurrentUserIdUseCase
-import com.example.messenger.domainLayer.SearchUsersByLoginUseCase
-import com.example.messenger.domainLayer.UpdateUserUseCase
+import com.example.messenger.domain.DownloadImagesUseCase
+import com.example.messenger.domain.GetCurrentUserIdUseCase
+import com.example.messenger.domain.SearchUsersByLoginUseCase
+import com.example.messenger.domain.UpdateUserUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,23 +28,27 @@ class AddFriendViewModel @Inject constructor(
 
     fun searchUserByLogin(loginQuery: String) {
         viewModelScope.launch {
-            val list = searchUsersByLoginUseCase.getUsersByLogin(loginQuery).await()
+            val list = searchUsersByLoginUseCase.getUsersByLogin(loginQuery)
             foundUsers.value = list
         }
     }
 
     fun downloadImages(list: List<User>) {
         viewModelScope.launch {
-            val uris = downloadImagesUseCase.getImages(list).await()
+            val uris = downloadImagesUseCase.getImages(list)
             images.value = uris
         }
     }
 
     fun updateUser(updatedUser: User) {
-        updateUserUseCase.updateUser(updatedUser)
+        viewModelScope.launch {
+            updateUserUseCase.updateUser(updatedUser)
+        }
     }
 
     private fun getCurrentUserId() {
-        currentUserId.value = getCurrentUserIdUseCase.getCurrentUserId()
+        viewModelScope.launch {
+            currentUserId.value = getCurrentUserIdUseCase.getCurrentUserId()
+        }
     }
 }
