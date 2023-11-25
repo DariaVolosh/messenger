@@ -12,7 +12,6 @@ import com.example.messenger.data.User
 import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.FetchChatsUseCase
 import com.example.messenger.domain.FetchLastMessagesUseCase
-import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetMyImageUseCase
 import com.example.messenger.domain.SignOutUserUseCase
 import kotlinx.coroutines.launch

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import com.example.messenger.MyApp
 import com.example.messenger.R
 import com.example.messenger.data.User
 import com.example.messenger.databinding.FragmentFriendsBinding
+import com.example.messenger.messages.MessagesFragment
 import javax.inject.Inject
 
 class FriendsFragment: Fragment(R.layout.fragment_friends) {
@@ -31,6 +33,14 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
 
         viewModel.currentUser.observe(viewLifecycleOwner) {currentUser ->
             setData(currentUser)
+        }
+
+        viewModel.chatOpened.observe(viewLifecycleOwner) {chatOpened ->
+            if (chatOpened) {
+                val bundle = bundleOf()
+                bundle.putString(MessagesFragment.FRIEND_UID, viewModel.friend.value?.userId)
+                findNavController().navigate(R.id.messages_fragment, bundle)
+            }
         }
 
         return binding.root

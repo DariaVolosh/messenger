@@ -7,13 +7,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messenger.R
-import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class DataAdapter @Inject constructor (
-    val viewModel: FriendsViewModel,
-    val lifecycleOwner: LifecycleOwner,
-    val navController: NavController
+    val viewModel: FriendsViewModel
 ): RecyclerView.Adapter<DataAdapterViewHolder>(){
 
     companion object {
@@ -35,35 +32,52 @@ class DataAdapter @Inject constructor (
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataAdapterViewHolder {
-        val layout = when (viewType) {
-            TYPE_FRIEND -> R.layout.holder_friend
-            TYPE_FRIEND_REQUEST -> R.layout.holder_friend_request
-            TYPE_FRIEND_REQUESTS_TEXT -> R.layout.friends_requests_text
+        val viewHolder = when (viewType) {
+            TYPE_FRIEND -> FriendViewHolder(LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.holder_friend, parent, false),
+                viewModel)
+            TYPE_FRIEND_REQUEST -> FriendRequestViewHolder(LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.holder_friend_request, parent, false),
+                viewModel)
+            TYPE_FRIEND_REQUESTS_TEXT -> FriendRequestsTextViewHolder(LayoutInflater
+                    .from(parent.context)
+                    .inflate(R.layout.friends_requests_text, parent, false)
+            )
             else -> throw IllegalArgumentException("Invalid type")
         }
 
-        val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-        return DataAdapterViewHolder(view, viewModel, lifecycleOwner, navController)
+        return viewHolder
     }
 
 
     override fun onBindViewHolder(holder: DataAdapterViewHolder, position: Int) {
         val element = friendsAndRequestsList[position]
         if (element !is DataModel.FriendsRequestsText) {
-            val indexOfImage = images.indexOfFirst {
-                it.toString().contains(
-                    if (element is DataModel.FriendRequest) {
-                        element.userId
-                    } else {
-                        (element as DataModel.Friend).userId
-                    }
+            if (element is DataModel.Friend) {
+                val indexOfImage = images.indexOfFirst {uri ->
+                    uri.toString().contains(element.userId)
+                }
+
+                (holder as FriendViewHolder).bind(
+                    friendsAndRequestsList[position] as DataModel.Friend,
+                    images[indexOfImage]
+                )
+            } else {
+                val indexOfImage = images.indexOfFirst {uri ->
+                    uri.toString().contains((element as DataModel.FriendRequest).userId)
+                }
+
+                (holder as FriendRequestViewHolder).bind(
+                    friendsAndRequestsList[position] as DataModel.FriendRequest,
+                    images[indexOfImage]
                 )
             }
-            if (friendsAndRequestsList.isNotEmpty()) {
-                holder.bind(friendsAndRequestsList[position], images[indexOfImage])
-            }
         } else {
-            holder.bind(friendsAndRequestsList[position], null)
+            (holder as FriendRequestsTextViewHolder).bind(
+                friendsAndRequestsList[position] as DataModel.FriendsRequestsText
+            )
         }
     }
 

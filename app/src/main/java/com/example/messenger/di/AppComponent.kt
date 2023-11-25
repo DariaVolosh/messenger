@@ -13,7 +13,6 @@ import com.example.messenger.signIn.SignInFragment
 import com.example.messenger.signUp.SignUpFragment
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Scope
 import javax.inject.Singleton
 
 @Component(modules = [RoomDatabaseModule::class, FirebaseModule::class, RepositoriesModule::class])

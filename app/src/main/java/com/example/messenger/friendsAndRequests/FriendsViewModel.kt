@@ -26,9 +26,15 @@ class FriendsViewModel @Inject constructor(
     val images = MutableLiveData<List<Uri>>()
     val friend = MutableLiveData<User>()
     val currentUser = MutableLiveData<User>()
+    val chatOpened = MutableLiveData<Boolean>()
 
     init {
         getCurrentUserObject()
+    }
+
+    fun openChat() {
+        chatOpened.value = true
+        chatOpened.value = false
     }
 
     private fun getCurrentUserObject() {
