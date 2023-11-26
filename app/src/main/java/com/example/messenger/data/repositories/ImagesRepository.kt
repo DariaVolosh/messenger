@@ -11,26 +11,15 @@ import java.io.File
 import javax.inject.Inject
 
 interface ImagesRepository {
-    suspend fun getImages(list: List<User>): List<Uri>
     suspend fun getMyImageUri(currentUserObject: User, internetAvailable: Boolean): Uri
     suspend fun uploadPhoto(photoUri: Uri, user: User): Boolean
 
-    suspend fun getImageById(id: String): Uri
 }
 
 class FirebaseImages @Inject constructor(
     private val firebaseStorage: FirebaseStorage,
     private val roomUserRepository: RoomUser
 ): ImagesRepository {
-    override suspend fun getImages(list: List<User>): List<Uri> {
-        val deferredUris = list.map { user ->
-            val uri = firebaseStorage.getReference("avatars/${user.userId}").downloadUrl.await()
-            uri
-        }
-
-        return deferredUris
-    }
-
     override suspend fun getMyImageUri(currentUserObject: User, internetAvailable: Boolean): Uri {
         val uri: Uri = if (internetAvailable) {
             firebaseStorage
@@ -67,9 +56,5 @@ class FirebaseImages @Inject constructor(
             }
 
         return photoUploaded.await()
-    }
-
-    override suspend fun getImageById(id: String): Uri {
-        return firebaseStorage.getReference("avatars/$id").downloadUrl.await()
     }
 }

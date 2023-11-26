@@ -2,16 +2,11 @@ package com.example.messenger.domain
 
 import android.net.Uri
 import com.example.messenger.data.User
-import com.example.messenger.data.repositories.ImagesRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.example.messenger.presenter.mapper.UserListToPhotoUriListMapper
 import javax.inject.Inject
 
 class DownloadImagesUseCase @Inject constructor(
-    private val imagesRepository: ImagesRepository
+    private val userListToPhotoUriListMapper: UserListToPhotoUriListMapper
 ) {
-    suspend fun getImages(list: List<User>): List<Uri> =
-        withContext(Dispatchers.IO) {
-            imagesRepository.getImages(list)
-        }
+    suspend fun getImages(list: List<User>): List<Uri> = userListToPhotoUriListMapper.map(list)
 }
