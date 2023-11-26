@@ -2,6 +2,13 @@ package com.example.messenger.di
 
 import android.content.Context
 import android.view.LayoutInflater
+import com.example.messenger.di.modules.FirebaseModule
+import com.example.messenger.di.modules.ImageLoaderModule
+import com.example.messenger.di.modules.MapperModule
+import com.example.messenger.di.modules.RepositoriesModule
+import com.example.messenger.di.modules.RoomDatabaseModule
+import com.example.messenger.di.modules.SharedPrefsModule
+import com.example.messenger.di.modules.UserModule
 import com.example.messenger.presenter.addFriend.AddFriendFragment
 import com.example.messenger.presenter.chats.ChatsFragment
 import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
@@ -19,7 +26,8 @@ import javax.inject.Singleton
     RepositoriesModule::class,
     UserModule::class,
     ImageLoaderModule::class,
-    MapperModule::class
+    MapperModule::class,
+    SharedPrefsModule::class
 ])
 @Singleton
 interface AppComponent {

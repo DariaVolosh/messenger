@@ -1,6 +1,5 @@
 package com.example.messenger.presenter.settings
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -55,30 +54,20 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun getSavedMessagesColors() {
-        viewModel.currentUserId.value?.let { id ->
-            val sharedPrefs = activity?.getSharedPreferences("colors", Context.MODE_PRIVATE)
-            val myColor = sharedPrefs?.getInt("myColor$id", R.color.turquoise)
-            val friendColor = sharedPrefs?.getInt("friendsColor$id", R.color.turquoise)
+        viewModel.currentUserId.observe(viewLifecycleOwner) { id ->
+            val myColor = viewModel.getMessagesColor("myColor$id")
+            val friendColor = viewModel.getMessagesColor("friendsColor$id")
 
-            myColor?.also {
-                binding.myMessagesColorButton.setTextColor(myColor)
-                binding.myMessagesColorButton.iconTint = ColorStateList.valueOf(myColor)
-            }
-            friendColor?.also {
-                binding.friendsMessagesColorButton.setTextColor(friendColor)
-                binding.friendsMessagesColorButton.iconTint = ColorStateList.valueOf(friendColor)
-            }
+            binding.myMessagesColorButton.setTextColor(myColor)
+            binding.myMessagesColorButton.iconTint = ColorStateList.valueOf(myColor)
+            binding.friendsMessagesColorButton.setTextColor(friendColor)
+            binding.friendsMessagesColorButton.iconTint = ColorStateList.valueOf(friendColor)
         }
     }
 
-    private fun setChosenColorToSharedPrefs(color: Int, myColor: Boolean) {
-        val sharedPrefs = activity?.getSharedPreferences("colors", Context.MODE_PRIVATE)
-        viewModel.currentUserId.value?.let {id ->
-            sharedPrefs?.edit()?.putInt(
-                if (myColor) "myColor$id"
-                else "friendsColor$id",
-                color
-            )?.apply()
+    private fun saveChosenColorToSharedPrefs(color: Int, myColor: Boolean) {
+        viewModel.currentUserId.observe(viewLifecycleOwner) {id ->
+            viewModel.setMessagesColor(color, if (myColor) "myColor$id" else "friendsColor$id")
 
             if (myColor) {
                 binding.myMessagesColorButton.setTextColor(color)
@@ -97,7 +86,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                 override fun onColorSelected(envelope: ColorEnvelope?, fromUser: Boolean) {
                     envelope?.also {
                         viewModel.currentUserId.value?.let {_ ->
-                            setChosenColorToSharedPrefs(envelope.color, myColor)
+                            saveChosenColorToSharedPrefs(envelope.color, myColor)
                         }
                     }
                 }

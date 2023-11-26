@@ -1,4 +1,4 @@
-package com.example.messenger.di
+package com.example.messenger.di.modules
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase

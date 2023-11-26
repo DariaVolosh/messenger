@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.NetworkUtils
 import com.example.messenger.data.User
+import com.example.messenger.domain.GetAndSaveMessagesColorUseCase
 import com.example.messenger.domain.GetCurrentUserIdUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetMyImageUseCase
@@ -27,6 +28,7 @@ class SettingsViewModel @Inject constructor(
     private val getRoomUserEntityByIdUseCase: GetRoomUserEntityByIdUseCase,
     private val signOutUserUseCase: SignOutUserUseCase,
     private val loadImageUseCase: LoadImageUseCase,
+    private val getAndSaveMessagesColorUseCase: GetAndSaveMessagesColorUseCase,
     private val networkUtils: NetworkUtils,
 ): ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
@@ -85,4 +87,10 @@ class SettingsViewModel @Inject constructor(
     fun loadImage(uri: Uri, imageView: ImageView) {
         loadImageUseCase.loadImage(uri, imageView)
     }
+
+    fun setMessagesColor(color: Int, key: String) {
+        getAndSaveMessagesColorUseCase.setMessagesColor(color, key)
+    }
+
+    fun getMessagesColor(key: String) = getAndSaveMessagesColorUseCase.getMessagesColor(key)
 }

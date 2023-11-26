@@ -1,4 +1,4 @@
-package com.example.messenger.di
+package com.example.messenger.di.modules
 
 import com.example.messenger.data.GlideImageLoader
 import com.example.messenger.data.ImageLoader

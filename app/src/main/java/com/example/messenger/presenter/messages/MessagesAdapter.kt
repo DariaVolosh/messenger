@@ -1,6 +1,5 @@
 package com.example.messenger.presenter.messages
 
-import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -14,11 +13,11 @@ import com.example.messenger.data.User
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import javax.inject.Inject
 
-class MessagesAdapter @Inject constructor(
-    private val context: Context)
-    : RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
+class MessagesAdapter(
+    private val myColor: Int,
+    private val friendsColor: Int
+): RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
     private var messages = listOf<Message>()
     private lateinit var currentUser: User
 
@@ -59,24 +58,20 @@ class MessagesAdapter @Inject constructor(
     private fun setMessageGravity(holder: ViewHolder, from: String ) {
         val messageLayoutParams = holder.message.layoutParams as LinearLayout.LayoutParams
         val timeLayoutParams = holder.timeSent.layoutParams as LinearLayout.LayoutParams
-        val sharedPrefs = context.getSharedPreferences("colors", Context.MODE_PRIVATE)
 
         if (from == currentUser.userId) {
             messageLayoutParams.gravity = Gravity.END
             timeLayoutParams.gravity = Gravity.END
-            holder.message.setBackgroundColor(
-                sharedPrefs.getInt("myColor${currentUser.userId}", R.color.turquoise)
-            )
+            holder.message.setBackgroundColor(myColor)
         } else {
             messageLayoutParams.gravity = Gravity.START
             timeLayoutParams.gravity = Gravity.START
-            holder.message.setBackgroundColor(
-                sharedPrefs.getInt("friendsColor${currentUser.userId}", R.color.turquoise)
-            )
+            holder.message.setBackgroundColor(friendsColor)
         }
         holder.message.layoutParams = messageLayoutParams
         holder.timeSent.layoutParams = timeLayoutParams
     }
 
     override fun getItemCount() = messages.size
+
 }

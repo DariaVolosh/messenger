@@ -1,4 +1,4 @@
-package com.example.messenger.di
+package com.example.messenger.di.modules
 
 import android.content.Context
 import androidx.room.Room

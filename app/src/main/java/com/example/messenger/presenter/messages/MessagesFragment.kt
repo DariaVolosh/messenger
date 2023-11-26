@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.messenger.MyApp
 import com.example.messenger.data.Message
 import com.example.messenger.data.User
@@ -16,7 +15,7 @@ import javax.inject.Inject
 class MessagesFragment : Fragment() {
     private lateinit var binding: FragmentMessagesBinding
     private lateinit var friendId: String
-    @Inject lateinit var adapter: MessagesAdapter
+    private lateinit var adapter: MessagesAdapter
     @Inject lateinit var viewModel: MessagesViewModel
 
     companion object {
@@ -90,15 +89,18 @@ class MessagesFragment : Fragment() {
     private fun downloadPhoto() {
         viewModel.downloadFriendMainPhoto(friendId)
         viewModel.friendPhotoUri.observe(viewLifecycleOwner) {uri ->
-            Glide.with(requireContext())
-                .load(uri)
-                .into(binding.mainPhoto)
+            viewModel.loadImage(uri, binding.mainPhoto)
         }
     }
 
     private fun initializeAdapter() {
-        binding.messages.adapter = adapter
-        binding.messages.layoutManager = LinearLayoutManager(requireContext())
+        viewModel.currentUser.observe(viewLifecycleOwner) {user ->
+            val myColor = viewModel.getMessagesColor("myColor${user.userId}")
+            val friendsColor = viewModel.getMessagesColor("friendsColor${user.userId}")
+            adapter = MessagesAdapter(myColor, friendsColor)
+            binding.messages.adapter = adapter
+            binding.messages.layoutManager = LinearLayoutManager(requireContext())
+        }
     }
 
     private fun sendMessage() {

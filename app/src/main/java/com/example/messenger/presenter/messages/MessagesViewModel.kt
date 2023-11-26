@@ -1,6 +1,7 @@
 package com.example.messenger.presenter.messages
 
 import android.net.Uri
+import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,10 +10,12 @@ import com.example.messenger.data.User
 
 import com.example.messenger.domain.AddChatToChatsListUseCase
 import com.example.messenger.domain.AddMessagesListenerUseCase
+import com.example.messenger.domain.GetAndSaveMessagesColorUseCase
 import com.example.messenger.domain.GetConversationReferenceUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetImageByUserIdUseCase
 import com.example.messenger.domain.GetUserObjectByIdUseCase
+import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.SendMessageUseCase
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.launch
@@ -25,7 +28,9 @@ class MessagesViewModel @Inject constructor(
     private val getUserObjectByIdUseCase: GetUserObjectByIdUseCase,
     private val getImageByUserIdUseCase: GetImageByUserIdUseCase,
     private val getConversationReferenceUseCase: GetConversationReferenceUseCase,
-    private val sendMessageUseCase: SendMessageUseCase
+    private val sendMessageUseCase: SendMessageUseCase,
+    private val loadImageUseCase: LoadImageUseCase,
+    private val getAndSaveMessagesColorUseCase: GetAndSaveMessagesColorUseCase
 ): ViewModel() {
     val friendObject = MutableLiveData<User>()
     val friendPhotoUri = MutableLiveData<Uri>()
@@ -97,4 +102,10 @@ class MessagesViewModel @Inject constructor(
             }
         }
     }
+
+    fun loadImage(uri: Uri, imageView: ImageView) {
+        loadImageUseCase.loadImage(uri, imageView)
+    }
+
+    fun getMessagesColor(key: String) = getAndSaveMessagesColorUseCase.getMessagesColor(key)
 }
