@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.messenger.R
 import com.example.messenger.data.User
 import com.example.messenger.databinding.DialogProfileDetailsBinding
@@ -58,14 +57,8 @@ class FriendsSearchAdapter @Inject constructor(
         holder.name.text = user.fullName
         holder.login.text = user.login
 
-        loadImage(images[position], holder)
+        viewModel.loadImage(images[position], holder.mainPhoto)
         holder.view.setOnClickListener { createDialogWithProfileDetails(user, position)}
-    }
-
-    private fun loadImage(uri: Uri, holder: ViewHolder) {
-        Glide.with(context)
-            .load(uri)
-            .into(holder.mainPhoto)
     }
 
     private fun disableAddFriendButton(view: DialogProfileDetailsBinding) {
@@ -81,9 +74,7 @@ class FriendsSearchAdapter @Inject constructor(
         view.friends.text =
             context.getString(R.string.dialog_friends_quantity_text, clickedUser.friends.size)
 
-        Glide.with(context)
-            .load(images[position])
-            .into(view.mainPhoto)
+        viewModel.loadImage(images[position], view.mainPhoto)
 
         // checking if friend request has been already sent to this user
         viewModel.currentUserId.value?.let { id ->

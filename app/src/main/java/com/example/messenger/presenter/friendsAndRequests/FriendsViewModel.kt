@@ -1,6 +1,7 @@
 package com.example.messenger.presenter.friendsAndRequests
 
 import android.net.Uri
+import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetDataModelListFromUserListUseCase
 import com.example.messenger.domain.GetUserListFromUserIdListUseCase
 import com.example.messenger.domain.GetUserObjectByIdUseCase
+import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.UpdateUserUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +24,8 @@ class FriendsViewModel @Inject constructor(
     private val downloadImagesUseCase: DownloadImagesUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
     private val getUserObjectByIdUseCase: GetUserObjectByIdUseCase,
-    private val getDataModelListFromUserListUseCase: GetDataModelListFromUserListUseCase
+    private val getDataModelListFromUserListUseCase: GetDataModelListFromUserListUseCase,
+    private val loadImageUseCase: LoadImageUseCase
 ): ViewModel() {
     val friendsAndRequestsList = MutableLiveData<List<User>>()
     val images = MutableLiveData<List<Uri>>()
@@ -78,5 +81,9 @@ class FriendsViewModel @Inject constructor(
         viewModelScope.launch {
             dataModelList.value = getDataModelListFromUserListUseCase.getDataModelListFromUserList(users)
         }
+    }
+
+    fun loadImage(uri: Uri, imageView: ImageView) {
+        loadImageUseCase.loadImage(uri, imageView)
     }
 }

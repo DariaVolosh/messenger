@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.lifecycle.findViewTreeLifecycleOwner
-import com.bumptech.glide.Glide
 import com.example.messenger.R
 import com.example.messenger.presenter.messages.MessagesFragment
 import de.hdodenhof.circleimageview.CircleImageView
@@ -21,14 +20,8 @@ class FriendViewHolder(itemView: View, private val viewModel: FriendsViewModel):
 
         name.text = item.name
         login.text = item.login
-        uploadImage(photoUri, mainPhoto)
+        viewModel.loadImage(photoUri, mainPhoto)
         button.setOnClickListener {openChat(item.userId)}
-    }
-
-    private fun uploadImage(uri: Uri, mainPhoto: CircleImageView) {
-        Glide.with(itemView.context)
-            .load(uri)
-            .into(mainPhoto)
     }
 
     private fun openChat(uId: String) {

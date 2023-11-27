@@ -3,6 +3,7 @@ package com.example.messenger.presenter.chats
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.FetchChatsUseCase
 import com.example.messenger.domain.FetchLastMessagesUseCase
 import com.example.messenger.domain.GetMyImageUseCase
+import com.example.messenger.domain.LoadImageUseCase
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -22,6 +24,7 @@ class ChatsViewModel @Inject constructor(
     private val getMyImageUseCase: GetMyImageUseCase,
     private val fetchLastMessagesUseCase: FetchLastMessagesUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
+    private val loadImageUseCase: LoadImageUseCase,
     private val networkUtils: NetworkUtils
 ) : ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
@@ -70,5 +73,9 @@ class ChatsViewModel @Inject constructor(
             val lastMessagesList = fetchLastMessagesUseCase.fetchLastMessages(chats)
             lastMessages.value = lastMessagesList
         }
+    }
+
+    fun loadImage(uri: Uri, imageView: ImageView) {
+        loadImageUseCase.loadImage(uri, imageView)
     }
 }

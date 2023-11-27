@@ -1,20 +1,20 @@
 package com.example.messenger.presenter.chats
 
-import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.messenger.R
 import com.example.messenger.data.Message
 import com.example.messenger.data.User
 import de.hdodenhof.circleimageview.CircleImageView
 
-class ChatsAdapter constructor(private val context: Context,
-                               private val messagesDisplay: MessageDisplayListener
+class ChatsAdapter constructor(
+    private val messagesDisplay: MessageDisplayListener,
+    private val loadImage: LoadImage
 ):
     RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
 
@@ -50,7 +50,8 @@ class ChatsAdapter constructor(private val context: Context,
         if (position < images.size && position < lastMessages.size && position < chats.size) {
             val friend = chats[position]
             holder.name.text = friend.fullName
-            loadImage(images[position], holder)
+            loadImage.loadImage(images[position], holder.mainPhoto)
+
 
             holder.view.setOnClickListener {
                 messagesDisplay.onDisplayMessages(friend)
@@ -60,14 +61,13 @@ class ChatsAdapter constructor(private val context: Context,
         }
     }
 
-    private fun loadImage(uri: Uri, holder: ViewHolder) {
-        Glide.with(context)
-            .load(uri)
-            .into(holder.mainPhoto)
-    }
     override fun getItemCount() = chats.size
 
     interface MessageDisplayListener {
         fun onDisplayMessages(friend: User)
+    }
+
+    interface LoadImage {
+        fun loadImage(uri: Uri, imageView: ImageView)
     }
 }

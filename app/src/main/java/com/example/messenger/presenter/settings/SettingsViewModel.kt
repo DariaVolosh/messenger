@@ -3,6 +3,7 @@ package com.example.messenger.presenter.settings
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import com.example.messenger.domain.GetCurrentUserIdUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetMyImageUseCase
 import com.example.messenger.domain.GetRoomUserEntityByIdUseCase
+import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.SignOutUserUseCase
 import com.example.messenger.room.UserEntity
 import kotlinx.coroutines.launch
@@ -24,6 +26,7 @@ class SettingsViewModel @Inject constructor(
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val getRoomUserEntityByIdUseCase: GetRoomUserEntityByIdUseCase,
     private val signOutUserUseCase: SignOutUserUseCase,
+    private val loadImageUseCase: LoadImageUseCase,
     private val networkUtils: NetworkUtils,
 ): ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
@@ -77,5 +80,9 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             signOutUserUseCase.signOutUser()
         }
+    }
+
+    fun loadImage(uri: Uri, imageView: ImageView) {
+        loadImageUseCase.loadImage(uri, imageView)
     }
 }

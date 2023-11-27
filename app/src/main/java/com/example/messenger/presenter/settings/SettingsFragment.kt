@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.example.messenger.MyApp
 import com.example.messenger.R
 import com.example.messenger.data.User
@@ -117,9 +116,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         }
 
         viewModel.mainPhotoUri.observe(viewLifecycleOwner) {uri ->
-            Glide.with(requireContext())
-                .load(uri)
-                .into(binding.mainPhoto)
+            viewModel.loadImage(uri, binding.mainPhoto)
         }
     }
 

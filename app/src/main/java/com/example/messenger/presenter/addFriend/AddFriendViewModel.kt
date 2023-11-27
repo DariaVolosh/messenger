@@ -1,12 +1,14 @@
 package com.example.messenger.presenter.addFriend
 
 import android.net.Uri
+import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.User
 import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.GetCurrentUserIdUseCase
+import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.SearchUsersByLoginUseCase
 import com.example.messenger.domain.UpdateUserUseCase
 import kotlinx.coroutines.launch
@@ -16,7 +18,8 @@ class AddFriendViewModel @Inject constructor(
     private val searchUsersByLoginUseCase: SearchUsersByLoginUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
-    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
+    private val loadImageUseCase: LoadImageUseCase
 ) : ViewModel() {
     val foundUsers = MutableLiveData<List<User>>()
     val images = MutableLiveData<List<Uri>>()
@@ -50,5 +53,9 @@ class AddFriendViewModel @Inject constructor(
         viewModelScope.launch {
             currentUserId.value = getCurrentUserIdUseCase.getCurrentUserId()
         }
+    }
+
+    fun loadImage(uri: Uri, imageView: ImageView) {
+        loadImageUseCase.loadImage(uri, imageView)
     }
 }

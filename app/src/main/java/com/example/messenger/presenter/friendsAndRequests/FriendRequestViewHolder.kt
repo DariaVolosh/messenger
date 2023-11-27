@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.lifecycle.findViewTreeLifecycleOwner
-import com.bumptech.glide.Glide
 import com.example.messenger.R
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -20,7 +19,7 @@ class FriendRequestViewHolder(itemView: View, private val viewModel: FriendsView
 
         name.text = item.name
         login.text = item.login
-        uploadImage(photoUri, mainPhoto)
+        viewModel.loadImage(photoUri, mainPhoto)
         button.setOnClickListener {addFriend(item.userId)}
     }
 
@@ -47,11 +46,5 @@ class FriendRequestViewHolder(itemView: View, private val viewModel: FriendsView
                 }
             }
         }
-    }
-
-    private fun uploadImage(uri: Uri, mainPhoto: CircleImageView) {
-        Glide.with(itemView.context)
-            .load(uri)
-            .into(mainPhoto)
     }
 }
