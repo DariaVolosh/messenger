@@ -16,7 +16,7 @@ class UserIdToUserMapper @Inject constructor(
 
 class UserIdListToUserListMapper @Inject constructor(
     private val userIdToUserMapper: UserIdToUserMapper
-): Mapper<List<String>, List<User>> {
+): Mapper<List<@JvmSuppressWildcards String>, List<@JvmSuppressWildcards User>> {
     override suspend fun map(from: List<String>): List<User> {
         return from.map {
                 id -> userIdToUserMapper.map(id)

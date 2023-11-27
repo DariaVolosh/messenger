@@ -21,7 +21,7 @@ class UserToDataModelMapper @Inject constructor(): Mapper<User, DataModel> {
 class UserListToDataModelListMapper @Inject constructor(
     private val userMapper: UserToDataModelMapper,
     private val currentUser: User
-): Mapper<List<User>, List<DataModel>> {
+): Mapper<List<@JvmSuppressWildcards User>, List<@JvmSuppressWildcards DataModel>> {
 
     override suspend fun map(from: List<User>): List<DataModel> {
         val dataModelObjects = mutableListOf<DataModel>()

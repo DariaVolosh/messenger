@@ -18,7 +18,8 @@ import javax.inject.Singleton
     FirebaseModule::class,
     RepositoriesModule::class,
     UserModule::class,
-    ImageLoaderModule::class
+    ImageLoaderModule::class,
+    MapperModule::class
 ])
 @Singleton
 interface AppComponent {
