@@ -1,4 +1,7 @@
 package com.example.messenger.data
+
+import javax.inject.Inject
+
 data class User(
     var fullName: String,
     var email: String,
@@ -7,7 +10,7 @@ data class User(
     var friends: MutableList<String>,
     var receivedFriendRequests: MutableList<String>,
     var chats: MutableList<String>) {
-    constructor() :
+    @Inject constructor() :
             this("", "", "", "",
                 mutableListOf(), mutableListOf(), mutableListOf()
             )

@@ -1,6 +1,7 @@
-package com.example.messenger.data
+package com.example.messenger.data.repositories
 
 import android.net.Uri
+import com.example.messenger.data.User
 import com.example.messenger.room.Repository
 import com.example.messenger.room.UserEntity
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +22,6 @@ interface UserRepository {
         password: String,
         photoUri: Uri): Boolean
     fun insertUser(user: User, photoUri: Uri)
-    suspend fun getUsersByIds(ids: List<String>): List<User>
     fun signOut()
 }
 
@@ -105,13 +105,6 @@ class FirebaseUser @Inject constructor(
         updateUser(user)
     }
 
-    override suspend fun getUsersByIds(ids: List<String>): List<User> {
-        return ids.map { id ->
-            val userSnapshot = firebaseDatabase.getReference("users/$id").get().await()
-            userSnapshot.getValue(User::class.java) ?: User()
-        }
-    }
-
     override fun signOut() {
         firebaseAuth.signOut()
     }
@@ -158,7 +151,5 @@ class RoomUser @Inject constructor(
             roomRepository.insertUser(roomUser)
         }
     }
-
-    override suspend fun getUsersByIds(ids: List<String>): List<User> = listOf()
     override fun signOut() {}
 }

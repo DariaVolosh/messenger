@@ -1,4 +1,4 @@
-package com.example.messenger.settings
+package com.example.messenger.presenter.settings
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,6 +12,7 @@ import com.example.messenger.domain.GetCurrentUserIdUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetMyImageUseCase
 import com.example.messenger.domain.GetRoomUserEntityByIdUseCase
+import com.example.messenger.domain.SignOutUserUseCase
 import com.example.messenger.room.UserEntity
 import kotlinx.coroutines.launch
 import java.io.File
@@ -22,6 +23,7 @@ class SettingsViewModel @Inject constructor(
     private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val getRoomUserEntityByIdUseCase: GetRoomUserEntityByIdUseCase,
+    private val signOutUserUseCase: SignOutUserUseCase,
     private val networkUtils: NetworkUtils,
 ): ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
@@ -68,6 +70,12 @@ class SettingsViewModel @Inject constructor(
                     currentRoomUser.value = getRoomUserEntityByIdUseCase.getUserEntityById(id)
                 }
             }
+        }
+    }
+
+    fun signOutUser() {
+        viewModelScope.launch {
+            signOutUserUseCase.signOutUser()
         }
     }
 }

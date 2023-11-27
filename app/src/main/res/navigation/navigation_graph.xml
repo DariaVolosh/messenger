@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/sign_in_fragment"
-        android:name="com.example.messenger.signIn.SignInFragment"
+        android:name="com.example.messenger.presenter.signIn.SignInFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_in" >
         <action
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/sign_up_fragment"
-        android:name="com.example.messenger.signUp.SignUpFragment"
+        android:name="com.example.messenger.presenter.signUp.SignUpFragment"
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/chats_fragment"
-        android:name="com.example.messenger.chats.ChatsFragment"
+        android:name="com.example.messenger.presenter.chats.ChatsFragment"
         android:label="fragment_chats"
         tools:layout="@layout/fragment_chats" >
         <action
@@ -43,7 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/add_friends_fragment"
-        android:name="com.example.messenger.addFriend.AddFriendFragment"
+        android:name="com.example.messenger.presenter.addFriend.AddFriendFragment"
         android:label="fragment_friends"
         tools:layout="@layout/fragment_add_friend">
         <action
@@ -52,7 +52,7 @@
     </fragment>
     <fragment
         android:id="@+id/friends_fragment"
-        android:name="com.example.messenger.friendsAndRequests.FriendsFragment"
+        android:name="com.example.messenger.presenter.friendsAndRequests.FriendsFragment"
         android:label="fragment_friends"
         tools:layout="@layout/fragment_friends" >
         <action
@@ -61,12 +61,12 @@
     </fragment>
     <fragment
         android:id="@+id/messages_fragment"
-        android:name="com.example.messenger.messages.MessagesFragment"
+        android:name="com.example.messenger.presenter.messages.MessagesFragment"
         android:label="fragment_messages"
         tools:layout="@layout/fragment_messages" />
     <fragment
         android:id="@+id/settings_fragment"
-        android:name="com.example.messenger.settings.SettingsFragment"
+        android:name="com.example.messenger.presenter.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>

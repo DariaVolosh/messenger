@@ -1,6 +1,6 @@
 package com.example.messenger.domain
 
-import com.example.messenger.data.RoomUser
+import com.example.messenger.data.repositories.RoomUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

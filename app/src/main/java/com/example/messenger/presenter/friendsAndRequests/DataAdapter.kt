@@ -1,10 +1,8 @@
-package com.example.messenger.friendsAndRequests
+package com.example.messenger.presenter.friendsAndRequests
 
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messenger.R
 import javax.inject.Inject

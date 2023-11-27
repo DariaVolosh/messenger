@@ -1,4 +1,4 @@
-package com.example.messenger.addFriend
+package com.example.messenger.presenter.addFriend
 
 import android.content.Context
 import android.net.Uri
@@ -18,7 +18,8 @@ import javax.inject.Inject
 class FriendsSearchAdapter @Inject constructor(
     private val context: Context,
     private val layoutInflater: LayoutInflater,
-    private val viewModel: AddFriendViewModel) :
+    private val viewModel: AddFriendViewModel
+) :
     RecyclerView.Adapter<FriendsSearchAdapter.ViewHolder>() {
 
     private var foundUsers = listOf<User>()

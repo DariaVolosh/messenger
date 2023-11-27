@@ -1,4 +1,4 @@
-package com.example.messenger.friendsAndRequests
+package com.example.messenger.presenter.friendsAndRequests
 
 sealed class DataModel {
     data class FriendRequest(

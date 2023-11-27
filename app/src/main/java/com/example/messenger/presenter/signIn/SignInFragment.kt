@@ -1,4 +1,4 @@
-package com.example.messenger.signIn
+package com.example.messenger.presenter.signIn
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -60,9 +60,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
     private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.create(
             requireContext(),
-            layoutInflater,
-            viewLifecycleOwner,
-            findNavController()
+            layoutInflater
         ).inject(this)
     }
 }

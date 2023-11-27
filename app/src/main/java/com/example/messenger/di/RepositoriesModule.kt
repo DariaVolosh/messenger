@@ -1,13 +1,13 @@
 package com.example.messenger.di
 
-import com.example.messenger.data.ChatsRepository
-import com.example.messenger.data.FirebaseChats
-import com.example.messenger.data.FirebaseImages
-import com.example.messenger.data.FirebaseMessages
-import com.example.messenger.data.FirebaseUser
-import com.example.messenger.data.ImagesRepository
-import com.example.messenger.data.MessagesRepository
-import com.example.messenger.data.UserRepository
+import com.example.messenger.data.repositories.ChatsRepository
+import com.example.messenger.data.repositories.FirebaseChats
+import com.example.messenger.data.repositories.FirebaseImages
+import com.example.messenger.data.repositories.FirebaseMessages
+import com.example.messenger.data.repositories.FirebaseUser
+import com.example.messenger.data.repositories.ImagesRepository
+import com.example.messenger.data.repositories.MessagesRepository
+import com.example.messenger.data.repositories.UserRepository
 import dagger.Binds
 import dagger.Module
 

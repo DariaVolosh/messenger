@@ -1,4 +1,4 @@
-package com.example.messenger.signUp
+package com.example.messenger.presenter.signUp
 
 import android.Manifest
 import android.app.Activity
@@ -45,11 +45,10 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
     private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.create(
             requireContext(),
-            layoutInflater,
-            viewLifecycleOwner,
-            findNavController()
+            layoutInflater
         ).inject(this)
     }
+
 
     // launcher used to request permission
     private val requestPermissionLauncher =

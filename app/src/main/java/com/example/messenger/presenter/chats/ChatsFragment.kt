@@ -1,4 +1,4 @@
-package com.example.messenger.chats
+package com.example.messenger.presenter.chats
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -12,12 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.messenger.MyApp
 import com.example.messenger.R
-import com.example.messenger.addFriend.AddFriendFragment
 import com.example.messenger.data.User
 import com.example.messenger.databinding.FragmentChatsBinding
-import com.example.messenger.friendsAndRequests.FriendsFragment
-import com.example.messenger.messages.MessagesFragment
-import com.example.messenger.settings.SettingsFragment
+import com.example.messenger.presenter.addFriend.AddFriendFragment
+import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
+import com.example.messenger.presenter.messages.MessagesFragment
+import com.example.messenger.presenter.settings.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import javax.inject.Inject
 
@@ -43,7 +43,6 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
         setNavigationBarOnItemListener()
         initializeAdapter()
         setFabAddFriendButtonListener()
-        setSignOutButtonListener()
 
         return binding.root
     }
@@ -68,9 +67,7 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
     private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.create(
             requireContext(),
-            layoutInflater,
-            viewLifecycleOwner,
-            findNavController()
+            layoutInflater
         ).inject(this)
     }
 
@@ -96,13 +93,6 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener {
             } else {
                 findNavController().navigate(R.id.add_friends_fragment)
             }
-        }
-    }
-
-    private fun setSignOutButtonListener() {
-        binding.signOut.setOnClickListener {
-            viewModel.signOutUser()
-            findNavController().navigate(R.id.sign_in_fragment)
         }
     }
 

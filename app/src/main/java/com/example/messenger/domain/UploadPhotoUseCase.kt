@@ -1,8 +1,8 @@
 package com.example.messenger.domain
 
 import android.net.Uri
-import com.example.messenger.data.ImagesRepository
 import com.example.messenger.data.User
+import com.example.messenger.data.repositories.ImagesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

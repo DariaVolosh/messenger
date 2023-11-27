@@ -1,4 +1,4 @@
-package com.example.messenger.signUp
+package com.example.messenger.presenter.signUp
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData

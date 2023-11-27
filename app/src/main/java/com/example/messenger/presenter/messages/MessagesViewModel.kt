@@ -1,4 +1,4 @@
-package com.example.messenger.messages
+package com.example.messenger.presenter.messages
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData

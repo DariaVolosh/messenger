@@ -1,7 +1,7 @@
 package com.example.messenger.domain
 
 import com.example.messenger.data.Message
-import com.example.messenger.data.MessagesRepository
+import com.example.messenger.data.repositories.MessagesRepository
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

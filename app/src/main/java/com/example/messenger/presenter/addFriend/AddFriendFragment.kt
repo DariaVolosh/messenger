@@ -1,4 +1,4 @@
-package com.example.messenger.addFriend
+package com.example.messenger.presenter.addFriend
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.messenger.MyApp
 import com.example.messenger.databinding.FragmentAddFriendBinding
@@ -35,9 +34,7 @@ class AddFriendFragment : Fragment() {
     private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.create(
             requireContext(),
-            layoutInflater,
-            viewLifecycleOwner,
-            findNavController()
+            layoutInflater
         ).inject(this)
     }
 

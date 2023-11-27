@@ -1,4 +1,4 @@
-package com.example.messenger.chats
+package com.example.messenger.presenter.chats
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,7 +13,6 @@ import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.FetchChatsUseCase
 import com.example.messenger.domain.FetchLastMessagesUseCase
 import com.example.messenger.domain.GetMyImageUseCase
-import com.example.messenger.domain.SignOutUserUseCase
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -23,7 +22,6 @@ class ChatsViewModel @Inject constructor(
     private val getMyImageUseCase: GetMyImageUseCase,
     private val fetchLastMessagesUseCase: FetchLastMessagesUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
-    private val signOutUserUseCase: SignOutUserUseCase,
     private val networkUtils: NetworkUtils
 ) : ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
@@ -71,12 +69,6 @@ class ChatsViewModel @Inject constructor(
         viewModelScope.launch {
             val lastMessagesList = fetchLastMessagesUseCase.fetchLastMessages(chats)
             lastMessages.value = lastMessagesList
-        }
-    }
-
-    fun signOutUser() {
-        viewModelScope.launch {
-            signOutUserUseCase.signOutUser()
         }
     }
 }

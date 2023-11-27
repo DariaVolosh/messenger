@@ -1,4 +1,4 @@
-package com.example.messenger.addFriend
+package com.example.messenger.presenter.addFriend
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package com.example.messenger.settings
+package com.example.messenger.presenter.settings
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -34,6 +34,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         getInfoAboutUser()
         setPhoto()
         getSavedMessagesColors()
+        setSignOutButtonListener()
 
         binding.friendsMessagesColorButton.setOnClickListener { openColorPicker(false) }
         binding.myMessagesColorButton.setOnClickListener { openColorPicker(true) }
@@ -43,10 +44,15 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.create(
             requireContext(),
-            layoutInflater,
-            viewLifecycleOwner,
-            findNavController()
+            layoutInflater
         ).inject(this)
+    }
+
+    private fun setSignOutButtonListener() {
+        binding.signOut.setOnClickListener {
+            viewModel.signOutUser()
+            findNavController().navigate(R.id.sign_in_fragment)
+        }
     }
 
     private fun getSavedMessagesColors() {

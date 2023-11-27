@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".messages.MessagesFragment"
+    tools:context=".presenter.messages.MessagesFragment"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout

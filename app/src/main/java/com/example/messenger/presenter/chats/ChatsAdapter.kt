@@ -1,4 +1,4 @@
-package com.example.messenger.chats
+package com.example.messenger.presenter.chats
 
 import android.content.Context
 import android.net.Uri
@@ -14,7 +14,8 @@ import com.example.messenger.data.User
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ChatsAdapter constructor(private val context: Context,
-                               private val messagesDisplay: MessageDisplayListener):
+                               private val messagesDisplay: MessageDisplayListener
+):
     RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
 
     private var chats = listOf<User>()

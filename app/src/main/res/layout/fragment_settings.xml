@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".settings.SettingsFragment"
+    tools:context=".presenter.settings.SettingsFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ScrollView
@@ -67,13 +67,24 @@
                 android:paddingTop="@dimen/_10dp"
                 tools:text="email@gmail.com"/>
 
+            <TextView
+                android:id="@+id/sign_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign out"
+                android:layout_marginBottom="@dimen/_15dp"
+                android:layout_marginEnd="@dimen/_15dp"
+                android:layout_below="@id/my_email"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="@dimen/_10dp"/>
+
             <View
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1dp"
                 android:background="@color/turquoise"
                 android:layout_marginTop="@dimen/_20dp"
-                android:layout_below="@id/my_email"/>
+                android:layout_below="@id/sign_out"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/my_messages_color_button"

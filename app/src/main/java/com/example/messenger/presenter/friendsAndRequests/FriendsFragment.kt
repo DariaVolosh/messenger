@@ -1,4 +1,4 @@
-package com.example.messenger.friendsAndRequests
+package com.example.messenger.presenter.friendsAndRequests
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,7 @@ import com.example.messenger.MyApp
 import com.example.messenger.R
 import com.example.messenger.data.User
 import com.example.messenger.databinding.FragmentFriendsBinding
-import com.example.messenger.messages.MessagesFragment
+import com.example.messenger.presenter.messages.MessagesFragment
 import javax.inject.Inject
 
 class FriendsFragment: Fragment(R.layout.fragment_friends) {
@@ -49,9 +49,7 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
     private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.create(
             requireContext(),
-            layoutInflater,
-            viewLifecycleOwner,
-            findNavController()
+            layoutInflater
         ).inject(this)
     }
 
@@ -76,38 +74,14 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
         val requests = currentUser.receivedFriendRequests
 
         val friendsAndRequests = friends + requests
-        val dataModelObjects = mutableListOf<DataModel>()
 
         viewModel.getUsersFromUId(friendsAndRequests)
-        viewModel.friendsAndRequestsList.observe(viewLifecycleOwner) { requests ->
-            dataModelObjects.clear()
-            var firstFriendRequestFound = false
-            for (user in requests) {
-                if (currentUser.receivedFriendRequests.contains(user.userId)) {
-                    if (!firstFriendRequestFound) {
-                        firstFriendRequestFound = true
-                        dataModelObjects.add(DataModel.FriendsRequestsText(
-                            getString(
-                                R.string.requests_quantity_text,
-                                currentUser.receivedFriendRequests.size
-                            )
-                        ))
-                    }
-                    dataModelObjects.add(DataModel.FriendRequest(user.fullName, user.login, user.userId))
-                } else {
-                    dataModelObjects.add(DataModel.Friend(user.fullName, user.login, user.userId))
-                    if (requests.lastIndexOf(user) == requests.size - 1) {
-                        dataModelObjects.add(DataModel.FriendsRequestsText(
-                            getString(
-                                R.string.requests_quantity_text,
-                                currentUser.receivedFriendRequests.size
-                            )
-                        ))
-                    }
-                }
-            }
+        viewModel.friendsAndRequestsList.observe(viewLifecycleOwner) { requestsAndFriends ->
+            viewModel.getDataModelListFromUserList(requestsAndFriends)
+        }
 
-            friendsAndRequestsAdapter.setFriendsAndRequestsList(dataModelObjects)
+        viewModel.dataModelList.observe(viewLifecycleOwner) { dataModelList ->
+            friendsAndRequestsAdapter.setFriendsAndRequestsList(dataModelList)
         }
 
         viewModel.images.observe(viewLifecycleOwner) {images ->

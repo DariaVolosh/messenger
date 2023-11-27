@@ -1,4 +1,4 @@
-package com.example.messenger.messages
+package com.example.messenger.presenter.messages
 
 import android.content.Context
 import android.view.Gravity

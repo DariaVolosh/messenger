@@ -1,4 +1,4 @@
-package com.example.messenger.signIn
+package com.example.messenger.presenter.signIn
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

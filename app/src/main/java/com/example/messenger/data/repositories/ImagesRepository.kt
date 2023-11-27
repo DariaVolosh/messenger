@@ -1,7 +1,8 @@
-package com.example.messenger.data
+package com.example.messenger.data.repositories
 
 import android.net.Uri
 import android.util.Log
+import com.example.messenger.data.User
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.CompletableDeferred
@@ -46,6 +47,7 @@ class FirebaseImages @Inject constructor(
 
     override suspend fun uploadPhoto(photoUri: Uri, user: User): Boolean {
         val photoUploaded: CompletableDeferred<Boolean> = CompletableDeferred()
+
         firebaseStorage.getReference("avatars/${user.userId}")
             .putFile(photoUri).addOnSuccessListener {
                 val localFile = File.createTempFile(user.userId, "jpeg")

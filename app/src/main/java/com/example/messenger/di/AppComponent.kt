@@ -2,20 +2,23 @@ package com.example.messenger.di
 
 import android.content.Context
 import android.view.LayoutInflater
-import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.NavController
-import com.example.messenger.addFriend.AddFriendFragment
-import com.example.messenger.chats.ChatsFragment
-import com.example.messenger.friendsAndRequests.FriendsFragment
-import com.example.messenger.messages.MessagesFragment
-import com.example.messenger.settings.SettingsFragment
-import com.example.messenger.signIn.SignInFragment
-import com.example.messenger.signUp.SignUpFragment
+import com.example.messenger.presenter.addFriend.AddFriendFragment
+import com.example.messenger.presenter.chats.ChatsFragment
+import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
+import com.example.messenger.presenter.messages.MessagesFragment
+import com.example.messenger.presenter.settings.SettingsFragment
+import com.example.messenger.presenter.signIn.SignInFragment
+import com.example.messenger.presenter.signUp.SignUpFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
-@Component(modules = [RoomDatabaseModule::class, FirebaseModule::class, RepositoriesModule::class])
+@Component(modules = [
+    RoomDatabaseModule::class,
+    FirebaseModule::class,
+    RepositoriesModule::class,
+    UserModule::class,
+])
 @Singleton
 interface AppComponent {
     fun inject(fragment: AddFriendFragment)
@@ -30,9 +33,7 @@ interface AppComponent {
     interface Factory {
         fun create(
             @BindsInstance context: Context,
-            @BindsInstance layoutInflater: LayoutInflater,
-            @BindsInstance lifecycleOwner: LifecycleOwner,
-            @BindsInstance navController: NavController
+            @BindsInstance layoutInflater: LayoutInflater
         ): AppComponent
     }
 }

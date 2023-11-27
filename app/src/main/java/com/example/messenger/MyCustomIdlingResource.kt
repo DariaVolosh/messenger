@@ -2,7 +2,7 @@ package com.example.messenger
 import androidx.appcompat.app.AppCompatActivity
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.IdlingResource.ResourceCallback
-import com.example.messenger.chats.ChatsFragment
+import com.example.messenger.presenter.chats.ChatsFragment
 
 class MyCustomIdlingResource(private val activity: AppCompatActivity): IdlingResource {
     private lateinit var resourceCallback: ResourceCallback
