@@ -2,6 +2,7 @@ package com.example.messenger.data.repositories
 
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.annotation.Keep
 import com.example.messenger.R
 import javax.inject.Inject
 
@@ -19,6 +20,5 @@ class SharedPreferencesUserSettingsRepository @Inject constructor(
 
     override fun setMessageColor(color: Int, key: String) {
         sharedPreferences.edit().putInt(key, color).apply()
-        Log.i("LOL", sharedPreferences.getInt(key, R.color.turquoise).toString())
     }
 }

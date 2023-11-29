@@ -5,18 +5,17 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messenger.R
-import com.example.messenger.data.User
-import com.example.messenger.databinding.DialogProfileDetailsBinding
+import com.example.messenger.data.model.User
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.hdodenhof.circleimageview.CircleImageView
 import javax.inject.Inject
 
 class FriendsSearchAdapter @Inject constructor(
     private val context: Context,
-    private val layoutInflater: LayoutInflater,
     private val viewModel: AddFriendViewModel
 ) :
     RecyclerView.Adapter<FriendsSearchAdapter.ViewHolder>() {
@@ -58,30 +57,32 @@ class FriendsSearchAdapter @Inject constructor(
         holder.login.text = user.login
 
         viewModel.loadImage(images[position], holder.mainPhoto)
-        holder.view.setOnClickListener { createDialogWithProfileDetails(user, position)}
+        holder.view.setOnClickListener { createDialogWithProfileDetails(user, position, holder.view)}
     }
 
-    private fun disableAddFriendButton(view: DialogProfileDetailsBinding) {
-        view.addToFriendsButton.visibility = View.GONE
-        view.requestSent.visibility = View.VISIBLE
+    private fun disableAddFriendButton(view: View) {
+        view.findViewById<Button>(R.id.add_to_friends_button).visibility = View.GONE
+        view.findViewById<TextView>(R.id.request_sent).visibility = View.VISIBLE
     }
 
-    private fun createDialogWithProfileDetails(clickedUser: User, position: Int) {
-        val view = DialogProfileDetailsBinding.inflate(layoutInflater)
+    private fun createDialogWithProfileDetails(clickedUser: User, position: Int, viewGroup: View) {
+        val view = LayoutInflater.from(context).inflate(
+            R.layout.dialog_profile_details, viewGroup as ViewGroup, false
+        )
 
-        view.fullName.text = clickedUser.fullName
-        view.login.text = clickedUser.login
-        view.friends.text =
+        view.findViewById<TextView>(R.id.full_name).text = clickedUser.fullName
+        view.findViewById<TextView>(R.id.login).text = clickedUser.login
+        view.findViewById<TextView>(R.id.friends).text =
             context.getString(R.string.dialog_friends_quantity_text, clickedUser.friends.size)
 
-        viewModel.loadImage(images[position], view.mainPhoto)
+        viewModel.loadImage(images[position], view.findViewById(R.id.main_photo))
 
         // checking if friend request has been already sent to this user
         viewModel.currentUserId.value?.let { id ->
             if (clickedUser.receivedFriendRequests.contains(id)) {
                 disableAddFriendButton(view)
             } else {
-                view.addToFriendsButton.setOnClickListener {
+                view.findViewById<Button>(R.id.add_to_friends_button).setOnClickListener {
                     sendFriendRequest(clickedUser)
                     disableAddFriendButton(view)
                 }
@@ -89,7 +90,7 @@ class FriendsSearchAdapter @Inject constructor(
         }
 
         MaterialAlertDialogBuilder(context)
-            .setView(view.root)
+            .setView(view)
             .show()
     }
 

@@ -1,6 +1,7 @@
 package com.example.messenger.domain
 
-import com.example.messenger.data.User
+import android.util.Log
+import com.example.messenger.data.model.User
 import com.example.messenger.data.repositories.FirebaseUser
 import com.example.messenger.data.repositories.UserRepository
 import kotlinx.coroutines.CompletableDeferred
@@ -10,11 +11,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
 class GetCurrentUserObjectUseCase @Inject constructor(
     private val userRepository: UserRepository,
 ) {
-
     var currentUser: CompletableDeferred<User> = CompletableDeferred()
 
     init {
@@ -25,6 +26,7 @@ class GetCurrentUserObjectUseCase @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             userRepository.getCurrentUserId()?.let { id ->
                 val user = userRepository.getUserById(id)
+                Log.i("User", user.toString())
                 currentUser.complete(user)
             }
         }

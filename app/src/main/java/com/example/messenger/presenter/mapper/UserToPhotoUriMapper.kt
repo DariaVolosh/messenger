@@ -1,7 +1,7 @@
 package com.example.messenger.presenter.mapper
 
 import android.net.Uri
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject

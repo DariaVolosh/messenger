@@ -1,9 +1,9 @@
 package com.example.messenger.data.repositories
 
 import android.net.Uri
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.room.Repository
-import com.example.messenger.room.UserEntity
+import com.example.messenger.room.model.UserEntity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase

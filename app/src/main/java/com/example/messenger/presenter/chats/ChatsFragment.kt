@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.messenger.MyApp
 import com.example.messenger.R
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.databinding.FragmentChatsBinding
 import com.example.messenger.presenter.addFriend.AddFriendFragment
 import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener, ChatsAdapter.LoadImage {
     private lateinit var binding: FragmentChatsBinding
-    lateinit var adapter: ChatsAdapter
+    private lateinit var adapter: ChatsAdapter
     private var orientation = 0
     @Inject lateinit var viewModel: ChatsViewModel
 
@@ -66,10 +66,7 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener, ChatsAdap
     }
 
     private fun injectDependencies() {
-        (requireActivity().application as MyApp).appComponent.create(
-            requireContext(),
-            layoutInflater
-        ).inject(this)
+        (requireActivity().application as MyApp).appComponent.inject(this)
     }
 
     private fun observeMainPhoto() {

@@ -6,5 +6,9 @@ import com.example.messenger.di.DaggerAppComponent
 import javax.inject.Inject
 
 class MyApp @Inject constructor() : Application() {
-    val appComponent: AppComponent.Factory = DaggerAppComponent.factory()
+    lateinit var appComponent: AppComponent
+    override fun onCreate() {
+        super.onCreate()
+        appComponent = DaggerAppComponent.factory().create(applicationContext)
+    }
 }

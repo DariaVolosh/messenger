@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.NetworkUtils
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.domain.GetAndSaveMessagesColorUseCase
 import com.example.messenger.domain.GetCurrentUserIdUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
@@ -16,7 +16,8 @@ import com.example.messenger.domain.GetMyImageUseCase
 import com.example.messenger.domain.GetRoomUserEntityByIdUseCase
 import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.SignOutUserUseCase
-import com.example.messenger.room.UserEntity
+import com.example.messenger.room.model.UserEntity
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -80,6 +81,7 @@ class SettingsViewModel @Inject constructor(
 
     fun signOutUser() {
         viewModelScope.launch {
+            getCurrentUserObjectUseCase.currentUser = CompletableDeferred()
             signOutUserUseCase.signOutUser()
         }
     }

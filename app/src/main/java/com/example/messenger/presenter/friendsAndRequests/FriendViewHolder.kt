@@ -3,10 +3,11 @@ package com.example.messenger.presenter.friendsAndRequests
 import android.net.Uri
 import android.view.View
 import android.widget.TextView
-import androidx.core.os.bundleOf
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.example.messenger.R
-import com.example.messenger.presenter.messages.MessagesFragment
+import com.example.messenger.data.model.User
 import de.hdodenhof.circleimageview.CircleImageView
 
 class FriendViewHolder(itemView: View, private val viewModel: FriendsViewModel):
@@ -25,13 +26,17 @@ class FriendViewHolder(itemView: View, private val viewModel: FriendsViewModel):
     }
 
     private fun openChat(uId: String) {
-        val bundle = bundleOf()
-        bundle.putString(MessagesFragment.FRIEND_UID, uId)
         viewModel.getUserObjectById(uId)
         itemView.findViewTreeLifecycleOwner()?.let { lifecycleOwner ->
-            viewModel.friend.observe(lifecycleOwner) {
-                viewModel.openChat()
+            val observer = object : Observer<User> {
+                override fun onChanged(user: User) {
+                    viewModel.openChat()
+                    viewModel.friend = MutableLiveData<User>()
+                    viewModel.friend.removeObserver(this)
+                }
             }
+
+            viewModel.friend.observe(lifecycleOwner, observer)
         }
     }
 }

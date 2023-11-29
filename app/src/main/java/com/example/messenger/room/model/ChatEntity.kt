@@ -1,7 +1,8 @@
-package com.example.messenger.room
+package com.example.messenger.room.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.messenger.room.model.UserEntity
 
 @Entity(tableName = "chats")
 data class ChatEntity (

@@ -1,12 +1,13 @@
 package com.example.messenger.presenter.messages
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.messenger.data.Message
-import com.example.messenger.data.User
+import com.example.messenger.data.model.Message
+import com.example.messenger.data.model.User
 
 import com.example.messenger.domain.AddChatToChatsListUseCase
 import com.example.messenger.domain.AddMessagesListenerUseCase
@@ -42,6 +43,7 @@ class MessagesViewModel @Inject constructor(
         getCurrentUserObject()
     }
 
+    @SuppressLint("NullSafeMutableLiveData")
     private fun getCurrentUserObject() {
         viewModelScope.launch {
             currentUser.value = getCurrentUserObjectUseCase.currentUser.await()

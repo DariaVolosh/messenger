@@ -7,12 +7,13 @@ import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.messenger.data.Message
+import com.example.messenger.data.model.Message
 import com.example.messenger.data.NetworkUtils
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.FetchChatsUseCase
 import com.example.messenger.domain.FetchLastMessagesUseCase
+import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetMyImageUseCase
 import com.example.messenger.domain.LoadImageUseCase
 import kotlinx.coroutines.launch
@@ -25,6 +26,7 @@ class ChatsViewModel @Inject constructor(
     private val fetchLastMessagesUseCase: FetchLastMessagesUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
     private val loadImageUseCase: LoadImageUseCase,
+    private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase,
     private val networkUtils: NetworkUtils
 ) : ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()

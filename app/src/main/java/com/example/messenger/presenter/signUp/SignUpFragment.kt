@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.messenger.MyApp
 import com.example.messenger.R
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.databinding.FragmentSignUpBinding
 import javax.inject.Inject
 
@@ -43,10 +43,7 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
     }
 
     private fun injectDependencies() {
-        (requireActivity().application as MyApp).appComponent.create(
-            requireContext(),
-            layoutInflater
-        ).inject(this)
+        (requireActivity().application as MyApp).appComponent.inject(this)
     }
 
 

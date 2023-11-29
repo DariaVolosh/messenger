@@ -1,7 +1,7 @@
 package com.example.messenger.domain
 
 import android.net.Uri
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.data.repositories.ImagesRepository
 import com.example.messenger.data.repositories.UserRepository
 import kotlinx.coroutines.CompletableDeferred
@@ -21,11 +21,13 @@ class SignUpUserUseCase @Inject constructor(
             val userRegistered: CompletableDeferred<Boolean> = CompletableDeferred()
 
             if (userCreated) {
+                getCurrentUserObjectUseCase.currentUser = CompletableDeferred()
                 getCurrentUserObjectUseCase.getCurrentUserObject()
 
                 val imageUploaded = imagesRepository.uploadPhoto(photoUri, user)
                 if (!imageUploaded) {
                     signOutUserUseCase.signOutUser()
+                    getCurrentUserObjectUseCase.currentUser = CompletableDeferred()
                     getCurrentUserObjectUseCase.getCurrentUserObject()
                     userRegistered.complete(false)
                 } else {

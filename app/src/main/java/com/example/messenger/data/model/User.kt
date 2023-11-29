@@ -1,7 +1,8 @@
-package com.example.messenger.data
+package com.example.messenger.data.model
 
-import javax.inject.Inject
+import androidx.annotation.Keep
 
+@Keep
 data class User(
     var fullName: String,
     var email: String,
@@ -10,8 +11,7 @@ data class User(
     var friends: MutableList<String>,
     var receivedFriendRequests: MutableList<String>,
     var chats: MutableList<String>) {
-    @Inject constructor() :
-            this("", "", "", "",
+    constructor() : this("", "", "", "",
                 mutableListOf(), mutableListOf(), mutableListOf()
             )
 }

@@ -1,7 +1,6 @@
 package com.example.messenger.di
 
 import android.content.Context
-import android.view.LayoutInflater
 import com.example.messenger.di.modules.FirebaseModule
 import com.example.messenger.di.modules.ImageLoaderModule
 import com.example.messenger.di.modules.MapperModule
@@ -42,8 +41,7 @@ interface AppComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            @BindsInstance context: Context,
-            @BindsInstance layoutInflater: LayoutInflater
+            @BindsInstance context: Context
         ): AppComponent
     }
 }

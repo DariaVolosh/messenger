@@ -1,5 +1,8 @@
-package com.example.messenger.data
+package com.example.messenger.data.model
 
+import androidx.annotation.Keep
+
+@Keep
 data class Message(
     val timestamp: Long,
     val text: String,

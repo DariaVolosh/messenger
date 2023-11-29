@@ -8,8 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messenger.R
-import com.example.messenger.data.Message
-import com.example.messenger.data.User
+import com.example.messenger.data.model.Message
+import com.example.messenger.data.model.User
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ChatsAdapter constructor(

@@ -1,11 +1,12 @@
 package com.example.messenger.presenter.friendsAndRequests
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetDataModelListFromUserListUseCase
@@ -29,7 +30,7 @@ class FriendsViewModel @Inject constructor(
 ): ViewModel() {
     val friendsAndRequestsList = MutableLiveData<List<User>>()
     val images = MutableLiveData<List<Uri>>()
-    val friend = MutableLiveData<User>()
+    var friend = MutableLiveData<User>()
     val currentUser = MutableLiveData<User>()
     val chatOpened = MutableLiveData<Boolean>()
     val dataModelList = MutableLiveData<List<DataModel>>()
@@ -43,6 +44,7 @@ class FriendsViewModel @Inject constructor(
         chatOpened.value = false
     }
 
+    @SuppressLint("NullSafeMutableLiveData")
     private fun getCurrentUserObject() {
         viewModelScope.launch {
             currentUser.value = getCurrentUserObjectUseCase.currentUser.await()
