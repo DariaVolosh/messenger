@@ -1,6 +1,6 @@
 package com.example.messenger.domain
 
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.data.repositories.FirebaseUser
 import com.example.messenger.data.repositories.UserRepository
 import kotlinx.coroutines.CompletableDeferred

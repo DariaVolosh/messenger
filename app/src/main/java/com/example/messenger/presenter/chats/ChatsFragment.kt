@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.messenger.MyApp
 import com.example.messenger.R
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.databinding.FragmentChatsBinding
 import com.example.messenger.presenter.addFriend.AddFriendFragment
 import com.example.messenger.presenter.friendsAndRequests.FriendsFragment

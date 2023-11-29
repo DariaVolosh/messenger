@@ -5,7 +5,7 @@ import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetDataModelListFromUserListUseCase

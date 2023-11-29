@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.messenger.MyApp
-import com.example.messenger.data.Message
-import com.example.messenger.data.User
+import com.example.messenger.data.model.Message
+import com.example.messenger.data.model.User
 import com.example.messenger.databinding.FragmentMessagesBinding
 import javax.inject.Inject
 

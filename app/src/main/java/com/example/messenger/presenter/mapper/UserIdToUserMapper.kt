@@ -1,6 +1,6 @@
 package com.example.messenger.presenter.mapper
 
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject

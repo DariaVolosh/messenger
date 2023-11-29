@@ -2,7 +2,7 @@ package com.example.messenger.data.repositories
 
 import android.net.Uri
 import android.util.Log
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.CompletableDeferred

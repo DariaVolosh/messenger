@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.NetworkUtils
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.domain.GetAndSaveMessagesColorUseCase
 import com.example.messenger.domain.GetCurrentUserIdUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase

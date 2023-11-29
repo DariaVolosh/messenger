@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messenger.R
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.databinding.DialogProfileDetailsBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.hdodenhof.circleimageview.CircleImageView

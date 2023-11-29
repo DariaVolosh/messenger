@@ -18,7 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.messenger.MyApp
 import com.example.messenger.R
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.databinding.FragmentSignUpBinding
 import javax.inject.Inject
 

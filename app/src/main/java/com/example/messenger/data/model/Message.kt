@@ -1,4 +1,4 @@
-package com.example.messenger.data
+package com.example.messenger.data.model
 
 data class Message(
     val timestamp: Long,

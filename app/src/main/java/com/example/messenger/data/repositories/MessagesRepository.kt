@@ -1,7 +1,7 @@
 package com.example.messenger.data.repositories
 
-import com.example.messenger.data.Message
-import com.example.messenger.data.User
+import com.example.messenger.data.model.Message
+import com.example.messenger.data.model.User
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

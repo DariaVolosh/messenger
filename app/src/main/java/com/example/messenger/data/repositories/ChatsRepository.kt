@@ -1,6 +1,6 @@
 package com.example.messenger.data.repositories
 
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await

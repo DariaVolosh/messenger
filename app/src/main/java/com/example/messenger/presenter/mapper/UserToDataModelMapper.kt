@@ -1,6 +1,6 @@
 package com.example.messenger.presenter.mapper
 
-import com.example.messenger.data.User
+import com.example.messenger.data.model.User
 import com.example.messenger.presenter.friendsAndRequests.DataModel
 import javax.inject.Inject
 
