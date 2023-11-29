@@ -66,10 +66,7 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener, ChatsAdap
     }
 
     private fun injectDependencies() {
-        (requireActivity().application as MyApp).appComponent.create(
-            requireContext(),
-            layoutInflater
-        ).inject(this)
+        (requireActivity().application as MyApp).appComponent.inject(this)
     }
 
     private fun observeMainPhoto() {

@@ -13,7 +13,9 @@ import com.example.messenger.domain.SearchUsersByLoginUseCase
 import com.example.messenger.domain.UpdateUserUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AddFriendViewModel @Inject constructor(
     private val searchUsersByLoginUseCase: SearchUsersByLoginUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,

@@ -43,10 +43,7 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
     }
 
     private fun injectDependencies() {
-        (requireActivity().application as MyApp).appComponent.create(
-            requireContext(),
-            layoutInflater
-        ).inject(this)
+        (requireActivity().application as MyApp).appComponent.inject(this)
     }
 
 
@@ -99,7 +96,10 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
 
         photoUri?.let { photoUri -> viewModel.signUpUser(user, password, photoUri) }
         viewModel.signedUp.observe(viewLifecycleOwner) {signedUp ->
-            if (signedUp) findNavController().navigate(R.id.chats_fragment)
+            if (signedUp) {
+                findNavController().navigate(R.id.chats_fragment)
+                viewModel.getCurrentUserObject()
+            }
         }
     }
 }

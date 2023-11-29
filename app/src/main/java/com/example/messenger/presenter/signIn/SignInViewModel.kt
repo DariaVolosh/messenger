@@ -17,12 +17,17 @@ class SignInViewModel @Inject constructor(
     val signedIn = MutableLiveData<Boolean>()
 
     init {
-        getCurrentUserObject()
+        getCurrentFirebaseUser()
     }
 
-    private fun getCurrentUserObject() {
+    private fun getCurrentFirebaseUser() {
         currentUser.value = getCurrentUserObjectUseCase.getFirebaseUser()
     }
+
+    fun getCurrentUserObject() {
+        getCurrentUserObjectUseCase.getCurrentUserObject()
+    }
+
     fun signInUser(email: String, password: String) {
         viewModelScope.launch {
             signedIn.value = signInUserUseCase.signInUser(email, password)

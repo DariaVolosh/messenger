@@ -41,7 +41,10 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         }
 
         viewModel.signedIn.observe(viewLifecycleOwner) {signedIn ->
-            if (signedIn) findNavController().navigate(R.id.chats_fragment)
+            if (signedIn) {
+                findNavController().navigate(R.id.chats_fragment)
+                viewModel.getCurrentUserObject()
+            }
         }
     }
 
@@ -53,14 +56,15 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
 
     private fun checkIfUserSignedIn() {
         viewModel.currentUser.observe(viewLifecycleOwner) {user ->
-            user?.let { findNavController().navigate(R.id.chats_fragment) }
+            user?.let {
+                findNavController().navigate(R.id.chats_fragment)
+            }
         }
     }
 
     private fun injectDependencies() {
-        (requireActivity().application as MyApp).appComponent.create(
-            requireContext(),
-            layoutInflater
-        ).inject(this)
+        val myApp = requireActivity().application as MyApp
+        myApp.createAppComponent(requireContext(), layoutInflater)
+        myApp.appComponent.inject(this)
     }
 }
