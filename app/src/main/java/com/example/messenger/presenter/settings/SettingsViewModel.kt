@@ -16,7 +16,7 @@ import com.example.messenger.domain.GetMyImageUseCase
 import com.example.messenger.domain.GetRoomUserEntityByIdUseCase
 import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.SignOutUserUseCase
-import com.example.messenger.room.UserEntity
+import com.example.messenger.room.model.UserEntity
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject

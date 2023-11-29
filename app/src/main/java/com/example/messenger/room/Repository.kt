@@ -1,5 +1,6 @@
 package com.example.messenger.room
 
+import com.example.messenger.room.model.UserEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

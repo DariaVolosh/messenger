@@ -1,4 +1,4 @@
-package com.example.messenger.room
+package com.example.messenger.room.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
