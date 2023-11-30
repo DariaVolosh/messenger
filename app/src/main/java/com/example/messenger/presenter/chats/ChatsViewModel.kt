@@ -7,8 +7,8 @@ import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.messenger.data.model.Message
 import com.example.messenger.data.NetworkUtils
+import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
 import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.FetchChatsUseCase
