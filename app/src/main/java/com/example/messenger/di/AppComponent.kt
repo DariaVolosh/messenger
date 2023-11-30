@@ -24,10 +24,10 @@ import javax.inject.Singleton
     RoomDatabaseModule::class,
     FirebaseModule::class,
     RepositoriesModule::class,
-    UserModule::class,
     ImageLoaderModule::class,
     MapperModule::class,
-    SharedPrefsModule::class
+    SharedPrefsModule::class,
+    UserModule::class
 ])
 @Singleton
 interface AppComponent {

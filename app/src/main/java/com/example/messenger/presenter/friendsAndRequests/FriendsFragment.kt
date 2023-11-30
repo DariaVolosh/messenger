@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.messenger.MyApp
@@ -17,8 +18,8 @@ import javax.inject.Inject
 
 class FriendsFragment: Fragment(R.layout.fragment_friends) {
     private lateinit var binding : FragmentFriendsBinding
+    private lateinit var friendsAndRequestsAdapter: DataAdapter
     @Inject lateinit var viewModel: FriendsViewModel
-    @Inject lateinit var friendsAndRequestsAdapter: DataAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +41,7 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
                 val bundle = bundleOf()
                 bundle.putString(MessagesFragment.FRIEND_UID, viewModel.friend.value?.userId)
                 findNavController().navigate(R.id.messages_fragment, bundle)
+                viewModel.friend = MutableLiveData()
             }
         }
 
@@ -51,6 +53,7 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
     }
 
     private fun initializeAdapter() {
+        friendsAndRequestsAdapter = DataAdapter(viewModel::loadImage, this::openChat, this::addFriend)
         binding.friendsAndFriendsRequestsList.adapter = friendsAndRequestsAdapter
         binding.friendsAndFriendsRequestsList.layoutManager = LinearLayoutManager(requireContext())
     }
@@ -83,6 +86,36 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
 
         viewModel.images.observe(viewLifecycleOwner) {images ->
             friendsAndRequestsAdapter.setImages(images)
+        }
+    }
+
+    private fun openChat(userId: String) {
+        val bundle = bundleOf()
+        bundle.putString(MessagesFragment.FRIEND_UID, userId)
+        viewModel.getUserObjectById(userId)
+        viewModel.friend.observe(viewLifecycleOwner) {
+            viewModel.openChat()
+        }
+    }
+
+    private fun addFriend(clickedUserId: String) {
+        viewModel.currentUser.observe(viewLifecycleOwner) { currentUser ->
+            currentUser.receivedFriendRequests.remove(clickedUserId)
+            currentUser.friends += clickedUserId
+            viewModel.updateUser(currentUser)
+            viewModel.getUserObjectById(clickedUserId)
+        }
+
+        viewModel.friend.observe(viewLifecycleOwner){ friend ->
+            val currentUser = viewModel.currentUser.value
+            currentUser?.let {user ->
+                friend.friends += user.userId
+                viewModel.updateUser(friend)
+                val friends = user.friends
+                val requests = user.receivedFriendRequests
+                val friendsAndRequests = friends + requests
+                viewModel.getUsersFromUId(friendsAndRequests)
+            }
         }
     }
 }

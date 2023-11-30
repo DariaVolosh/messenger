@@ -1,19 +1,16 @@
 package com.example.messenger.presenter.chats
 
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.messenger.MyApp
 import com.example.messenger.R
-import com.example.messenger.data.model.User
 import com.example.messenger.databinding.FragmentChatsBinding
 import com.example.messenger.presenter.addFriend.AddFriendFragment
 import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
@@ -22,11 +19,11 @@ import com.example.messenger.presenter.settings.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import javax.inject.Inject
 
-class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener, ChatsAdapter.LoadImage {
-    private lateinit var binding: FragmentChatsBinding
-    lateinit var adapter: ChatsAdapter
-    private var orientation = 0
+class ChatsFragment : Fragment() {
     @Inject lateinit var viewModel: ChatsViewModel
+    private lateinit var binding: FragmentChatsBinding
+    private lateinit var adapter: ChatsAdapter
+    private var orientation = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,9 +90,7 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener, ChatsAdap
     }
 
     private fun initializeAdapter() {
-        // manually inject adapter, because i need to pass a listener to it
-        adapter = ChatsAdapter(
-            this, this)
+        adapter = ChatsAdapter(viewModel::loadImage, this::displayChat)
         binding.chatsList.adapter = adapter
         binding.chatsList.layoutManager = LinearLayoutManager(requireContext())
     }
@@ -146,9 +141,9 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener, ChatsAdap
         }
     }
 
-    override fun onDisplayMessages(friend: User) {
+    private fun displayChat(friendId: String) {
         val bundle = bundleOf()
-        bundle.putString(MessagesFragment.FRIEND_UID, friend.userId)
+        bundle.putString(MessagesFragment.FRIEND_UID, friendId)
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             val messagesFragment = MessagesFragment()
             messagesFragment.arguments = bundle
@@ -158,9 +153,5 @@ class ChatsFragment : Fragment(), ChatsAdapter.MessageDisplayListener, ChatsAdap
         } else {
             findNavController().navigate(R.id.messages_fragment, bundle)
         }
-    }
-
-    override fun loadImage(uri: Uri, imageView: ImageView) {
-        viewModel.loadImage(uri, imageView)
     }
 }

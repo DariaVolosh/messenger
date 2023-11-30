@@ -12,11 +12,10 @@ import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
 import de.hdodenhof.circleimageview.CircleImageView
 
-class ChatsAdapter constructor(
-    private val messagesDisplay: MessageDisplayListener,
-    private val loadImage: LoadImage
-):
-    RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
+class ChatsAdapter(
+    private val loadImage: (Uri, ImageView) -> Unit,
+    private val displayChat: (String) -> Unit
+): RecyclerView.Adapter<ChatsAdapter.ViewHolder>() {
 
     private var chats = listOf<User>()
     private var images = listOf<Uri>()
@@ -50,24 +49,16 @@ class ChatsAdapter constructor(
         if (position < images.size && position < lastMessages.size && position < chats.size) {
             val friend = chats[position]
             holder.name.text = friend.fullName
-            loadImage.loadImage(images[position], holder.mainPhoto)
+            holder.message.text = lastMessages[position].text
 
+            loadImage(images[position], holder.mainPhoto)
 
             holder.view.setOnClickListener {
-                messagesDisplay.onDisplayMessages(friend)
+                displayChat(friend.userId)
             }
 
-            holder.message.text = lastMessages[position].text
         }
     }
 
     override fun getItemCount() = chats.size
-
-    interface MessageDisplayListener {
-        fun onDisplayMessages(friend: User)
-    }
-
-    interface LoadImage {
-        fun loadImage(uri: Uri, imageView: ImageView)
-    }
 }

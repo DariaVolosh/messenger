@@ -24,9 +24,9 @@ import javax.inject.Inject
 
 
 class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
+    @Inject lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpBinding
     private var photoUri : Uri? = null
-    @Inject lateinit var viewModel: SignUpViewModel
 
 
     override fun onCreateView(

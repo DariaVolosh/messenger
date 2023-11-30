@@ -3,12 +3,14 @@ package com.example.messenger.presenter.friendsAndRequests
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messenger.R
-import javax.inject.Inject
 
-class DataAdapter @Inject constructor (
-    val viewModel: FriendsViewModel
+class DataAdapter (
+    private val loadImage: (Uri, ImageView) -> Unit,
+    private val openChat: (String) -> Unit,
+    private val addFriend: (String) -> Unit
 ): RecyclerView.Adapter<DataAdapterViewHolder>(){
 
     companion object {
@@ -34,11 +36,13 @@ class DataAdapter @Inject constructor (
             TYPE_FRIEND -> FriendViewHolder(LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.holder_friend, parent, false),
-                viewModel)
+                loadImage,
+                openChat)
             TYPE_FRIEND_REQUEST -> FriendRequestViewHolder(LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.holder_friend_request, parent, false),
-                viewModel)
+                loadImage,
+                addFriend)
             TYPE_FRIEND_REQUESTS_TEXT -> FriendRequestsTextViewHolder(LayoutInflater
                     .from(parent.context)
                     .inflate(R.layout.friends_requests_text, parent, false)

@@ -9,13 +9,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.messenger.MyApp
 import com.example.messenger.R
 import com.example.messenger.databinding.FragmentSignInBinding
-import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
 class SignInFragment : Fragment(R.layout.fragment_sign_in) {
     private lateinit var binding: FragmentSignInBinding
     @Inject lateinit var viewModel: SignInViewModel
-    @Inject lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,

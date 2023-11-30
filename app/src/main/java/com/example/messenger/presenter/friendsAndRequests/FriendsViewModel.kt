@@ -29,7 +29,7 @@ class FriendsViewModel @Inject constructor(
 ): ViewModel() {
     val friendsAndRequestsList = MutableLiveData<List<User>>()
     val images = MutableLiveData<List<Uri>>()
-    val friend = MutableLiveData<User>()
+    var friend = MutableLiveData<User>()
     val currentUser = MutableLiveData<User>()
     val chatOpened = MutableLiveData<Boolean>()
     val dataModelList = MutableLiveData<List<DataModel>>()
