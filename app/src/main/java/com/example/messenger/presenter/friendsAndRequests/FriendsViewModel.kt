@@ -25,7 +25,8 @@ class FriendsViewModel @Inject constructor(
     private val updateUserUseCase: UpdateUserUseCase,
     private val getUserObjectByIdUseCase: GetUserObjectByIdUseCase,
     private val getDataModelListFromUserListUseCase: GetDataModelListFromUserListUseCase,
-    private val loadImageUseCase: LoadImageUseCase
+    private val loadImageUseCase: LoadImageUseCase,
+
 ): ViewModel() {
     val friendsAndRequestsList = MutableLiveData<List<User>>()
     val images = MutableLiveData<List<Uri>>()

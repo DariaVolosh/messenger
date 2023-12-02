@@ -2,6 +2,7 @@ package com.example.messenger.di
 
 import android.content.Context
 import android.view.LayoutInflater
+import com.example.messenger.MyApp
 import com.example.messenger.di.modules.FirebaseModule
 import com.example.messenger.di.modules.ImageLoaderModule
 import com.example.messenger.di.modules.MapperModule
@@ -36,6 +37,7 @@ interface AppComponent {
     fun inject(fragment: MessagesFragment)
     fun inject(fragment: SettingsFragment)
     fun inject(fragment: SignUpFragment)
+    fun inject(myApp: MyApp)
 
     @Component.Factory
     interface Factory {

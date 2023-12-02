@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.messenger.MyApp
+import com.example.messenger.R
 import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
 import com.example.messenger.databinding.FragmentMessagesBinding
@@ -33,6 +35,7 @@ class MessagesFragment : Fragment() {
         initializeIds()
         getCurrentMessagesPath()
         populateToolbarWithFriendInfo()
+        listenForFriendOnlineStatus()
 
         binding.sendMessageButton.setOnClickListener { sendMessage() }
 
@@ -44,13 +47,12 @@ class MessagesFragment : Fragment() {
     }
 
     private fun getCurrentMessagesPath() {
-        var currentUser = User(
-            "","","","", mutableListOf(), mutableListOf(), mutableListOf(), false
-        )
+        var currentUser = User()
         viewModel.currentUser.observe(viewLifecycleOwner) {user ->
             currentUser = user
             viewModel.getExistingMessagesPath(friendId)
         }
+
         viewModel.existingMessagesPath.observe(viewLifecycleOwner) {
             initializeAdapter()
             listenForMessages(currentUser)
@@ -110,6 +112,24 @@ class MessagesFragment : Fragment() {
             viewModel.sendMessage(message)
             binding.messageEditText.text.clear()
             viewModel.addChatToChatsList(friendId)
+        }
+    }
+
+    private fun listenForFriendOnlineStatus() {
+        viewModel.userOnlineStatus.observe(viewLifecycleOwner) { online ->
+            binding.onlineStatus.apply {
+                if (online) {
+                    text = getString(R.string.active_now)
+                    setTextColor(ContextCompat.getColor(context, R.color.green))
+                } else {
+                    text = getString(R.string.offline)
+                    setTextColor(ContextCompat.getColor(context, R.color.red))
+                }
+            }
+
+            binding.onlineStatus.text =
+                if (online) getString(R.string.active_now)
+                else getString(R.string.offline)
         }
     }
 }

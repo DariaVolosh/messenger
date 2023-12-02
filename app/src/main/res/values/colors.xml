@@ -11,4 +11,5 @@
     <color name="colorControlActivated">#FFFFFF</color>
     <color name="colorControlHighlight">#FFFFFF</color>
     <color name="green">#009229</color>
+    <color name="red">#FF980E0E</color>
 </resources>

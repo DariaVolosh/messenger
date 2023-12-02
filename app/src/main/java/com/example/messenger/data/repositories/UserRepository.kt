@@ -4,8 +4,16 @@ import android.net.Uri
 import com.example.messenger.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -23,6 +31,9 @@ interface UserRepository {
     fun signOut()
 
     fun getFirebaseUser(): FirebaseUser?
+    suspend fun onUserOnlineStatusListener(id: String): Flow<Boolean>
+
+    fun setOnlineStatus(online: Boolean, id: String)
 }
 
 class FirebaseUser @Inject constructor(
@@ -30,13 +41,10 @@ class FirebaseUser @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : UserRepository {
     override suspend fun getUserById(id: String): User {
-        val currentUser = CompletableDeferred<User>()
         val userSnapshot = firebaseDatabase.getReference("users/$id").get().await()
 
-        currentUser.complete(userSnapshot.getValue(User::class.java) ?:
-        throw IllegalArgumentException("User not found"))
-
-        return currentUser.await()
+        return userSnapshot.getValue(User::class.java)
+            ?: throw IllegalArgumentException("User not found")
     }
 
     override suspend fun getUsersByLogin(
@@ -75,6 +83,9 @@ class FirebaseUser @Inject constructor(
         val signedIn = CompletableDeferred<Boolean>()
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
             signedIn.complete(true)
+            getCurrentUserId()?.let { id ->
+                setOnlineStatus(true, id)
+            }
         }.addOnFailureListener {
             signedIn.complete(false)
         }
@@ -110,4 +121,23 @@ class FirebaseUser @Inject constructor(
     }
 
     override fun getFirebaseUser(): FirebaseUser? = firebaseAuth.currentUser
+    override suspend fun onUserOnlineStatusListener(id: String): Flow<Boolean>  {
+        val flow = MutableSharedFlow<Boolean>()
+        firebaseDatabase.getReference("users/$id/online")
+            .addValueEventListener(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        flow.emit(snapshot.getValue(Boolean::class.java) ?: false)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+
+        return flow
+    }
+
+    override fun setOnlineStatus(online: Boolean, id: String) {
+        firebaseDatabase.getReference("users/$id/online").setValue(online)
+    }
 }

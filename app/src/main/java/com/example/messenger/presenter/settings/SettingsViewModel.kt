@@ -6,13 +6,13 @@ import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.messenger.data.NetworkUtils
 import com.example.messenger.data.model.User
 import com.example.messenger.domain.GetAndSaveMessagesColorUseCase
 import com.example.messenger.domain.GetCurrentUserIdUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetMyImageUseCase
 import com.example.messenger.domain.LoadImageUseCase
+import com.example.messenger.domain.SetUserOnlineStatusUseCase
 import com.example.messenger.domain.SignOutUserUseCase
 import com.example.messenger.room.model.UserEntity
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ class SettingsViewModel @Inject constructor(
     private val signOutUserUseCase: SignOutUserUseCase,
     private val loadImageUseCase: LoadImageUseCase,
     private val getAndSaveMessagesColorUseCase: GetAndSaveMessagesColorUseCase,
-    private val networkUtils: NetworkUtils,
+    private val setUserOnlineStatusUseCase: SetUserOnlineStatusUseCase
 ): ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
     val mainPhotoBitmap = MutableLiveData<Bitmap>()
@@ -65,6 +65,8 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             signOutUserUseCase.signOutUser()
         }
+
+        setUserOnlineStatus(false)
     }
 
     fun loadImage(uri: Uri, imageView: ImageView) {
@@ -76,4 +78,10 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun getMessagesColor(key: String) = getAndSaveMessagesColorUseCase.getMessagesColor(key)
+
+    private fun setUserOnlineStatus(boolean: Boolean) {
+        currentUserId.value?.let { id ->
+            setUserOnlineStatusUseCase.setOnlineStatus(boolean, id)
+        }
+    }
 }

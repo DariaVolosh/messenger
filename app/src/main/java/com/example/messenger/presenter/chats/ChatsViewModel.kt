@@ -1,13 +1,11 @@
 package com.example.messenger.presenter.chats
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.messenger.data.NetworkUtils
 import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
 import com.example.messenger.domain.DownloadImagesUseCase
@@ -16,7 +14,6 @@ import com.example.messenger.domain.FetchLastMessagesUseCase
 import com.example.messenger.domain.GetMyImageUseCase
 import com.example.messenger.domain.LoadImageUseCase
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 class ChatsViewModel @Inject constructor(
@@ -25,7 +22,6 @@ class ChatsViewModel @Inject constructor(
     private val fetchLastMessagesUseCase: FetchLastMessagesUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
     private val loadImageUseCase: LoadImageUseCase,
-    private val networkUtils: NetworkUtils
 ) : ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
     val mainPhotoBitmap = MutableLiveData<Bitmap>()
@@ -38,6 +34,7 @@ class ChatsViewModel @Inject constructor(
         downloadImage()
     }
 
+
     private fun fetchChats() {
         viewModelScope.launch {
             val list = fetchChatsUseCase.fetchChats()
@@ -48,15 +45,8 @@ class ChatsViewModel @Inject constructor(
 
     private fun downloadImage() {
         viewModelScope.launch {
-            val isInternetAvailable = networkUtils.isInternetAvailable()
             val uri = getMyImageUseCase.getMyImage()
-            if (isInternetAvailable) {
-                mainPhotoUri.value = uri
-            } else {
-                val localFile = File(uri.toString())
-                val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                mainPhotoBitmap.value = bitmap
-            }
+            mainPhotoUri.value = uri
         }
     }
 

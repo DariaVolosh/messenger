@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
-
 import com.example.messenger.domain.AddChatToChatsListUseCase
 import com.example.messenger.domain.AddMessagesListenerUseCase
 import com.example.messenger.domain.GetAndSaveMessagesColorUseCase
@@ -15,6 +14,7 @@ import com.example.messenger.domain.GetConversationReferenceUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetImageByUserIdUseCase
 import com.example.messenger.domain.GetUserObjectByIdUseCase
+import com.example.messenger.domain.ListenForUserOnlineStatusUseCase
 import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.SendMessageUseCase
 import com.google.firebase.database.DatabaseReference
@@ -30,13 +30,15 @@ class MessagesViewModel @Inject constructor(
     private val getConversationReferenceUseCase: GetConversationReferenceUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val loadImageUseCase: LoadImageUseCase,
-    private val getAndSaveMessagesColorUseCase: GetAndSaveMessagesColorUseCase
+    private val getAndSaveMessagesColorUseCase: GetAndSaveMessagesColorUseCase,
+    private val listenForFriendOnlineStatusUseCase: ListenForUserOnlineStatusUseCase,
 ): ViewModel() {
     val friendObject = MutableLiveData<User>()
     val friendPhotoUri = MutableLiveData<Uri>()
     val existingMessagesPath = MutableLiveData<DatabaseReference>()
     val messages = MutableLiveData<List<Message>>()
     val currentUser = MutableLiveData<User>()
+    val userOnlineStatus = MutableLiveData<Boolean>()
 
     init {
         getCurrentUserObject()
@@ -52,6 +54,9 @@ class MessagesViewModel @Inject constructor(
         viewModelScope.launch {
             val fetchedFriend = getUserObjectByIdUseCase.getUserById(id)
             friendObject.value = fetchedFriend
+            friendObject.value?.let {friendUser ->
+                listenForFriendOnlineStatus(friendUser.userId)
+            }
         }
     }
 
@@ -108,4 +113,12 @@ class MessagesViewModel @Inject constructor(
     }
 
     fun getMessagesColor(key: String) = getAndSaveMessagesColorUseCase.getMessagesColor(key)
+
+    private fun listenForFriendOnlineStatus(id: String) {
+        viewModelScope.launch {
+            listenForFriendOnlineStatusUseCase.getOnlineStatus(id).collect { online ->
+                userOnlineStatus.value = online
+            }
+        }
+    }
 }

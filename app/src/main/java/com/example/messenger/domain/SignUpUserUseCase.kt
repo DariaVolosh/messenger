@@ -13,7 +13,9 @@ class SignUpUserUseCase @Inject constructor(
     private val userRepository: UserRepository,
     private val imagesRepository: ImagesRepository,
     private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase,
-    private val signOutUserUseCase: SignOutUserUseCase
+    private val signOutUserUseCase: SignOutUserUseCase,
+    private val setUserOnlineStatusUseCase: SetUserOnlineStatusUseCase,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
 ){
     suspend fun signUpUser(user: User, password: String, photoUri: Uri): Boolean =
         withContext(Dispatchers.IO) {
@@ -21,8 +23,6 @@ class SignUpUserUseCase @Inject constructor(
             val userRegistered: CompletableDeferred<Boolean> = CompletableDeferred()
 
             if (userCreated) {
-                getCurrentUserObjectUseCase.getCurrentUserObject()
-
                 val imageUploaded = imagesRepository.uploadPhoto(photoUri, user)
                 if (!imageUploaded) {
                     signOutUserUseCase.signOutUser()
@@ -30,6 +30,9 @@ class SignUpUserUseCase @Inject constructor(
                     userRegistered.complete(false)
                 } else {
                     userRegistered.complete(true)
+                    getCurrentUserIdUseCase.getCurrentUserId()?.let {id ->
+                        setUserOnlineStatusUseCase.setOnlineStatus(true, id)
+                    }
                 }
             }
 

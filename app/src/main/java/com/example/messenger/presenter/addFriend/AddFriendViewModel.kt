@@ -21,7 +21,7 @@ class AddFriendViewModel @Inject constructor(
     private val downloadImagesUseCase: DownloadImagesUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
-    private val loadImageUseCase: LoadImageUseCase
+    private val loadImageUseCase: LoadImageUseCase,
 ) : ViewModel() {
     val foundUsers = MutableLiveData<List<User>>()
     val images = MutableLiveData<List<Uri>>()
