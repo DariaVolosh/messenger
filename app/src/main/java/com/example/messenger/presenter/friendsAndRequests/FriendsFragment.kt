@@ -31,11 +31,13 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
         injectDependencies()
         setNavigationBarOnItemListener()
         initializeAdapter()
+        observeChatOpened()
+        observeCurrentUser()
 
-        viewModel.currentUser.observe(viewLifecycleOwner) {currentUser ->
-            setData(currentUser)
-        }
+        return binding.root
+    }
 
+    private fun observeChatOpened() {
         viewModel.chatOpened.observe(viewLifecycleOwner) {chatOpened ->
             if (chatOpened) {
                 val bundle = bundleOf()
@@ -44,8 +46,12 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
                 viewModel.friend = MutableLiveData()
             }
         }
+    }
 
-        return binding.root
+    private fun observeCurrentUser() {
+        viewModel.currentUser.observe(viewLifecycleOwner) {currentUser ->
+            setData(currentUser)
+        }
     }
 
     private fun injectDependencies() {

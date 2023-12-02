@@ -120,7 +120,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         viewModel.currentRoomUser.observe(viewLifecycleOwner) {roomUser ->
             roomUser.apply {
                 val user = User(fullName, email, login, firebaseUserId, mutableListOf(),
-                    mutableListOf(), mutableListOf()
+                    mutableListOf(), mutableListOf(), false
                 )
 
                 setInfoAboutUser(user)

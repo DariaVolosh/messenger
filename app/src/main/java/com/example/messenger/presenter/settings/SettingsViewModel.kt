@@ -1,7 +1,6 @@
 package com.example.messenger.presenter.settings
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
@@ -13,19 +12,16 @@ import com.example.messenger.domain.GetAndSaveMessagesColorUseCase
 import com.example.messenger.domain.GetCurrentUserIdUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetMyImageUseCase
-import com.example.messenger.domain.GetRoomUserEntityByIdUseCase
 import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.SignOutUserUseCase
 import com.example.messenger.room.model.UserEntity
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
     private val getMyImageUseCase: GetMyImageUseCase,
     private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
-    private val getRoomUserEntityByIdUseCase: GetRoomUserEntityByIdUseCase,
     private val signOutUserUseCase: SignOutUserUseCase,
     private val loadImageUseCase: LoadImageUseCase,
     private val getAndSaveMessagesColorUseCase: GetAndSaveMessagesColorUseCase,
@@ -53,28 +49,15 @@ class SettingsViewModel @Inject constructor(
 
     private fun downloadImage() {
         viewModelScope.launch {
-            val isInternetAvailable = networkUtils.isInternetAvailable()
-            val uri = getMyImageUseCase.getMyImage(isInternetAvailable)
-            if (isInternetAvailable) {
-                mainPhotoUri.value = uri
-            } else {
-                val localFile = File(uri.toString())
-                val bitmap = BitmapFactory.decodeFile(localFile.absolutePath)
-                mainPhotoBitmap.value = bitmap
-            }
+            val uri = getMyImageUseCase.getMyImage()
+            mainPhotoUri.value = uri
         }
     }
 
     private fun getCurrentUser() {
         viewModelScope.launch {
-            if (networkUtils.isInternetAvailable()) {
-                val currentUser = getCurrentUserObjectUseCase.currentUser.await()
-                currentFirebaseUser.value = currentUser
-            } else {
-                currentUserId.value?.let { id ->
-                    currentRoomUser.value = getRoomUserEntityByIdUseCase.getUserEntityById(id)
-                }
-            }
+            val currentUser = getCurrentUserObjectUseCase.getCurrentUserObject()
+            currentFirebaseUser.value = currentUser
         }
     }
 

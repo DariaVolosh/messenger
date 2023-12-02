@@ -15,14 +15,10 @@ class FetchLastMessagesUseCase @Inject constructor(
     suspend fun fetchLastMessages(chats: List<User>): List<Message> =
         withContext(Dispatchers.IO) {
             val lastMessages = CompletableDeferred<List<Message>>()
-            val currentUserId = getCurrentUserObjectUseCase.currentUser.await()
-            if (currentUserId != null) {
-                lastMessages.complete(
-                    messagesRepository.fetchLastMessages(chats, currentUserId.userId)
-                )
-            } else {
-                lastMessages.complete(listOf())
-            }
+            val currentUserId = getCurrentUserObjectUseCase.getCurrentUserObject()
+            lastMessages.complete(
+                messagesRepository.fetchLastMessages(chats, currentUserId.userId)
+            )
 
             lastMessages.await()
         }

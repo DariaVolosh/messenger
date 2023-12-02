@@ -15,8 +15,8 @@ class FetchChatsUseCase @Inject constructor(
         withContext(Dispatchers.IO) {
             val usersDeferred = CompletableDeferred<List<User>>()
 
-            val currentUser = getCurrentUserObjectUseCase.currentUser.await()
-            val result = currentUser.let { chatsRepository.fetchChats(it.userId) }
+            val currentUser = getCurrentUserObjectUseCase.getCurrentUserObject()
+            val result = chatsRepository.fetchChats(currentUser.userId)
             usersDeferred.complete(result)
 
             usersDeferred.await()

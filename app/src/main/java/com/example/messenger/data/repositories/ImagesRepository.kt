@@ -7,52 +7,35 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.tasks.await
-import java.io.File
 import javax.inject.Inject
 
 interface ImagesRepository {
-    suspend fun getMyImageUri(currentUserObject: User, internetAvailable: Boolean): Uri
+    suspend fun getMyImageUri(currentUserObject: User): Uri
     suspend fun uploadPhoto(photoUri: Uri, user: User): Boolean
 
 }
 
 class FirebaseImages @Inject constructor(
-    private val firebaseStorage: FirebaseStorage,
-    private val roomUserRepository: RoomUser
+    private val firebaseStorage: FirebaseStorage
 ): ImagesRepository {
-    override suspend fun getMyImageUri(currentUserObject: User, internetAvailable: Boolean): Uri {
-        val uri: Uri = if (internetAvailable) {
-            firebaseStorage
-                .getReference("avatars/${currentUserObject.userId}").downloadUrl.await()
-        } else {
-            val roomUser =
-                roomUserRepository.getUserEntityById(currentUserObject.userId)
-            if (roomUser == null) Uri.parse("")
-            else Uri.parse(roomUser.photoRef)
-        }
-
-        return uri
+    override suspend fun getMyImageUri(currentUserObject: User): Uri {
+        return firebaseStorage
+            .getReference("avatars/${currentUserObject.userId}").downloadUrl.await()
     }
 
     override suspend fun uploadPhoto(photoUri: Uri, user: User): Boolean {
         val photoUploaded: CompletableDeferred<Boolean> = CompletableDeferred()
 
         firebaseStorage.getReference("avatars/${user.userId}")
-            .putFile(photoUri).addOnSuccessListener {
-                val localFile = File.createTempFile(user.userId, "jpeg")
-                firebaseStorage
-                    .getReference("avatars/${user.userId}")
-                    .getFile(localFile)
-                    .addOnSuccessListener {
-                        photoUploaded.complete(true)
-                        roomUserRepository.insertUser(user, Uri.parse(localFile.absolutePath))
-                }.addOnFailureListener {exception ->
-                    if (exception is StorageException) {
-                        Log.e("FirebaseStorage", "Error code: ${exception.errorCode}")
-                    }
-                }
-            }.addOnFailureListener {
+            .putFile(photoUri)
+            .addOnSuccessListener {
+                    photoUploaded.complete(true)
+            }.addOnFailureListener {exception ->
                 photoUploaded.complete(false)
+
+                if (exception is StorageException) {
+                    Log.e("FirebaseStorage", "Error code: ${exception.errorCode}")
+                }
             }
 
         return photoUploaded.await()

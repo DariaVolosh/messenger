@@ -8,7 +8,6 @@ import com.example.messenger.di.modules.MapperModule
 import com.example.messenger.di.modules.RepositoriesModule
 import com.example.messenger.di.modules.RoomDatabaseModule
 import com.example.messenger.di.modules.SharedPrefsModule
-import com.example.messenger.di.modules.UserModule
 import com.example.messenger.presenter.addFriend.AddFriendFragment
 import com.example.messenger.presenter.chats.ChatsFragment
 import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
@@ -26,8 +25,7 @@ import javax.inject.Singleton
     RepositoriesModule::class,
     ImageLoaderModule::class,
     MapperModule::class,
-    SharedPrefsModule::class,
-    UserModule::class
+    SharedPrefsModule::class
 ])
 @Singleton
 interface AppComponent {

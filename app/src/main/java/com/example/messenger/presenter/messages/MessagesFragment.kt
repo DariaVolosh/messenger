@@ -45,7 +45,7 @@ class MessagesFragment : Fragment() {
 
     private fun getCurrentMessagesPath() {
         var currentUser = User(
-            "","","","", mutableListOf(), mutableListOf(), mutableListOf()
+            "","","","", mutableListOf(), mutableListOf(), mutableListOf(), false
         )
         viewModel.currentUser.observe(viewLifecycleOwner) {user ->
             currentUser = user

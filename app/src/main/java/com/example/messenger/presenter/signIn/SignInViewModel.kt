@@ -24,10 +24,6 @@ class SignInViewModel @Inject constructor(
         currentUser.value = getCurrentUserObjectUseCase.getFirebaseUser()
     }
 
-    fun getCurrentUserObject() {
-        getCurrentUserObjectUseCase.getCurrentUserObject()
-    }
-
     fun signInUser(email: String, password: String) {
         viewModelScope.launch {
             signedIn.value = signInUserUseCase.signInUser(email, password)

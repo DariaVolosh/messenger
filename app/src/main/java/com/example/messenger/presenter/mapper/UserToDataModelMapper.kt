@@ -1,6 +1,7 @@
 package com.example.messenger.presenter.mapper
 
 import com.example.messenger.data.model.User
+import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.presenter.friendsAndRequests.DataModel
 import javax.inject.Inject
 
@@ -20,10 +21,10 @@ class UserToDataModelMapper @Inject constructor(): Mapper<User, DataModel> {
 
 class UserListToDataModelListMapper @Inject constructor(
     private val userMapper: UserToDataModelMapper,
-    private val currentUser: User
+    private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase
 ): Mapper<List<@JvmSuppressWildcards User>, List<@JvmSuppressWildcards DataModel>> {
-
     override suspend fun map(from: List<User>): List<DataModel> {
+        val currentUser = getCurrentUserObjectUseCase.getCurrentUserObject()
         val dataModelObjects = mutableListOf<DataModel>()
         var firstFriendRequestFound = false
         for (user in from) {

@@ -21,8 +21,4 @@ class SignUpViewModel @Inject constructor(
             signedUp.value = signedUpOrError
         }
     }
-
-    fun getCurrentUserObject() {
-        getCurrentUserObjectUseCase.getCurrentUserObject()
-    }
 }

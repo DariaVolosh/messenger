@@ -30,7 +30,7 @@ class FriendsViewModel @Inject constructor(
     val friendsAndRequestsList = MutableLiveData<List<User>>()
     val images = MutableLiveData<List<Uri>>()
     var friend = MutableLiveData<User>()
-    val currentUser = MutableLiveData<User>()
+    var currentUser = MutableLiveData<User>()
     val chatOpened = MutableLiveData<Boolean>()
     val dataModelList = MutableLiveData<List<DataModel>>()
 
@@ -45,7 +45,7 @@ class FriendsViewModel @Inject constructor(
 
     private fun getCurrentUserObject() {
         viewModelScope.launch {
-            currentUser.value = getCurrentUserObjectUseCase.currentUser.await()
+            currentUser.value = getCurrentUserObjectUseCase.getCurrentUserObject()
         }
     }
 

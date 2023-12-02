@@ -49,7 +49,7 @@ class ChatsViewModel @Inject constructor(
     private fun downloadImage() {
         viewModelScope.launch {
             val isInternetAvailable = networkUtils.isInternetAvailable()
-            val uri = getMyImageUseCase.getMyImage(isInternetAvailable)
+            val uri = getMyImageUseCase.getMyImage()
             if (isInternetAvailable) {
                 mainPhotoUri.value = uri
             } else {

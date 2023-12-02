@@ -2,8 +2,6 @@ package com.example.messenger.data.repositories
 
 import android.net.Uri
 import com.example.messenger.data.model.User
-import com.example.messenger.room.Repository
-import com.example.messenger.room.model.UserEntity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -23,6 +21,8 @@ interface UserRepository {
         photoUri: Uri): Boolean
     fun insertUser(user: User, photoUri: Uri)
     fun signOut()
+
+    fun getFirebaseUser(): FirebaseUser?
 }
 
 class FirebaseUser @Inject constructor(
@@ -109,47 +109,5 @@ class FirebaseUser @Inject constructor(
         firebaseAuth.signOut()
     }
 
-    fun getFirebaseUser(): FirebaseUser? = firebaseAuth.currentUser
-}
-
-class RoomUser @Inject constructor(
-    private val roomRepository: Repository,
-    private val userRepository: UserRepository
-): UserRepository {
-    fun getUserEntityById(id: String): UserEntity =
-        roomRepository.getUserByFirebaseId(id)
-
-    override suspend fun getUserById(id: String): User =
-        User("", "", "", "", mutableListOf(), mutableListOf(), mutableListOf())
-
-    override suspend fun getUsersByLogin(
-        loginQuery: String,
-        currentUserObject: User
-    ): List<User> = listOf()
-
-    override fun getCurrentUserId(): String = ""
-
-    override fun updateUser(user: User) {}
-    override suspend fun signInUser(email: String, password: String): Boolean = false
-    override suspend fun signUpUser(
-        user: User,
-        password: String,
-        photoUri: Uri
-    ): Boolean = false
-
-    override fun insertUser(user: User, photoUri: Uri) {
-        userRepository.getCurrentUserId()?.let {id ->
-            val roomUser = UserEntity(
-                firebaseUserId = id,
-                login = user.login,
-                email = user.email,
-                photoRef = photoUri.toString(),
-                fullName = user.fullName,
-                chats = listOf()
-            )
-
-            roomRepository.insertUser(roomUser)
-        }
-    }
-    override fun signOut() {}
+    override fun getFirebaseUser(): FirebaseUser? = firebaseAuth.currentUser
 }

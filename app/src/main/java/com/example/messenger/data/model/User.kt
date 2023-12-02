@@ -7,8 +7,8 @@ data class User(
     var userId: String,
     var friends: MutableList<String>,
     var receivedFriendRequests: MutableList<String>,
-    var chats: MutableList<String>) {
+    var chats: MutableList<String>,
+    val online: Boolean = false) {
     constructor(): this("", "", "", "",
-                mutableListOf(), mutableListOf(), mutableListOf()
-    )
+                mutableListOf(), mutableListOf(), mutableListOf(), false)
 }

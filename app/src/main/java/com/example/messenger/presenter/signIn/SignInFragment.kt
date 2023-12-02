@@ -41,7 +41,6 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         viewModel.signedIn.observe(viewLifecycleOwner) {signedIn ->
             if (signedIn) {
                 findNavController().navigate(R.id.chats_fragment)
-                viewModel.getCurrentUserObject()
             }
         }
     }

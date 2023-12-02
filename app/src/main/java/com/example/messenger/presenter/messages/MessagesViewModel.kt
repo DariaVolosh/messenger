@@ -44,7 +44,7 @@ class MessagesViewModel @Inject constructor(
 
     private fun getCurrentUserObject() {
         viewModelScope.launch {
-            currentUser.value = getCurrentUserObjectUseCase.currentUser.await()
+            currentUser.value = getCurrentUserObjectUseCase.getCurrentUserObject()
         }
     }
 

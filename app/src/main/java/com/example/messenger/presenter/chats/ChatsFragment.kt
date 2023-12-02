@@ -17,6 +17,7 @@ import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
 import com.example.messenger.presenter.messages.MessagesFragment
 import com.example.messenger.presenter.settings.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.database.FirebaseDatabase
 import javax.inject.Inject
 
 class ChatsFragment : Fragment() {
@@ -24,6 +25,7 @@ class ChatsFragment : Fragment() {
     private lateinit var binding: FragmentChatsBinding
     private lateinit var adapter: ChatsAdapter
     private var orientation = 0
+    @Inject lateinit var database: FirebaseDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater,

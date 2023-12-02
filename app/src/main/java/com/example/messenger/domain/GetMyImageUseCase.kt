@@ -1,39 +1,20 @@
 package com.example.messenger.domain
 
 import android.net.Uri
-import com.example.messenger.data.model.User
 import com.example.messenger.data.repositories.FirebaseImages
-import com.example.messenger.data.repositories.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class GetMyImageUseCase @Inject constructor(
     private val imagesRepository: FirebaseImages,
-    private val userRepository: UserRepository,
     private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase
 ) {
-    suspend fun getMyImage(internetAvailable: Boolean): Uri =
+    suspend fun getMyImage(): Uri =
         withContext(Dispatchers.IO) {
-            val currentUser: User? = if (internetAvailable) {
-                getCurrentUserObjectUseCase.currentUser.await()
-            } else {
-                val userId = userRepository.getCurrentUserId()
-                userId?.let {
-                    User(
-                        "", "", "",
-                        it,
-                        mutableListOf(),
-                        mutableListOf(),
-                        mutableListOf()
-                    )
-                }
-            }
+            val currentUser = getCurrentUserObjectUseCase.getCurrentUserObject()
+            var result = imagesRepository.getMyImageUri(currentUser)
 
-            val result = currentUser?.let {
-                imagesRepository.getMyImageUri(it, internetAvailable)
-            }
-
-            result ?: Uri.parse("")
+            result
         }
 }

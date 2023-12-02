@@ -12,7 +12,7 @@ class SearchUsersByLoginUseCase @Inject constructor(
 ) {
     suspend fun getUsersByLogin(loginQuery: String): List<User> =
         withContext(Dispatchers.IO) {
-            val currentUser = getCurrentUserObjectUseCase.currentUser.await()
+            val currentUser = getCurrentUserObjectUseCase.getCurrentUserObject()
             userRepository.getUsersByLogin(loginQuery, currentUser)
         }
 }

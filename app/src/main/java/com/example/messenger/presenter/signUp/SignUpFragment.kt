@@ -92,13 +92,12 @@ class SignUpFragment: Fragment(R.layout.fragment_sign_up) {
         val password = binding.passwordSignUp.text.toString()
         val fullName = binding.fullName.text.toString()
 
-        val user = User(fullName, email, login, "", mutableListOf(), mutableListOf(), mutableListOf())
+        val user = User(fullName, email, login, "", mutableListOf(), mutableListOf(), mutableListOf(), false)
 
         photoUri?.let { photoUri -> viewModel.signUpUser(user, password, photoUri) }
         viewModel.signedUp.observe(viewLifecycleOwner) {signedUp ->
             if (signedUp) {
                 findNavController().navigate(R.id.chats_fragment)
-                viewModel.getCurrentUserObject()
             }
         }
     }
