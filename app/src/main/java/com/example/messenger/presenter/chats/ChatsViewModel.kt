@@ -12,7 +12,9 @@ import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.FetchChatsUseCase
 import com.example.messenger.domain.FetchLastMessagesUseCase
 import com.example.messenger.domain.GetMyImageUseCase
+import com.example.messenger.domain.GetOnlineStatusFlowListUseCase
 import com.example.messenger.domain.LoadImageUseCase
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,12 +24,14 @@ class ChatsViewModel @Inject constructor(
     private val fetchLastMessagesUseCase: FetchLastMessagesUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
     private val loadImageUseCase: LoadImageUseCase,
+    private val getOnlineStatusFlowListUseCase: GetOnlineStatusFlowListUseCase
 ) : ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
     val mainPhotoBitmap = MutableLiveData<Bitmap>()
     val chatList = MutableLiveData<List<User>>()
     val lastMessages = MutableLiveData<List<Message>>()
     val photoUris = MutableLiveData<List<Uri>>()
+    val onlineStatus = MutableLiveData<List<Flow<Boolean>>>()
 
     init {
         fetchChats()
@@ -62,7 +66,14 @@ class ChatsViewModel @Inject constructor(
         viewModelScope.launch {
             val lastMessagesList = fetchLastMessagesUseCase.fetchLastMessages(chats)
             lastMessages.value = lastMessagesList
+            chatList.value?.let { users ->
+                getOnlineUserStatusFlowList(users)
+            }
         }
+    }
+
+    private suspend fun getOnlineUserStatusFlowList(list: List<User>) {
+        onlineStatus.value = getOnlineStatusFlowListUseCase.getOnlineStatusFlowList(list)
     }
 
     fun loadImage(uri: Uri, imageView: ImageView) {

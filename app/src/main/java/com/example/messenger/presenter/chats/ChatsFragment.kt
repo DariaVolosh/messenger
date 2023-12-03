@@ -40,6 +40,7 @@ class ChatsFragment : Fragment() {
         observeImages()
         observeMainPhoto()
         observeLastMessages()
+        observeOnlineStatus()
         setNavigationBarOnItemListener()
         initializeAdapter()
         setFabAddFriendButtonListener()
@@ -61,6 +62,12 @@ class ChatsFragment : Fragment() {
     private fun observeImages() {
         viewModel.photoUris.observe(viewLifecycleOwner) {list ->
             adapter.setImages(list)
+        }
+    }
+
+    private fun observeOnlineStatus() {
+        viewModel.onlineStatus.observe(viewLifecycleOwner) { onlineList ->
+            adapter.setOnlineStatus(onlineList)
         }
     }
 

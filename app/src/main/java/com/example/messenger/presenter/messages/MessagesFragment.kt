@@ -126,10 +126,6 @@ class MessagesFragment : Fragment() {
                     setTextColor(ContextCompat.getColor(context, R.color.red))
                 }
             }
-
-            binding.onlineStatus.text =
-                if (online) getString(R.string.active_now)
-                else getString(R.string.offline)
         }
     }
 }

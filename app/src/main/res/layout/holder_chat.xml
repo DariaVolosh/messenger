@@ -31,6 +31,20 @@
         tools:text="Name" />
 
     <TextView
+        android:id="@+id/online"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/kufam_medium"
+        android:includeFontPadding="false"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_13sp"
+        android:paddingStart="@dimen/_15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/name"
+        app:layout_constraintStart_toEndOf="@+id/name"
+        app:layout_constraintTop_toTopOf="@+id/name"
+        tools:text="Active now" />
+
+    <TextView
         android:layout_width="@dimen/_20dp"
         android:layout_height="@dimen/_20dp"
         android:background="@drawable/messages_quantity_circle"

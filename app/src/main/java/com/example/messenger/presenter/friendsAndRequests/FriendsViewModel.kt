@@ -15,9 +15,7 @@ import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.UpdateUserUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class FriendsViewModel @Inject constructor(
     private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase,
     private val getUserListFromUserIdListUseCase: GetUserListFromUserIdListUseCase,
