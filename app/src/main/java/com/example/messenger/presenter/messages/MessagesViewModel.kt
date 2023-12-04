@@ -9,15 +9,18 @@ import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
 import com.example.messenger.domain.AddChatToChatsListUseCase
 import com.example.messenger.domain.AddMessagesListenerUseCase
+import com.example.messenger.domain.EmitOnlineValuesUseCase
 import com.example.messenger.domain.GetAndSaveMessagesColorUseCase
 import com.example.messenger.domain.GetConversationReferenceUseCase
 import com.example.messenger.domain.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.GetImageByUserIdUseCase
+import com.example.messenger.domain.GetOnlineFlowById
+import com.example.messenger.domain.GetOnlineStatusFlowListUseCase
 import com.example.messenger.domain.GetUserObjectByIdUseCase
-import com.example.messenger.domain.ListenForUserOnlineStatusUseCase
 import com.example.messenger.domain.LoadImageUseCase
 import com.example.messenger.domain.SendMessageUseCase
 import com.google.firebase.database.DatabaseReference
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,14 +34,16 @@ class MessagesViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
     private val loadImageUseCase: LoadImageUseCase,
     private val getAndSaveMessagesColorUseCase: GetAndSaveMessagesColorUseCase,
-    private val listenForFriendOnlineStatusUseCase: ListenForUserOnlineStatusUseCase,
+    private val getOnlineStatusFlowListUseCase: GetOnlineStatusFlowListUseCase,
+    private val emitOnlineValuesUseCase: EmitOnlineValuesUseCase,
+    private val getOnlineFlowById: GetOnlineFlowById
 ): ViewModel() {
     val friendObject = MutableLiveData<User>()
     val friendPhotoUri = MutableLiveData<Uri>()
     val existingMessagesPath = MutableLiveData<DatabaseReference>()
     val messages = MutableLiveData<List<Message>>()
     val currentUser = MutableLiveData<User>()
-    val userOnlineStatus = MutableLiveData<Boolean>()
+    val onlineStatus = MutableLiveData<List<Flow<Boolean>>>()
 
     init {
         getCurrentUserObject()
@@ -54,8 +59,8 @@ class MessagesViewModel @Inject constructor(
         viewModelScope.launch {
             val fetchedFriend = getUserObjectByIdUseCase.getUserById(id)
             friendObject.value = fetchedFriend
-            friendObject.value?.let {friendUser ->
-                listenForFriendOnlineStatus(friendUser.userId)
+            friendObject.value?.let {
+                getOnlineUserStatusFlowList()
             }
         }
     }
@@ -114,11 +119,21 @@ class MessagesViewModel @Inject constructor(
 
     fun getMessagesColor(key: String) = getAndSaveMessagesColorUseCase.getMessagesColor(key)
 
-    private fun listenForFriendOnlineStatus(id: String) {
+    private fun getOnlineUserStatusFlowList() {
         viewModelScope.launch {
-            listenForFriendOnlineStatusUseCase.getOnlineStatus(id).collect { online ->
-                userOnlineStatus.value = online
+            friendObject.value?.let { friend ->
+                onlineStatus.value = getOnlineStatusFlowListUseCase.getOnlineStatusFlowList(
+                    listOf(friend)
+                )
             }
         }
     }
+
+    fun emitOnlineStatus(list: List<Flow<Boolean>>) {
+        friendObject.value?.let {friend ->
+            emitOnlineValuesUseCase.emitOnlineValues(list, listOf(friend))
+        }
+    }
+
+    fun getFlowById(id: String): Flow<Boolean> = getOnlineFlowById.getOnlineFlowById(id)
 }

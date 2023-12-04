@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.messenger.MyApp
@@ -12,12 +11,17 @@ import com.example.messenger.R
 import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
 import com.example.messenger.databinding.FragmentMessagesBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MessagesFragment : Fragment() {
     private lateinit var binding: FragmentMessagesBinding
     private lateinit var friendId: String
     private lateinit var adapter: MessagesAdapter
+    private lateinit var onlineStatus: Job
     @Inject lateinit var viewModel: MessagesViewModel
 
     companion object {
@@ -116,16 +120,26 @@ class MessagesFragment : Fragment() {
     }
 
     private fun listenForFriendOnlineStatus() {
-        viewModel.userOnlineStatus.observe(viewLifecycleOwner) { online ->
-            binding.onlineStatus.apply {
-                if (online) {
-                    text = getString(R.string.active_now)
-                    setTextColor(ContextCompat.getColor(context, R.color.green))
-                } else {
-                    text = getString(R.string.offline)
-                    setTextColor(ContextCompat.getColor(context, R.color.red))
+        viewModel.onlineStatus.observe(viewLifecycleOwner) {list ->
+            viewModel.emitOnlineStatus(list)
+            onlineStatus = CoroutineScope(Dispatchers.Main).launch {
+                viewModel.getFlowById(friendId).collect {online ->
+                    binding.onlineStatus.apply {
+                        if (online) {
+                            text = getString(R.string.active_now)
+                            setTextColor(requireContext().getColor(R.color.green))
+                        } else {
+                            text = getString(R.string.offline)
+                            setTextColor(requireContext().getColor(R.color.red))
+                        }
+                    }
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onlineStatus.cancel()
     }
 }

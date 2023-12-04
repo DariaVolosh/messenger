@@ -8,11 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
+import com.example.messenger.data.repositories.UserRepository
 import com.example.messenger.domain.DownloadImagesUseCase
 import com.example.messenger.domain.FetchChatsUseCase
 import com.example.messenger.domain.FetchLastMessagesUseCase
 import com.example.messenger.domain.GetMyImageUseCase
-import com.example.messenger.domain.GetOnlineStatusFlowListUseCase
 import com.example.messenger.domain.LoadImageUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -24,14 +24,14 @@ class ChatsViewModel @Inject constructor(
     private val fetchLastMessagesUseCase: FetchLastMessagesUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
     private val loadImageUseCase: LoadImageUseCase,
-    private val getOnlineStatusFlowListUseCase: GetOnlineStatusFlowListUseCase
+    private val userRepository: UserRepository
 ) : ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
     val mainPhotoBitmap = MutableLiveData<Bitmap>()
-    val chatList = MutableLiveData<List<User>>()
-    val lastMessages = MutableLiveData<List<Message>>()
-    val photoUris = MutableLiveData<List<Uri>>()
-    val onlineStatus = MutableLiveData<List<Flow<Boolean>>>()
+    var chatList = MutableLiveData<List<User>>()
+    var lastMessages = MutableLiveData<List<Message>>()
+    var photoUris = MutableLiveData<List<Uri>>()
+    var onlineStatus = MutableLiveData<List<Flow<Boolean>>>()
 
     init {
         fetchChats()
@@ -72,8 +72,14 @@ class ChatsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getOnlineUserStatusFlowList(list: List<User>) {
-        onlineStatus.value = getOnlineStatusFlowListUseCase.getOnlineStatusFlowList(list)
+    private fun getOnlineUserStatusFlowList(list: List<User>) {
+        onlineStatus.value = userRepository.getOnlineUserStatusFlowList(list)
+    }
+
+    fun emitOnlineStatus(list: List<Flow<Boolean>>) {
+        chatList.value?.let { users ->
+            userRepository.emitOnlineValues(list, users)
+        }
     }
 
     fun loadImage(uri: Uri, imageView: ImageView) {

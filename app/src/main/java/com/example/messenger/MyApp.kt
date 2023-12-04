@@ -30,7 +30,7 @@ class MyApp @Inject constructor(
 
 class AppLifecycleObserver @Inject constructor(
     private val setUserOnlineStatusUseCase: SetUserOnlineStatusUseCase,
-    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
 ) : DefaultLifecycleObserver {
     override fun onStart(owner: LifecycleOwner) {
         owner.lifecycleScope.launch {

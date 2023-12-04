@@ -1,6 +1,7 @@
 package com.example.messenger.data.repositories
 
 import android.net.Uri
+import android.util.Log
 import com.example.messenger.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -32,11 +33,14 @@ interface UserRepository {
     fun signOut()
 
     fun getFirebaseUser(): FirebaseUser?
-    fun onUserOnlineStatusListener(id: String): Flow<Boolean>
 
     fun setOnlineStatus(online: Boolean, id: String)
 
-    fun getOnlineUserStatusList(list: List<User>): List<Flow<Boolean>>
+    fun getOnlineUserStatusFlowList(list: List<User>): List<Flow<Boolean>>
+
+    fun emitOnlineValues(list: List<Flow<Boolean>>, users: List<User>)
+
+    fun getOnlineFlowById(id: String): Flow<Boolean>
 }
 
 @Singleton
@@ -127,51 +131,45 @@ class FirebaseUser @Inject constructor(
 
     override fun getFirebaseUser(): FirebaseUser? = firebaseAuth.currentUser
 
-    private val onlineStatus = mutableListOf<Pair<String, MutableSharedFlow<Boolean>>>()
-    override fun onUserOnlineStatusListener(id: String): MutableSharedFlow<Boolean>  {
-        var flow = MutableSharedFlow<Boolean>()
-
-        if (!onlineStatus.any { pair -> pair.first == id }) {
-            onlineStatus.add(id to flow)
-            firebaseDatabase.getReference("users/$id/online")
-                .addValueEventListener(object: ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val onlineSnapshot = snapshot.getValue(Boolean::class.java)
-                            flow.emit(onlineSnapshot ?: false)
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {}
-                })
-        } else {
-            onlineStatus.find { pair -> pair.first == id }?.let {
-                flow = it.second
-                firebaseDatabase.getReference("users/$id/online").get().addOnSuccessListener {
-                    snapshot ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        flow.emit(snapshot.getValue(Boolean::class.java) ?: false)
-                    }
-                }
-            }
-        }
-
-
-        return flow
-    }
-
     override fun setOnlineStatus(online: Boolean, id: String) {
         firebaseDatabase.getReference("users/$id/online").setValue(online)
     }
 
-    override fun getOnlineUserStatusList(list: List<User>): List<MutableSharedFlow<Boolean>> {
-        val onlineFlowList = mutableListOf<MutableSharedFlow<Boolean>>()
-        for (i in list.indices) {
-            val flow = onUserOnlineStatusListener(list[i].userId)
-            onlineStatus.add(list[i].userId to flow)
-            onlineFlowList += flow
+    val onlineStatus = mutableMapOf<String, MutableSharedFlow<Boolean>>()
+    override fun getOnlineUserStatusFlowList(list: List<User>): List<MutableSharedFlow<Boolean>> =
+        list.map {
+            var flow = MutableSharedFlow<Boolean>()
+            flow
         }
 
-        return onlineFlowList
+    override fun emitOnlineValues(flows: List<Flow<Boolean>>, users: List<User>) {
+        for (i in users.indices) {
+            if (onlineStatus[users[i].userId] == null) {
+                firebaseDatabase.getReference("users/${users[i].userId}/online")
+                    .addValueEventListener(object: ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val onlineSnapshot = snapshot.getValue(Boolean::class.java)
+                                onlineStatus[users[i].userId] = flows[i] as MutableSharedFlow<Boolean>
+                                onlineStatus[users[i].userId]?.emit(onlineSnapshot ?: false)
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {}
+                    })
+            } else {
+                firebaseDatabase.getReference("users/${users[i].userId}/online").get()
+                    .addOnSuccessListener { snapshot ->
+                        CoroutineScope(Dispatchers.IO).launch {
+                            Log.i("ONLINE", snapshot.getValue(Boolean::class.java).toString())
+                            onlineStatus[users[i].userId]?.emit(
+                                snapshot.getValue(Boolean::class.java) ?: false
+                            )
+                        }
+                    }
+            }
+        }
     }
+
+    override fun getOnlineFlowById(id: String) = onlineStatus[id] as Flow<Boolean>
 }

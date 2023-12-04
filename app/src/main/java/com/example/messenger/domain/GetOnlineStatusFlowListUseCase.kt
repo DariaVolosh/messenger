@@ -11,6 +11,6 @@ class GetOnlineStatusFlowListUseCase @Inject constructor(
 ) {
     suspend fun getOnlineStatusFlowList(list: List<User>) =
         withContext(Dispatchers.IO) {
-            userRepository.getOnlineUserStatusList(list)
+            userRepository.getOnlineUserStatusFlowList(list)
         }
 }

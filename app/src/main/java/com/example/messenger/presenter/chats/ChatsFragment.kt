@@ -17,7 +17,9 @@ import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
 import com.example.messenger.presenter.messages.MessagesFragment
 import com.example.messenger.presenter.settings.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ChatsFragment : Fragment() {
@@ -25,7 +27,6 @@ class ChatsFragment : Fragment() {
     private lateinit var binding: FragmentChatsBinding
     private lateinit var adapter: ChatsAdapter
     private var orientation = 0
-    @Inject lateinit var database: FirebaseDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,14 +37,14 @@ class ChatsFragment : Fragment() {
         orientation = resources.configuration.orientation
 
         injectDependencies()
+        initializeAdapter()
         observeChatList()
         observeImages()
         observeMainPhoto()
         observeLastMessages()
-        observeOnlineStatus()
         setNavigationBarOnItemListener()
-        initializeAdapter()
         setFabAddFriendButtonListener()
+        startObservingOnlineStatus()
 
         return binding.root
     }
@@ -64,13 +65,6 @@ class ChatsFragment : Fragment() {
             adapter.setImages(list)
         }
     }
-
-    private fun observeOnlineStatus() {
-        viewModel.onlineStatus.observe(viewLifecycleOwner) { onlineList ->
-            adapter.setOnlineStatus(onlineList)
-        }
-    }
-
     private fun injectDependencies() {
         (requireActivity().application as MyApp).appComponent.inject(this)
     }
@@ -161,6 +155,20 @@ class ChatsFragment : Fragment() {
                 .commitNow()
         } else {
             findNavController().navigate(R.id.messages_fragment, bundle)
+        }
+    }
+
+    private fun startObservingOnlineStatus() {
+        viewModel.onlineStatus.observe(viewLifecycleOwner) {list ->
+            for (i in list.indices) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    list[i].collect { online ->
+                        adapter.updateOnlineStatus(i, online)
+                    }
+                }
+            }
+
+            viewModel.emitOnlineStatus(list)
         }
     }
 }
