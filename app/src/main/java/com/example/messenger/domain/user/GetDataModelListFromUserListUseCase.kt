@@ -1,4 +1,4 @@
-package com.example.messenger.domain
+package com.example.messenger.domain.user
 
 import com.example.messenger.data.model.User
 import com.example.messenger.presenter.friendsAndRequests.DataModel

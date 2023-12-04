@@ -1,4 +1,4 @@
-package com.example.messenger.domain
+package com.example.messenger.domain.user
 
 import android.net.Uri
 import com.example.messenger.data.model.User

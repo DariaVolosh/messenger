@@ -3,8 +3,8 @@ package com.example.messenger.presenter.signIn
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.messenger.domain.GetCurrentUserObjectUseCase
-import com.example.messenger.domain.SignInUserUseCase
+import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
+import com.example.messenger.domain.user.SignInUserUseCase
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.launch
 import javax.inject.Inject

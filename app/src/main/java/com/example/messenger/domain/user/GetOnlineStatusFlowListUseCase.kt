@@ -1,15 +1,16 @@
-package com.example.messenger.domain
+package com.example.messenger.domain.user
 
+import com.example.messenger.data.model.User
 import com.example.messenger.data.repositories.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class SignInUserUseCase @Inject constructor(
+class GetOnlineStatusFlowListUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-   suspend fun signInUser(email: String, password: String): Boolean =
+    suspend fun getOnlineStatusFlowList(list: List<User>) =
         withContext(Dispatchers.IO) {
-            userRepository.signInUser(email, password)
+            userRepository.getOnlineUserStatusFlowList(list)
         }
 }

@@ -1,4 +1,4 @@
-package com.example.messenger.domain
+package com.example.messenger.domain.userSettings
 
 import com.example.messenger.data.repositories.UserSettingsRepository
 import javax.inject.Inject

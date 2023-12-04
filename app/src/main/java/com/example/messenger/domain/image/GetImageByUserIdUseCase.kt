@@ -1,4 +1,4 @@
-package com.example.messenger.domain
+package com.example.messenger.domain.image
 
 import android.net.Uri
 import com.example.messenger.presenter.mapper.UserToPhotoUriMapper

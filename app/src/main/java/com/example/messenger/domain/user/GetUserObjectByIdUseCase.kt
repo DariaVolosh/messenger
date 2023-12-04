@@ -1,4 +1,4 @@
-package com.example.messenger.domain
+package com.example.messenger.domain.user
 
 import com.example.messenger.data.repositories.UserRepository
 import kotlinx.coroutines.Dispatchers

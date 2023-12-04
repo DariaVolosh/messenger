@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.model.User
-import com.example.messenger.domain.SignUpUserUseCase
+import com.example.messenger.domain.user.SignUpUserUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

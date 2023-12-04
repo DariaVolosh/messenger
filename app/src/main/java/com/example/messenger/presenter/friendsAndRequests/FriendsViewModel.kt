@@ -6,13 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.model.User
-import com.example.messenger.domain.DownloadImagesUseCase
-import com.example.messenger.domain.GetCurrentUserObjectUseCase
-import com.example.messenger.domain.GetDataModelListFromUserListUseCase
-import com.example.messenger.domain.GetUserListFromUserIdListUseCase
-import com.example.messenger.domain.GetUserObjectByIdUseCase
-import com.example.messenger.domain.LoadImageUseCase
-import com.example.messenger.domain.UpdateUserUseCase
+import com.example.messenger.domain.image.DownloadImagesUseCase
+import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
+import com.example.messenger.domain.user.GetDataModelListFromUserListUseCase
+import com.example.messenger.domain.user.GetUserListFromUserIdListUseCase
+import com.example.messenger.domain.user.GetUserObjectByIdUseCase
+import com.example.messenger.domain.image.LoadImageUseCase
+import com.example.messenger.domain.user.UpdateUserUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ class FriendsViewModel @Inject constructor(
     private val getDataModelListFromUserListUseCase: GetDataModelListFromUserListUseCase,
     private val loadImageUseCase: LoadImageUseCase,
 
-): ViewModel() {
+    ): ViewModel() {
     val friendsAndRequestsList = MutableLiveData<List<User>>()
     val images = MutableLiveData<List<Uri>>()
     var friend = MutableLiveData<User>()

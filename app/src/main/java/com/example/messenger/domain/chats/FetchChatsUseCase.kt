@@ -1,7 +1,8 @@
-package com.example.messenger.domain
+package com.example.messenger.domain.chats
 
 import com.example.messenger.data.model.User
 import com.example.messenger.data.repositories.ChatsRepository
+import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -1,7 +1,7 @@
 package com.example.messenger.presenter.mapper
 
 import com.example.messenger.data.model.User
-import com.example.messenger.domain.GetCurrentUserObjectUseCase
+import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
 import com.example.messenger.presenter.friendsAndRequests.DataModel
 import javax.inject.Inject
 

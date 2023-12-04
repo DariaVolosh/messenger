@@ -1,8 +1,9 @@
-package com.example.messenger.domain
+package com.example.messenger.domain.messages
 
 import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
 import com.example.messenger.data.repositories.MessagesRepository
+import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

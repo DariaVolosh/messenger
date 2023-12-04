@@ -1,4 +1,4 @@
-package com.example.messenger.domain
+package com.example.messenger.domain.messages
 
 import com.example.messenger.data.model.Message
 import com.example.messenger.data.repositories.MessagesRepository

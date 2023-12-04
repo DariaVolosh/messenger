@@ -9,8 +9,8 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.example.messenger.di.AppComponent
 import com.example.messenger.di.DaggerAppComponent
-import com.example.messenger.domain.GetCurrentUserIdUseCase
-import com.example.messenger.domain.SetUserOnlineStatusUseCase
+import com.example.messenger.domain.user.GetCurrentUserIdUseCase
+import com.example.messenger.domain.user.SetUserOnlineStatusUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
