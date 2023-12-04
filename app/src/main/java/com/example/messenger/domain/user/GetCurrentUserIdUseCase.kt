@@ -8,7 +8,8 @@ import javax.inject.Inject
 class GetCurrentUserIdUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    suspend fun getCurrentUserId() = withContext(Dispatchers.IO) {
-        userRepository.getCurrentUserId()
-    }
+    suspend fun getCurrentUserId() =
+        withContext(Dispatchers.IO) {
+            userRepository.getCurrentUserId()
+        }
 }

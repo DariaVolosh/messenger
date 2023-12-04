@@ -98,11 +98,13 @@ class MessagesFragment : Fragment() {
 
     private fun initializeAdapter() {
         viewModel.currentUser.observe(viewLifecycleOwner) {user ->
-            val myColor = viewModel.getMessagesColor("myColor${user.userId}")
-            val friendsColor = viewModel.getMessagesColor("friendsColor${user.userId}")
-            adapter = MessagesAdapter(myColor, friendsColor)
-            binding.messages.adapter = adapter
-            binding.messages.layoutManager = LinearLayoutManager(requireContext())
+            CoroutineScope(Dispatchers.Main).launch {
+                val myColor = viewModel.getMessagesColor("myColor${user.userId}")
+                val friendsColor = viewModel.getMessagesColor("friendsColor${user.userId}")
+                adapter = MessagesAdapter(myColor, friendsColor)
+                binding.messages.adapter = adapter
+                binding.messages.layoutManager = LinearLayoutManager(requireContext())
+            }
         }
     }
 

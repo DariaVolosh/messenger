@@ -10,7 +10,8 @@ import javax.inject.Inject
 class UploadPhotoUseCase @Inject constructor(
     private val imagesRepository: ImagesRepository
 ) {
-    suspend fun uploadPhoto(photoUri: Uri, user: User): Boolean = withContext(Dispatchers.IO) {
-        imagesRepository.uploadPhoto(photoUri, user)
+    suspend fun uploadPhoto(photoUri: Uri, user: User): Boolean =
+        withContext(Dispatchers.IO) {
+            imagesRepository.uploadPhoto(photoUri, user)
     }
 }

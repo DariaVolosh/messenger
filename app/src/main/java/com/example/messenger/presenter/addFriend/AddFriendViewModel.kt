@@ -58,6 +58,8 @@ class AddFriendViewModel @Inject constructor(
     }
 
     fun loadImage(uri: Uri, imageView: ImageView) {
-        loadImageUseCase.loadImage(uri, imageView)
+        viewModelScope.launch {
+            loadImageUseCase.loadImage(uri, imageView)
+        }
     }
 }

@@ -14,6 +14,9 @@ import com.example.messenger.databinding.FragmentSettingsBinding
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
@@ -52,13 +55,15 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private fun getSavedMessagesColors() {
         viewModel.currentUserId.observe(viewLifecycleOwner) { id ->
-            val myColor = viewModel.getMessagesColor("myColor$id")
-            val friendColor = viewModel.getMessagesColor("friendsColor$id")
+            CoroutineScope(Dispatchers.IO).launch {
+                val myColor = viewModel.getMessagesColor("myColor$id")
+                val friendColor = viewModel.getMessagesColor("friendsColor$id")
 
-            binding.myMessagesColorButton.setTextColor(myColor)
-            binding.myMessagesColorButton.iconTint = ColorStateList.valueOf(myColor)
-            binding.friendsMessagesColorButton.setTextColor(friendColor)
-            binding.friendsMessagesColorButton.iconTint = ColorStateList.valueOf(friendColor)
+                binding.myMessagesColorButton.setTextColor(myColor)
+                binding.myMessagesColorButton.iconTint = ColorStateList.valueOf(myColor)
+                binding.friendsMessagesColorButton.setTextColor(friendColor)
+                binding.friendsMessagesColorButton.iconTint = ColorStateList.valueOf(friendColor)
+            }
         }
     }
 

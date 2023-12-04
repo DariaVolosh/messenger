@@ -15,7 +15,9 @@ import com.example.messenger.domain.image.LoadImageUseCase
 import com.example.messenger.domain.user.SetUserOnlineStatusUseCase
 import com.example.messenger.domain.user.SignOutUserUseCase
 import com.example.messenger.room.model.UserEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
@@ -70,18 +72,26 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun loadImage(uri: Uri, imageView: ImageView) {
-        loadImageUseCase.loadImage(uri, imageView)
+        viewModelScope.launch {
+            loadImageUseCase.loadImage(uri, imageView)
+        }
     }
 
     fun setMessagesColor(color: Int, key: String) {
-        getAndSaveMessagesColorUseCase.setMessagesColor(color, key)
+        viewModelScope.launch {
+            getAndSaveMessagesColorUseCase.setMessagesColor(color, key)
+        }
     }
 
-    fun getMessagesColor(key: String) = getAndSaveMessagesColorUseCase.getMessagesColor(key)
+    suspend fun getMessagesColor(key: String) = withContext(Dispatchers.IO) {
+        getAndSaveMessagesColorUseCase.getMessagesColor(key)
+    }
 
     private fun setUserOnlineStatus(boolean: Boolean) {
-        currentUserId.value?.let { id ->
-            setUserOnlineStatusUseCase.setOnlineStatus(boolean, id)
+        viewModelScope.launch {
+            currentUserId.value?.let { id ->
+                setUserOnlineStatusUseCase.setOnlineStatus(boolean, id)
+            }
         }
     }
 }

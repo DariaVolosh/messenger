@@ -20,8 +20,10 @@ import com.example.messenger.domain.user.GetUserObjectByIdUseCase
 import com.example.messenger.domain.image.LoadImageUseCase
 import com.example.messenger.domain.messages.SendMessageUseCase
 import com.google.firebase.database.DatabaseReference
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MessagesViewModel @Inject constructor(
@@ -114,10 +116,15 @@ class MessagesViewModel @Inject constructor(
     }
 
     fun loadImage(uri: Uri, imageView: ImageView) {
-        loadImageUseCase.loadImage(uri, imageView)
+        viewModelScope.launch {
+            loadImageUseCase.loadImage(uri, imageView)
+        }
     }
 
-    fun getMessagesColor(key: String) = getAndSaveMessagesColorUseCase.getMessagesColor(key)
+    suspend fun getMessagesColor(key: String) =
+        withContext(Dispatchers.IO) {
+            getAndSaveMessagesColorUseCase.getMessagesColor(key)
+        }
 
     private fun getOnlineUserStatusFlowList() {
         viewModelScope.launch {
@@ -130,10 +137,15 @@ class MessagesViewModel @Inject constructor(
     }
 
     fun emitOnlineStatus(list: List<Flow<Boolean>>) {
-        friendObject.value?.let {friend ->
-            emitOnlineValuesUseCase.emitOnlineValues(list, listOf(friend))
+        viewModelScope.launch {
+            friendObject.value?.let {friend ->
+                emitOnlineValuesUseCase.emitOnlineValues(list, listOf(friend))
+            }
         }
     }
 
-    fun getFlowById(id: String): Flow<Boolean> = getOnlineFlowById.getOnlineFlowById(id)
+    suspend fun getFlowById(id: String): Flow<Boolean> =
+        withContext(Dispatchers.IO) {
+            getOnlineFlowById.getOnlineFlowById(id)
+        }
 }
