@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.model.User
 import com.example.messenger.domain.image.DownloadImagesUseCase
-import com.example.messenger.domain.user.GetCurrentUserIdUseCase
 import com.example.messenger.domain.image.LoadImageUseCase
+import com.example.messenger.domain.user.GetCurrentUserIdUseCase
 import com.example.messenger.domain.user.SearchUsersByLoginUseCase
 import com.example.messenger.domain.user.UpdateUserUseCase
 import kotlinx.coroutines.launch

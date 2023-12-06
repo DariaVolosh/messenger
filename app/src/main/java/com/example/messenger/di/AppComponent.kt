@@ -15,7 +15,6 @@ import com.example.messenger.presenter.chats.ChatsFragment
 import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
 import com.example.messenger.presenter.messages.MessagesFragment
 import com.example.messenger.presenter.settings.SettingsFragment
-import com.example.messenger.presenter.signUp.SignUpFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -35,7 +34,6 @@ interface AppComponent {
     fun inject(fragment: FriendsFragment)
     fun inject(fragment: MessagesFragment)
     fun inject(fragment: SettingsFragment)
-    fun inject(fragment: SignUpFragment)
     fun inject(myApp: MyApp)
     fun inject(mainActivity: MainActivity)
 

@@ -9,11 +9,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.messenger.presenter.signIn.SignInScreen
 import com.example.messenger.presenter.signIn.SignInViewModel
+import com.example.messenger.presenter.signUp.SignUpScreen
+import com.example.messenger.presenter.signUp.SignUpViewModel
 import com.example.messenger.ui.theme.MessengerTheme
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     @Inject lateinit var signInViewModel: SignInViewModel
+    @Inject lateinit var signUpViewModel: SignUpViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,14 +26,16 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             MessengerTheme {
-                MainScreen(signInViewModel)
+                MainScreen(signInViewModel, signUpViewModel)
             }
         }
     }
 }
 
 @Composable
-fun MainScreen(signInViewModel: SignInViewModel) {
+fun MainScreen(
+    signInViewModel: SignInViewModel,
+    signUpViewModel: SignUpViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "signIn") {
@@ -43,21 +48,13 @@ fun MainScreen(signInViewModel: SignInViewModel) {
         }
 
         composable("chats") {
-            ChatsScreen()
+
         }
 
         composable("signUp") {
-            SignUpScreen()
+            SignUpScreen(signUpViewModel) {
+                navController.navigate("chats")
+            }
         }
     }
-}
-
-@Composable
-fun ChatsScreen() {
-
-}
-
-@Composable
-fun SignUpScreen() {
-
 }

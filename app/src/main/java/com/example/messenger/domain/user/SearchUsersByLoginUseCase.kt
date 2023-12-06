@@ -2,7 +2,6 @@ package com.example.messenger.domain.user
 
 import com.example.messenger.data.model.User
 import com.example.messenger.data.repositories.UserRepository
-import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

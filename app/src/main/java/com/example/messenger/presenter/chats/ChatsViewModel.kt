@@ -9,11 +9,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.model.Message
 import com.example.messenger.data.model.User
 import com.example.messenger.data.repositories.UserRepository
-import com.example.messenger.domain.image.DownloadImagesUseCase
 import com.example.messenger.domain.chats.FetchChatsUseCase
-import com.example.messenger.domain.messages.FetchLastMessagesUseCase
+import com.example.messenger.domain.image.DownloadImagesUseCase
 import com.example.messenger.domain.image.GetMyImageUseCase
 import com.example.messenger.domain.image.LoadImageUseCase
+import com.example.messenger.domain.messages.FetchLastMessagesUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject

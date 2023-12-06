@@ -18,12 +18,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.messenger.R
 import com.example.messenger.presenter.components.HeaderAndDescription
 import com.example.messenger.presenter.components.SignInSectionWithBackground
-import com.example.messenger.ui.theme.MessengerTheme
 
 @Composable
 fun SignInScreen(
@@ -77,23 +75,6 @@ fun SignInScreen(
 
         TextButton(
             onClick = {navigateToSignUpScreen()},
-            modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 0.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.join_now),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun SignInScreenPreview() { 
-    MessengerTheme {
-        TextButton(
-            onClick = {},
             modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 0.dp)
         ) {
             Text(

@@ -44,4 +44,5 @@
     <string name="grant_permission_toast_text">You have to grant storage permission to upload photo</string>
     <string name="active_now">Active now</string>
     <string name="offline">Offline</string>
+    <string name="avatar_content_description">avatar</string>
 </resources>

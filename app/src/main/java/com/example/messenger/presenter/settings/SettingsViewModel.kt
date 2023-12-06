@@ -7,13 +7,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.messenger.data.model.User
-import com.example.messenger.domain.userSettings.GetAndSaveMessagesColorUseCase
-import com.example.messenger.domain.user.GetCurrentUserIdUseCase
-import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.image.GetMyImageUseCase
 import com.example.messenger.domain.image.LoadImageUseCase
+import com.example.messenger.domain.user.GetCurrentUserIdUseCase
+import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.user.SetUserOnlineStatusUseCase
 import com.example.messenger.domain.user.SignOutUserUseCase
+import com.example.messenger.domain.userSettings.GetAndSaveMessagesColorUseCase
 import com.example.messenger.room.model.UserEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
