@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 class ChatsFragment : Fragment() {
     @Inject lateinit var viewModel: ChatsViewModel
     private lateinit var binding: FragmentChatsBinding
@@ -87,7 +88,7 @@ class ChatsFragment : Fragment() {
                     .replace(R.id.details_fragment, addFriendFragment)
                     .commitNow()
             } else {
-                findNavController().navigate(R.id.add_friends_fragment)
+                //findNavController().navigate(R.id.add_friends_fragment)
             }
         }
     }
@@ -111,7 +112,7 @@ class ChatsFragment : Fragment() {
                             .view?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
                             ?.visibility = View.GONE
                     } else {
-                        findNavController().navigate(R.id.friends_fragment)
+                        //findNavController().navigate(R.id.friends_fragment)
                     }
                 }
                 R.id.chats -> {
@@ -136,7 +137,7 @@ class ChatsFragment : Fragment() {
                             .view?.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
                             ?.visibility = View.GONE
                     } else {
-                        findNavController().navigate(R.id.settings_fragment)
+                        //findNavController().navigate(R.id.settings_fragment)
                     }
                 }
             }
@@ -154,7 +155,7 @@ class ChatsFragment : Fragment() {
                 .replace(R.id.details_fragment, messagesFragment)
                 .commitNow()
         } else {
-            findNavController().navigate(R.id.messages_fragment, bundle)
+            //findNavController().navigate(R.id.messages_fragment, bundle)
         }
     }
 

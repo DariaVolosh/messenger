@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.messenger.MyApp
 import com.example.messenger.R
@@ -42,7 +41,7 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
             if (chatOpened) {
                 val bundle = bundleOf()
                 bundle.putString(MessagesFragment.FRIEND_UID, viewModel.friend.value?.userId)
-                findNavController().navigate(R.id.messages_fragment, bundle)
+                //findNavController().navigate(R.id.messages_fragment, bundle)
                 viewModel.friend = MutableLiveData()
             }
         }
@@ -67,9 +66,9 @@ class FriendsFragment: Fragment(R.layout.fragment_friends) {
     private fun setNavigationBarOnItemListener() {
         binding.bottomNavigationView.setOnItemSelectedListener {item ->
             when (item.itemId) {
-                R.id.friends -> findNavController().navigate(R.id.friends_fragment)
-                R.id.chats -> findNavController().navigate(R.id.chats_fragment)
-                R.id.settings -> findNavController().navigate(R.id.settings_fragment)
+                //R.id.friends -> findNavController().navigate(R.id.friends_fragment)
+                //R.id.chats -> findNavController().navigate(R.id.chats_fragment)
+                //R.id.settings -> findNavController().navigate(R.id.settings_fragment)
             }
             true
         }

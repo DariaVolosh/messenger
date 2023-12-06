@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.messenger.MyApp
 import com.example.messenger.R
 import com.example.messenger.data.model.User
@@ -49,7 +48,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private fun setSignOutButtonListener() {
         binding.signOut.setOnClickListener {
             viewModel.signOutUser()
-            findNavController().navigate(R.id.sign_in_fragment)
+            //findNavController().navigate(R.id.sign_in_fragment)
         }
     }
 
@@ -136,9 +135,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private fun setNavigationBarOnItemListener() {
         binding.bottomNavigationView.setOnItemSelectedListener {item ->
             when (item.itemId) {
-                R.id.friends -> findNavController().navigate(R.id.friends_fragment)
-                R.id.chats -> findNavController().navigate(R.id.chats_fragment)
-                R.id.settings -> findNavController().navigate(R.id.settings_fragment)
+                //R.id.friends -> findNavController().navigate(R.id.friends_fragment)
+                //R.id.chats -> findNavController().navigate(R.id.chats_fragment)
+               // R.id.settings -> findNavController().navigate(R.id.settings_fragment)
             }
             true
         }
