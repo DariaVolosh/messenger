@@ -2,7 +2,6 @@ package com.example.messenger
 import androidx.appcompat.app.AppCompatActivity
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.IdlingResource.ResourceCallback
-import com.example.messenger.presenter.chats.ChatsFragment
 
 class MyCustomIdlingResource(private val activity: AppCompatActivity): IdlingResource {
     private lateinit var resourceCallback: ResourceCallback
@@ -17,11 +16,15 @@ class MyCustomIdlingResource(private val activity: AppCompatActivity): IdlingRes
         }
     }
 
+    override fun isIdleNow(): Boolean {
+        TODO("Not yet implemented")
+    }
+
     fun setLoginPerformed(loginPerformed: Boolean) {
         this.loginPerformed = loginPerformed
     }
 
-    override fun isIdleNow(): Boolean {
+    /* override fun isIdleNow(): Boolean {
         val fragmentManager = activity.supportFragmentManager
         val fragment = fragmentManager.findFragmentById(R.id.nav_host)
         if (loginPerformed) {
@@ -30,5 +33,5 @@ class MyCustomIdlingResource(private val activity: AppCompatActivity): IdlingRes
 
         if (isIdle) resourceCallback.onTransitionToIdle()
         return isIdle
-    }
+    } */
 }

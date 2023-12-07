@@ -42,7 +42,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun injectDependencies() {
-        (requireActivity().application as MyApp).appComponent.inject(this)
+        (requireActivity().application as MyApp).appComponent?.inject(this)
     }
 
     private fun setSignOutButtonListener() {

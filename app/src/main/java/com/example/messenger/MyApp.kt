@@ -18,12 +18,12 @@ import javax.inject.Inject
 class MyApp @Inject constructor(
 
 ) : Application() {
-    lateinit var appComponent: AppComponent
+    var appComponent: AppComponent? = null
     @Inject lateinit var lifecycleObserver: AppLifecycleObserver
 
     fun createAppComponent(context: Context, layoutInflater: LayoutInflater) {
         appComponent = DaggerAppComponent.factory().create(context, layoutInflater)
-        appComponent.inject(this)
+        appComponent?.inject(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleObserver)
     }
 }

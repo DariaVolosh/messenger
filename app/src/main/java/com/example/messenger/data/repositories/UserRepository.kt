@@ -1,7 +1,6 @@
 package com.example.messenger.data.repositories
 
 import android.net.Uri
-import android.util.Log
 import com.example.messenger.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -161,7 +160,6 @@ class FirebaseUser @Inject constructor(
                 firebaseDatabase.getReference("users/${users[i].userId}/online").get()
                     .addOnSuccessListener { snapshot ->
                         CoroutineScope(Dispatchers.IO).launch {
-                            Log.i("ONLINE", snapshot.getValue(Boolean::class.java).toString())
                             onlineStatus[users[i].userId]?.emit(
                                 snapshot.getValue(Boolean::class.java) ?: false
                             )

@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.messenger.presenter.chats.ChatsScreen
+import com.example.messenger.presenter.chats.ChatsViewModel
 import com.example.messenger.presenter.signIn.SignInScreen
 import com.example.messenger.presenter.signIn.SignInViewModel
 import com.example.messenger.presenter.signUp.SignUpScreen
@@ -17,16 +19,18 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject lateinit var signInViewModel: SignInViewModel
     @Inject lateinit var signUpViewModel: SignUpViewModel
+    @Inject lateinit var chatsViewModel: ChatsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        (application as MyApp).createAppComponent(this, layoutInflater)
-        (application as MyApp).appComponent.inject(this)
+        val myApp = application as MyApp
+        if (myApp.appComponent == null) myApp.createAppComponent(this, layoutInflater)
+        myApp.appComponent?.inject(this)
 
         setContent {
             MessengerTheme {
-                MainScreen(signInViewModel, signUpViewModel)
+                MainScreen(signInViewModel, signUpViewModel, chatsViewModel)
             }
         }
     }
@@ -35,7 +39,9 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun MainScreen(
     signInViewModel: SignInViewModel,
-    signUpViewModel: SignUpViewModel) {
+    signUpViewModel: SignUpViewModel,
+    chatsViewModel: ChatsViewModel
+) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "signIn") {
@@ -48,7 +54,7 @@ fun MainScreen(
         }
 
         composable("chats") {
-
+            ChatsScreen(chatsViewModel)
         }
 
         composable("signUp") {

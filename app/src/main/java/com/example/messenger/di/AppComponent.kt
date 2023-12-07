@@ -11,7 +11,6 @@ import com.example.messenger.di.modules.RepositoriesModule
 import com.example.messenger.di.modules.RoomDatabaseModule
 import com.example.messenger.di.modules.SharedPrefsModule
 import com.example.messenger.presenter.addFriend.AddFriendFragment
-import com.example.messenger.presenter.chats.ChatsFragment
 import com.example.messenger.presenter.friendsAndRequests.FriendsFragment
 import com.example.messenger.presenter.messages.MessagesFragment
 import com.example.messenger.presenter.settings.SettingsFragment
@@ -30,7 +29,6 @@ import javax.inject.Singleton
 @Singleton
 interface AppComponent {
     fun inject(fragment: AddFriendFragment)
-    fun inject(fragment: ChatsFragment)
     fun inject(fragment: FriendsFragment)
     fun inject(fragment: MessagesFragment)
     fun inject(fragment: SettingsFragment)

@@ -1,6 +1,5 @@
 package com.example.messenger.presenter.chats
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
@@ -14,40 +13,39 @@ import com.example.messenger.domain.image.DownloadImagesUseCase
 import com.example.messenger.domain.image.GetMyImageUseCase
 import com.example.messenger.domain.image.LoadImageUseCase
 import com.example.messenger.domain.messages.FetchLastMessagesUseCase
+import com.example.messenger.domain.user.EmitOnlineValuesUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ChatsViewModel @Inject constructor(
     private val fetchChatsUseCase: FetchChatsUseCase,
     private val getMyImageUseCase: GetMyImageUseCase,
     private val fetchLastMessagesUseCase: FetchLastMessagesUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
     private val loadImageUseCase: LoadImageUseCase,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val emitOnlineValuesUseCase: EmitOnlineValuesUseCase
 ) : ViewModel() {
     val mainPhotoUri = MutableLiveData<Uri>()
-    val mainPhotoBitmap = MutableLiveData<Bitmap>()
     var chatList = MutableLiveData<List<User>>()
     var lastMessages = MutableLiveData<List<Message>>()
     var photoUris = MutableLiveData<List<Uri>>()
-    var onlineStatus = MutableLiveData<List<Flow<Boolean>>>()
+    var onlineStatus = MutableLiveData<MutableList<Boolean>>()
 
-    init {
-        fetchChats()
-        downloadImage()
-    }
-
-
-    private fun fetchChats() {
+    fun fetchChats() {
         viewModelScope.launch {
             val list = fetchChatsUseCase.fetchChats()
             chatList.value = list
             downloadImages(list)
+            fetchLastMessages(list)
+            getOnlineUserStatusFlowList(list)
         }
     }
 
-    private fun downloadImage() {
+    fun downloadImage() {
         viewModelScope.launch {
             val uri = getMyImageUseCase.getMyImage()
             mainPhotoUri.value = uri
@@ -58,7 +56,6 @@ class ChatsViewModel @Inject constructor(
         viewModelScope.launch {
             val uris = downloadImagesUseCase.getImages(list)
             photoUris.value = uris
-            fetchLastMessages(chatList.value ?: listOf())
         }
     }
 
@@ -66,19 +63,34 @@ class ChatsViewModel @Inject constructor(
         viewModelScope.launch {
             val lastMessagesList = fetchLastMessagesUseCase.fetchLastMessages(chats)
             lastMessages.value = lastMessagesList
-            chatList.value?.let { users ->
-                getOnlineUserStatusFlowList(users)
-            }
         }
     }
 
-    private fun getOnlineUserStatusFlowList(list: List<User>) {
-        onlineStatus.value = userRepository.getOnlineUserStatusFlowList(list)
+    private suspend fun getOnlineUserStatusFlowList(list: List<User>) {
+        val onlineStatusList = userRepository.getOnlineUserStatusFlowList(list)
+        collectOnlineStatus(onlineStatusList)
     }
 
-    fun emitOnlineStatus(list: List<Flow<Boolean>>) {
+    private suspend fun collectOnlineStatus(list: List<Flow<Boolean>>) {
+        onlineStatus.value = MutableList(list.size) {false}
+        viewModelScope.launch {
+            for (i in list.indices) {
+                list[i].collect {online ->
+                    val newList = onlineStatus.value?.toMutableList()
+                    newList?.set(i, online)
+                    onlineStatus.value = newList ?: mutableListOf()
+                }
+            }
+        }
+
+        emitOnlineStatus(list)
+    }
+
+    private fun emitOnlineStatus(list: List<Flow<Boolean>>) {
         chatList.value?.let { users ->
-            userRepository.emitOnlineValues(list, users)
+            viewModelScope.launch {
+                emitOnlineValuesUseCase.emitOnlineValues(list, users)
+            }
         }
     }
 

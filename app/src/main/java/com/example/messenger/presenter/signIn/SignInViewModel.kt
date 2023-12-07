@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class SignInViewModel @Inject constructor(
     private val signInUserUseCase: SignInUserUseCase,
-    private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase,
+    private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase
 ): ViewModel() {
     val currentUser = MutableLiveData<FirebaseUser?>()
     val signedIn = MutableLiveData<Boolean>()

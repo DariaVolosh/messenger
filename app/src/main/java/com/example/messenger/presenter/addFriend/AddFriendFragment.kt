@@ -37,7 +37,7 @@ class AddFriendFragment : Fragment() {
     }
 
     private fun injectDependencies() {
-        (requireActivity().application as MyApp).appComponent.inject(this)
+        (requireActivity().application as MyApp).appComponent?.inject(this)
     }
 
     private fun observeDownloadedImages() {

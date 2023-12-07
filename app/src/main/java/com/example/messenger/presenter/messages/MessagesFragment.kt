@@ -47,7 +47,7 @@ class MessagesFragment : Fragment() {
     }
 
     private fun injectDependencies() {
-        (requireActivity().application as MyApp).appComponent.inject(this)
+        (requireActivity().application as MyApp).appComponent?.inject(this)
     }
 
     private fun getCurrentMessagesPath() {

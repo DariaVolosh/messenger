@@ -39,10 +39,28 @@ val Typography = Typography(
         )
     ),
 
+    displayMedium = TextStyle(
+        fontFamily = kufamFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
+
     labelSmall = TextStyle(
         fontFamily = kufamFontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
+
+    bodySmall = TextStyle(
+        fontFamily = kufamFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
         platformStyle = PlatformTextStyle(
             includeFontPadding = false
         )
