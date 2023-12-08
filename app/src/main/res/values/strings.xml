@@ -45,5 +45,6 @@
     <string name="active_now">Active now</string>
     <string name="offline">Offline</string>
     <string name="avatar_content_description">Avatar</string>
-    <string name="botton_navigation_item_description">Bottom navigation item</string>
+    <string name="bottom_navigation_item_description">Bottom navigation item</string>
+    <string name="back_navigation_icon_description">Back</string>
 </resources>

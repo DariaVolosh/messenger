@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -39,11 +39,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.messenger.R
-import com.example.messenger.presenter.components.Chat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatsScreen(viewModel: ChatsViewModel) {
+fun ChatsScreen(
+    viewModel: ChatsViewModel,
+    bottomNavigationItemOnClick: (String) -> Unit
+) {
     val photoUri by viewModel.mainPhotoUri.observeAsState()
     val chats by viewModel.chatList.observeAsState()
     val lastMessages by viewModel.lastMessages.observeAsState()
@@ -59,7 +61,15 @@ fun ChatsScreen(viewModel: ChatsViewModel) {
         initialized = true
     }
 
-    val navigationBarDestinations = listOf("Friends", "Chats", "Settings")
+    if (selectedNavItem == 1) {
+        bottomNavigationItemOnClick("friendsAndRequests")
+        selectedNavItem = 0
+    } else if (selectedNavItem == 2) {
+        bottomNavigationItemOnClick("settings")
+        selectedNavItem = 0
+    }
+
+    val navigationBarDestinations = listOf("Chats", "Friends", "Settings")
     val navigationBarIcons = listOf(
         R.drawable.ic_chats,
         R.drawable.ic_friends,
@@ -104,8 +114,7 @@ fun ChatsScreen(viewModel: ChatsViewModel) {
             if (chats != null && lastMessages != null && photoUris != null && onlineStatus != null) {
                 LazyColumn {
                     chats?.let { users ->
-                        items(users) { user ->
-                            val index = users.indexOf(user)
+                        itemsIndexed(users) { index, user ->
                             Chat(
                                 user.fullName,
                                 photoUris?.get(index) ?: Uri.parse(""),
@@ -148,7 +157,7 @@ fun ChatsScreen(viewModel: ChatsViewModel) {
                         onClick = { selectedNavItem = index },
                         icon = { Icon(
                             painter = painterResource(id = navigationBarIcons[index]),
-                            contentDescription = stringResource(R.string.botton_navigation_item_description),
+                            contentDescription = stringResource(R.string.bottom_navigation_item_description),
                             tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier.size(25.dp)
                         )},
@@ -161,7 +170,6 @@ fun ChatsScreen(viewModel: ChatsViewModel) {
                         colors = NavigationBarItemDefaults.colors(
                             indicatorColor = MaterialTheme.colorScheme.secondary
                         )
-
                     )
                 }
             }

@@ -2,7 +2,6 @@ package com.example.messenger.di.modules
 
 import android.net.Uri
 import com.example.messenger.data.model.User
-import com.example.messenger.presenter.friendsAndRequests.DataModel
 import com.example.messenger.presenter.mapper.Mapper
 import com.example.messenger.presenter.mapper.UserIdListToUserListMapper
 import com.example.messenger.presenter.mapper.UserListToDataModelListMapper

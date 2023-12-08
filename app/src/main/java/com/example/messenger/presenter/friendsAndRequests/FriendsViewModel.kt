@@ -9,56 +9,58 @@ import com.example.messenger.data.model.User
 import com.example.messenger.domain.image.DownloadImagesUseCase
 import com.example.messenger.domain.image.LoadImageUseCase
 import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
-import com.example.messenger.domain.user.GetDataModelListFromUserListUseCase
 import com.example.messenger.domain.user.GetUserListFromUserIdListUseCase
 import com.example.messenger.domain.user.GetUserObjectByIdUseCase
 import com.example.messenger.domain.user.UpdateUserUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FriendsViewModel @Inject constructor(
     private val getCurrentUserObjectUseCase: GetCurrentUserObjectUseCase,
     private val getUserListFromUserIdListUseCase: GetUserListFromUserIdListUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
     private val getUserObjectByIdUseCase: GetUserObjectByIdUseCase,
-    private val getDataModelListFromUserListUseCase: GetDataModelListFromUserListUseCase,
-    private val loadImageUseCase: LoadImageUseCase,
-
-    ): ViewModel() {
-    val friendsAndRequestsList = MutableLiveData<List<User>>()
+    private val loadImageUseCase: LoadImageUseCase
+): ViewModel() {
     val images = MutableLiveData<List<Uri>>()
     var friend = MutableLiveData<User>()
     var currentUser = MutableLiveData<User>()
+    val friendsList = MutableLiveData<List<User>>()
+    val requestsList = MutableLiveData<List<User>>()
     val chatOpened = MutableLiveData<Boolean>()
-    val dataModelList = MutableLiveData<List<DataModel>>()
-
-    init {
-        getCurrentUserObject()
-    }
 
     fun openChat() {
         chatOpened.value = true
         chatOpened.value = false
     }
 
-    private fun getCurrentUserObject() {
+    private fun getUsersList(friends: List<String>, requests: List<String>) {
         viewModelScope.launch {
-            currentUser.value = getCurrentUserObjectUseCase.getCurrentUserObject()
+            friendsList.value = getUserListFromUserIdListUseCase.userIdListToUserList(friends)
+            requestsList.value = getUserListFromUserIdListUseCase.userIdListToUserList(requests)
+
+            val requestsAndFriends =
+                friendsList.value?.plus(requestsList.value ?: listOf()) ?: listOf()
+            downloadImages(requestsAndFriends)
         }
     }
 
-    fun getUsersFromUId(list: List<String>) {
+    fun getCurrentUserObject() {
         viewModelScope.launch {
-            val fetchedUsers = getUserListFromUserIdListUseCase.userIdListToUserList(list)
-            friendsAndRequestsList.value = fetchedUsers
-            downloadImages(fetchedUsers)
+            currentUser.value = getCurrentUserObjectUseCase.getCurrentUserObject()
+            currentUser.value?.let { user ->
+                getUsersList(user.friends, user.receivedFriendRequests)
+            }
         }
     }
 
    private fun downloadImages(list: List<User>) {
        viewModelScope.launch {
            val fetchedImages = downloadImagesUseCase.getImages(list)
+           images.value = listOf()
            images.value = fetchedImages
        }
    }
@@ -73,12 +75,6 @@ class FriendsViewModel @Inject constructor(
         viewModelScope.launch {
             val fetchedFriend = getUserObjectByIdUseCase.getUserById(id)
             friend.value = fetchedFriend
-        }
-    }
-
-    fun getDataModelListFromUserList(users: List<User>) {
-        viewModelScope.launch {
-            dataModelList.value = getDataModelListFromUserListUseCase.getDataModelListFromUserList(users)
         }
     }
 

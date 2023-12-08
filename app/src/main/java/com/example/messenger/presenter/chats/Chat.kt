@@ -1,4 +1,4 @@
-package com.example.messenger.presenter.components
+package com.example.messenger.presenter.chats
 
 import android.net.Uri
 import androidx.compose.foundation.background
