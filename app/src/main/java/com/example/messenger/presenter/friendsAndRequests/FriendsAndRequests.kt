@@ -2,8 +2,12 @@ package com.example.messenger.presenter.friendsAndRequests
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -30,12 +34,12 @@ import com.example.messenger.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FriendsAndRequestsScreen(
-    friendsViewModel: FriendsViewModel
+    friendsViewModel: FriendsViewModel,
+    navigateToMessages: (String, Uri) -> Unit
 ) {
     val images by friendsViewModel.images.observeAsState()
     val friend by friendsViewModel.friend.observeAsState()
     var initialized by rememberSaveable { mutableStateOf(false) }
-
 
     if (!initialized) {
         friendsViewModel.getCurrentUserObject()
@@ -54,19 +58,31 @@ fun FriendsAndRequestsScreen(
 
     Column {
         TopAppBar(
+            modifier = Modifier.height(75.dp),
             navigationIcon = {
-                IconButton(onClick = { }) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = stringResource(id = R.string.back_navigation_icon_description)
-                    )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = stringResource(id = R.string.back_navigation_icon_description),
+                            modifier = Modifier.size(25.dp)
+                        )
+                    }
                 }
             },
             title = {
-                Text(
-                    text = stringResource(id = R.string.friends_toolbar_title),
-                    style = MaterialTheme.typography.displayMedium
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.friends_toolbar_title),
+                        style = MaterialTheme.typography.displayMedium
+                    )
+                }
             }
         )
 
@@ -75,17 +91,17 @@ fun FriendsAndRequestsScreen(
             verticalArrangement = Arrangement.spacedBy(15.dp),
             modifier = Modifier.padding(vertical = 15.dp)
         ) {
-            if (
-                friendsViewModel.friendsList.value != null
+            if (images != null &&
+                images?.size != 0
+                && friendsViewModel.friendsList.value != null
                 && friendsViewModel.friendsList.value?.size != 0
-                && images != null
-                && images?.size != 0
                 ) {
                 friendsViewModel.friendsList.value?.let {friends ->
                     itemsIndexed(friends) {index, user ->
                         Friend(
                             photoUri = images?.get(index) ?: Uri.parse(""),
-                            user
+                            user,
+                            navigateToMessages
                         )
                     }
                 }
@@ -102,11 +118,10 @@ fun FriendsAndRequestsScreen(
                 }
             }
 
-            if (
-                friendsViewModel.requestsList.value != null
+            if (images != null &&
+                images?.size != 0
+                && friendsViewModel.requestsList.value != null
                 && friendsViewModel.requestsList.value?.size != 0
-                && images != null
-                && images?.size != 0
                 ) {
                 friendsViewModel.requestsList.value?.let {requests ->
                     itemsIndexed(requests) {index, user ->

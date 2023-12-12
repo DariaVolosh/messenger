@@ -39,12 +39,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.messenger.R
+import com.example.messenger.data.model.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatsScreen(
     viewModel: ChatsViewModel,
-    bottomNavigationItemOnClick: (String) -> Unit
+    bottomNavigationItemOnClick: (String) -> Unit,
+    navigateToChat: (User, Uri) -> Unit
 ) {
     val photoUri by viewModel.mainPhotoUri.observeAsState()
     val chats by viewModel.chatList.observeAsState()
@@ -111,15 +113,19 @@ fun ChatsScreen(
                 }
             )
 
-            if (chats != null && lastMessages != null && photoUris != null && onlineStatus != null) {
+            if (chats != null && lastMessages != null && photoUris != null && onlineStatus != null
+                && chats?.size == lastMessages?.size && lastMessages?.size == photoUris?.size
+                && photoUris?.size == onlineStatus?.size
+                ) {
                 LazyColumn {
                     chats?.let { users ->
                         itemsIndexed(users) { index, user ->
                             Chat(
-                                user.fullName,
-                                photoUris?.get(index) ?: Uri.parse(""),
-                                lastMessages?.get(index)?.text ?: "",
-                                onlineStatus?.get(index) ?: false
+                                user = user,
+                                lastMessage = lastMessages?.get(index)?.text ?: "",
+                                photoUri = photoUris?.get(index) ?: Uri.parse(""),
+                                onlineStatus = onlineStatus?.get(index) ?: false,
+                                navigateToChat = navigateToChat
                             )
                         }
                     }

@@ -11,6 +11,8 @@ import com.example.messenger.presenter.chats.ChatsScreen
 import com.example.messenger.presenter.chats.ChatsViewModel
 import com.example.messenger.presenter.friendsAndRequests.FriendsAndRequestsScreen
 import com.example.messenger.presenter.friendsAndRequests.FriendsViewModel
+import com.example.messenger.presenter.messages.MessagesScreen
+import com.example.messenger.presenter.messages.MessagesViewModel
 import com.example.messenger.presenter.signIn.SignInScreen
 import com.example.messenger.presenter.signIn.SignInViewModel
 import com.example.messenger.presenter.signUp.SignUpScreen
@@ -23,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var signUpViewModel: SignUpViewModel
     @Inject lateinit var chatsViewModel: ChatsViewModel
     @Inject lateinit var friendsViewModel: FriendsViewModel
+    @Inject lateinit var messagesViewModel: MessagesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +36,13 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             MessengerTheme {
-                MainScreen(signInViewModel, signUpViewModel, chatsViewModel, friendsViewModel)
+                MainScreen(
+                    signInViewModel,
+                    signUpViewModel,
+                    chatsViewModel,
+                    friendsViewModel,
+                    messagesViewModel
+                )
             }
         }
     }
@@ -44,7 +53,8 @@ fun MainScreen(
     signInViewModel: SignInViewModel,
     signUpViewModel: SignUpViewModel,
     chatsViewModel: ChatsViewModel,
-    friendsViewModel: FriendsViewModel
+    friendsViewModel: FriendsViewModel,
+    messagesViewModel: MessagesViewModel
 ) {
     val navController = rememberNavController()
 
@@ -61,7 +71,9 @@ fun MainScreen(
         }
 
         composable("friendsAndRequests") {
-            FriendsAndRequestsScreen(friendsViewModel)
+            FriendsAndRequestsScreen(friendsViewModel) { id, uri ->
+                navController.navigate("messages/$id")
+            }
         }
 
         composable("settings") {
@@ -69,14 +81,26 @@ fun MainScreen(
         }
 
         composable("chats") {
-            ChatsScreen(chatsViewModel) { route ->
+            ChatsScreen(chatsViewModel, { route ->
                 navController.navigate(route)
-            }
+            }, { id, photoUri ->
+                navController.navigate("messages/$id/$photoUri")
+            })
         }
 
         composable("signUp") {
             SignUpScreen(signUpViewModel) {
                 navController.navigate("chats")
+            }
+        }
+
+        composable("messages/{userId}") { backStackEntry ->
+            MessagesScreen(
+                backStackEntry.arguments?.getString("userId") ?: "",
+                messagesViewModel
+            ) {
+                navController.popBackStack()
+
             }
         }
     }

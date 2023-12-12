@@ -14,6 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,11 +37,13 @@ interface UserRepository {
 
     fun setOnlineStatus(online: Boolean, id: String)
 
-    fun getOnlineUserStatusFlowList(list: List<User>): List<Flow<Boolean>>
+    suspend fun getOnlineStatus(id: String): Boolean
 
-    fun emitOnlineValues(list: List<Flow<Boolean>>, users: List<User>)
+    fun getOnlineStatusChatsFlow(): Flow<List<Boolean>>
 
-    fun getOnlineFlowById(id: String): Flow<Boolean>
+    fun emitChatsOnlineValues(users: List<User>, oldOnlineStatuses: MutableList<Boolean>)
+    fun emitMessagesOnlineStatus(userId: String)
+    fun getOnlineStatusMessagesFlow(): Flow<Boolean>
 }
 
 @Singleton
@@ -47,6 +51,9 @@ class FirebaseUser @Inject constructor(
     private val firebaseDatabase: FirebaseDatabase,
     private val firebaseAuth: FirebaseAuth
 ) : UserRepository {
+
+    private val chatsOnlineStatusFlow = MutableSharedFlow<List<Boolean>>()
+    private val messagesOnlineStatusFlow = MutableSharedFlow<Boolean>()
     override suspend fun getUserById(id: String): User {
         val userSnapshot = firebaseDatabase.getReference("users/$id").get().await()
 
@@ -134,40 +141,72 @@ class FirebaseUser @Inject constructor(
         firebaseDatabase.getReference("users/$id/online").setValue(online)
     }
 
-    val onlineStatus = mutableMapOf<String, MutableSharedFlow<Boolean>>()
-    override fun getOnlineUserStatusFlowList(list: List<User>): List<MutableSharedFlow<Boolean>> =
-        list.map {
-            var flow = MutableSharedFlow<Boolean>()
-            flow
-        }
+    override suspend fun getOnlineStatus(id: String): Boolean {
+        val ref = firebaseDatabase.getReference("users/$id/online").get().await()
+        return ref.getValue(Boolean::class.java) ?: false
+    }
 
-    override fun emitOnlineValues(flows: List<Flow<Boolean>>, users: List<User>) {
+    override fun emitChatsOnlineValues(
+        users: List<User>,
+        oldOnlineStatuses: MutableList<Boolean>
+    ) {
+        val mutex = Mutex()
         for (i in users.indices) {
-            if (onlineStatus[users[i].userId] == null) {
-                firebaseDatabase.getReference("users/${users[i].userId}/online")
-                    .addValueEventListener(object: ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val onlineSnapshot = snapshot.getValue(Boolean::class.java)
-                                onlineStatus[users[i].userId] = flows[i] as MutableSharedFlow<Boolean>
-                                onlineStatus[users[i].userId]?.emit(onlineSnapshot ?: false)
+            val newIndex = i
+            firebaseDatabase.getReference("users/${users[i].userId}/online")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val onlineSnapshot = snapshot.getValue(Boolean::class.java)
+                            onlineSnapshot?.let { online ->
+                                mutex.withLock {
+                                    if (newIndex >= oldOnlineStatuses.size) {
+                                        while (oldOnlineStatuses.size <= newIndex) {
+                                            oldOnlineStatuses.add(false)
+                                        }
+
+                                        oldOnlineStatuses[newIndex] = online
+
+                                    } else {
+                                        oldOnlineStatuses[newIndex] = online
+                                    }
+
+                                    chatsOnlineStatusFlow.emit(oldOnlineStatuses)
+                                }
                             }
                         }
-
-                        override fun onCancelled(error: DatabaseError) {}
-                    })
-            } else {
-                firebaseDatabase.getReference("users/${users[i].userId}/online").get()
-                    .addOnSuccessListener { snapshot ->
-                        CoroutineScope(Dispatchers.IO).launch {
-                            onlineStatus[users[i].userId]?.emit(
-                                snapshot.getValue(Boolean::class.java) ?: false
-                            )
-                        }
                     }
-            }
+
+                    override fun onCancelled(error: DatabaseError) {}
+                })
         }
     }
 
-    override fun getOnlineFlowById(id: String) = onlineStatus[id] as Flow<Boolean>
+    override fun getOnlineStatusChatsFlow(): Flow<List<Boolean>> = chatsOnlineStatusFlow
+
+    override fun emitMessagesOnlineStatus(userId: String) {
+        val mutex = Mutex()
+        var onlineStatus: Boolean
+        firebaseDatabase.getReference("users/$userId/online")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val onlineSnapshot = snapshot.getValue(Boolean::class.java)
+                        onlineSnapshot?.let { online ->
+                            mutex.withLock {
+                                onlineStatus = online
+
+                                messagesOnlineStatusFlow.emit(onlineStatus)
+
+                            }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {}
+            })
+
+
+    }
+    override fun getOnlineStatusMessagesFlow(): Flow<Boolean> = messagesOnlineStatusFlow
 }

@@ -31,7 +31,8 @@ import com.example.messenger.data.model.User
 @Composable
 fun Friend(
     photoUri: Uri,
-    user: User
+    user: User,
+    navigateToMessages: (String, Uri) -> Unit
 ) {
     Row (
         Modifier
@@ -71,8 +72,9 @@ fun Friend(
             }
         }
 
-        Button(onClick = {
-        }, colors = ButtonDefaults.buttonColors(
+        Button(
+            onClick = { navigateToMessages(user.userId, photoUri) },
+            colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary),
             shape = RoundedCornerShape(10.dp),

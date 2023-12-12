@@ -2,6 +2,7 @@ package com.example.messenger.presenter.chats
 
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,22 +20,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.messenger.R
-import com.example.messenger.ui.theme.MessengerTheme
+import com.example.messenger.data.model.User
 import com.example.messenger.ui.theme.green
 
 @Composable
-fun Chat(name: String, photoUri: Uri, lastMessage: String, online: Boolean) {
+fun Chat(
+    user: User,
+    lastMessage: String,
+    photoUri: Uri,
+    onlineStatus: Boolean,
+    navigateToChat: (User, Uri) -> Unit
+) {
     Row (
         Modifier
             .padding(15.dp, 15.dp, 15.dp, 0.dp)
             .clip(RoundedCornerShape(10.dp))
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.tertiaryContainer)
-            .height(75.dp),
+            .height(75.dp)
+            .clickable { navigateToChat(user, photoUri) },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
@@ -50,15 +57,15 @@ fun Chat(name: String, photoUri: Uri, lastMessage: String, online: Boolean) {
         Column(verticalArrangement = Arrangement.Center) {
             Row {
                 Text(
-                    text = name,
+                    text = user.fullName,
                     color = MaterialTheme.colorScheme.onTertiaryContainer,
                     style = MaterialTheme.typography.displaySmall
                 )
 
                 Text(
-                    text = if (online) stringResource(R.string.active_now)
+                    text = if (onlineStatus) stringResource(R.string.active_now)
                            else stringResource(R.string.offline),
-                    color = if (online) green
+                    color = if (onlineStatus) green
                             else MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.displaySmall,
                     modifier = Modifier.padding(horizontal = 15.dp)
@@ -71,13 +78,5 @@ fun Chat(name: String, photoUri: Uri, lastMessage: String, online: Boolean) {
                 modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 0.dp)
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun ChatPreview() {
-    MessengerTheme {
-        Chat("name", Uri.parse(""), "last message", false)
     }
 }

@@ -6,35 +6,70 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface MessagesRepository {
-    suspend fun fetchLastMessages(chats: List<User>, currentUserId: String): List<Message>
+    suspend fun fetchLastMessages(
+        chats: List<User>,
+        currentUserId: String,
+        oldLastMessages: MutableList<Message>
+    )
     fun sendMessage(message: Message, existingMessagesPath: DatabaseReference)
-    fun addMessagesListener(existingMessagesPath: DatabaseReference): Flow<Message>
+    fun getMessagesFlow(): Flow<Message>
+    fun addMessagesListener(existingMessagesPath: DatabaseReference)
+    fun getLastMessagesFlow(): Flow<List<Message>>
 }
 
+@Singleton
 class FirebaseMessages @Inject constructor(
     private val chatsRepository: ChatsRepository,
 ): MessagesRepository {
-    override suspend fun fetchLastMessages(chats: List<User>, currentUserId: String): List<Message> {
-        val lastMessages = mutableListOf<Message>()
+    private val lastMessagesFlow = MutableSharedFlow<List<Message>>()
+    private val messagesFlow = MutableSharedFlow<Message>()
 
-        for (user in chats) {
-            val conversationId = chatsRepository.getConversationReference(currentUserId, user.userId)
-            val lastMessageSnapshot = conversationId.child("lastMessage").get().await()
-            val message = lastMessageSnapshot.getValue(Message::class.java)
-            message?.let { lastMessages.add(message) }
+    override suspend fun fetchLastMessages(
+        chats: List<User>,
+        currentUserId: String,
+        oldLastMessages: MutableList<Message>
+    ) {
+        val mutex = Mutex()
+        for (i in chats.indices) {
+            val messagesRef = chatsRepository.getConversationReference(
+                currentUserId, chats[i].userId
+            )
+            val newIndex = i
+            messagesRef.child("lastMessage")
+                .addValueEventListener(object: ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val message = snapshot.getValue(Message::class.java)
+                            message?.let {
+                                mutex.withLock {
+                                    if (newIndex >= oldLastMessages.size) {
+                                        while (oldLastMessages.size <= newIndex) {
+                                            oldLastMessages.add(Message())
+                                        }
+                                        oldLastMessages[newIndex] = message
+                                    } else {
+                                        oldLastMessages[newIndex] = message
+                                    }
+                                    lastMessagesFlow.emit(oldLastMessages)
+                                }
+                            }
+                        }
+                    }
+                    override fun onCancelled(error: DatabaseError) {}
+                })
         }
-
-        return lastMessages
     }
 
     override fun sendMessage(message: Message, existingMessagesPath: DatabaseReference) {
@@ -42,21 +77,18 @@ class FirebaseMessages @Inject constructor(
         existingMessagesPath.child("lastMessage").setValue(message)
     }
 
-    override fun addMessagesListener(existingMessagesPath: DatabaseReference): Flow<Message> {
-        val flow = MutableSharedFlow<Message>(replay = 1, onBufferOverflow = BufferOverflow.SUSPEND)
-
+    override fun getMessagesFlow(): MutableSharedFlow<Message> = messagesFlow
+    override fun addMessagesListener(
+        existingMessagesPath: DatabaseReference
+    ) {
         existingMessagesPath.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                snapshot.getValue(Message::class.java)?.let { message ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        if (snapshot.key != "lastMessage") {
-                            flow.emit(message)
-                            val lastMessage = existingMessagesPath.child("lastMessage").get().await()
-                            if (lastMessage.getValue(Message::class.java) == message) {
-                                flow.emit(Message())
-                            }
-                        } else {
-                            flow.emit(Message())
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (snapshot.key != "lastMessage") {
+                        val message = snapshot.getValue(Message::class.java)
+
+                        message?.let {
+                            messagesFlow.emit(message)
                         }
                     }
                 }
@@ -67,7 +99,7 @@ class FirebaseMessages @Inject constructor(
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
         })
-
-        return flow
     }
+
+    override fun getLastMessagesFlow(): Flow<List<Message>> = lastMessagesFlow
 }
