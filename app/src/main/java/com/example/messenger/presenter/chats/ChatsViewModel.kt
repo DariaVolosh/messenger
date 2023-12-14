@@ -1,7 +1,6 @@
 package com.example.messenger.presenter.chats
 
 import android.net.Uri
-import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +10,6 @@ import com.example.messenger.domain.chats.FetchChatsUseCase
 import com.example.messenger.domain.chats.GetChatsFlowUseCase
 import com.example.messenger.domain.image.DownloadImagesUseCase
 import com.example.messenger.domain.image.GetMyImageUseCase
-import com.example.messenger.domain.image.LoadImageUseCase
 import com.example.messenger.domain.messages.FetchLastMessagesUseCase
 import com.example.messenger.domain.messages.GetLastMessagesFlowUseCase
 import com.example.messenger.domain.user.EmitChatsOnlineValuesUseCase
@@ -26,7 +24,6 @@ class ChatsViewModel @Inject constructor(
     private val getMyImageUseCase: GetMyImageUseCase,
     private val fetchLastMessagesUseCase: FetchLastMessagesUseCase,
     private val downloadImagesUseCase: DownloadImagesUseCase,
-    private val loadImageUseCase: LoadImageUseCase,
     private val emitChatsOnlineValuesUseCase: EmitChatsOnlineValuesUseCase,
     private val getChatsFlowUseCase: GetChatsFlowUseCase,
     private val getLastMessagesFlowUseCase: GetLastMessagesFlowUseCase,
@@ -78,13 +75,7 @@ class ChatsViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            if (lastMessages.value == null) {
-                fetchLastMessagesUseCase.fetchLastMessages(chats, mutableListOf())
-            }
-
-            lastMessages.value?.let {
-                fetchLastMessagesUseCase.fetchLastMessages(chats, it)
-            }
+            fetchLastMessagesUseCase.fetchLastMessages(chats, mutableListOf())
         }
     }
 
@@ -99,20 +90,8 @@ class ChatsViewModel @Inject constructor(
 
         chatList.value?.let { users ->
             viewModelScope.launch {
-                if (onlineStatus.value == null) {
-                    emitChatsOnlineValuesUseCase.emitOnlineValues(users, mutableListOf())
-                } else {
-                    onlineStatus.value?.let {online ->
-                        emitChatsOnlineValuesUseCase.emitOnlineValues(users, online)
-                    }
-                }
+                emitChatsOnlineValuesUseCase.emitOnlineValues(users, mutableListOf())
             }
-        }
-    }
-
-    fun loadImage(uri: Uri, imageView: ImageView) {
-        viewModelScope.launch {
-            loadImageUseCase.loadImage(uri, imageView)
         }
     }
 }

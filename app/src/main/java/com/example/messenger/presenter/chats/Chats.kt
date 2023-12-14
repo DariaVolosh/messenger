@@ -46,7 +46,8 @@ import com.example.messenger.data.model.User
 fun ChatsScreen(
     viewModel: ChatsViewModel,
     bottomNavigationItemOnClick: (String) -> Unit,
-    navigateToChat: (User, Uri) -> Unit
+    navigateToChat: (User) -> Unit,
+    navigateToAddFriends: () -> Unit
 ) {
     val photoUri by viewModel.mainPhotoUri.observeAsState()
     val chats by viewModel.chatList.observeAsState()
@@ -135,7 +136,7 @@ fun ChatsScreen(
 
         Column (horizontalAlignment = Alignment.End){
             ExtendedFloatingActionButton(
-                onClick = {  },
+                onClick = { navigateToAddFriends() },
                 containerColor = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(vertical = 15.dp, horizontal = 10.dp)
             ) {

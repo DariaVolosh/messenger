@@ -74,7 +74,8 @@ class FirebaseUser @Inject constructor(
                 if (user != null &&
                     user.login.startsWith(loginQuery) &&
                     !user.login.startsWith(currentUserObject.login) &&
-                    !currentUserObject.friends.contains(user.userId)
+                    !currentUserObject.friends.contains(user.userId) &&
+                    !user.receivedFriendRequests.contains(currentUserObject.userId)
                 ) {
                     foundUsers.add(user)
                 }

@@ -32,7 +32,7 @@ fun Chat(
     lastMessage: String,
     photoUri: Uri,
     onlineStatus: Boolean,
-    navigateToChat: (User, Uri) -> Unit
+    navigateToChat: (User) -> Unit
 ) {
     Row (
         Modifier
@@ -41,7 +41,7 @@ fun Chat(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.tertiaryContainer)
             .height(75.dp)
-            .clickable { navigateToChat(user, photoUri) },
+            .clickable { navigateToChat(user) },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(

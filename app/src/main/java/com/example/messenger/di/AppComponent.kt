@@ -10,7 +10,6 @@ import com.example.messenger.di.modules.MapperModule
 import com.example.messenger.di.modules.RepositoriesModule
 import com.example.messenger.di.modules.RoomDatabaseModule
 import com.example.messenger.di.modules.SharedPrefsModule
-import com.example.messenger.presenter.addFriend.AddFriendFragment
 import com.example.messenger.presenter.settings.SettingsFragment
 import dagger.BindsInstance
 import dagger.Component
@@ -26,7 +25,6 @@ import javax.inject.Singleton
 ])
 @Singleton
 interface AppComponent {
-    fun inject(fragment: AddFriendFragment)
     fun inject(fragment: SettingsFragment)
     fun inject(myApp: MyApp)
     fun inject(mainActivity: MainActivity)

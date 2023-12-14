@@ -26,6 +26,7 @@ interface MessagesRepository {
     fun sendMessage(message: Message, existingMessagesPath: DatabaseReference)
     fun getMessagesFlow(): Flow<Message>
     fun addMessagesListener(existingMessagesPath: DatabaseReference)
+    fun removeMessagesListener(existingMessagesPath: DatabaseReference)
     fun getLastMessagesFlow(): Flow<List<Message>>
 }
 
@@ -35,6 +36,7 @@ class FirebaseMessages @Inject constructor(
 ): MessagesRepository {
     private val lastMessagesFlow = MutableSharedFlow<List<Message>>()
     private val messagesFlow = MutableSharedFlow<Message>()
+    private lateinit var currentMessagesEventListener: ChildEventListener
 
     override suspend fun fetchLastMessages(
         chats: List<User>,
@@ -81,7 +83,7 @@ class FirebaseMessages @Inject constructor(
     override fun addMessagesListener(
         existingMessagesPath: DatabaseReference
     ) {
-        existingMessagesPath.addChildEventListener(object : ChildEventListener {
+        val listener = object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 CoroutineScope(Dispatchers.IO).launch {
                     if (snapshot.key != "lastMessage") {
@@ -98,7 +100,14 @@ class FirebaseMessages @Inject constructor(
             override fun onChildRemoved(snapshot: DataSnapshot) {}
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
-        })
+        }
+
+        existingMessagesPath.addChildEventListener(listener)
+        currentMessagesEventListener = listener
+    }
+
+    override fun removeMessagesListener(existingMessagesPath: DatabaseReference) {
+        existingMessagesPath.removeEventListener(currentMessagesEventListener)
     }
 
     override fun getLastMessagesFlow(): Flow<List<Message>> = lastMessagesFlow

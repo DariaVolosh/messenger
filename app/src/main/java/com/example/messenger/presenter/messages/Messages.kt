@@ -90,6 +90,7 @@ fun MessagesScreen(
             if (leaveScreenKey) {
                 initialized = false
                 leaveScreenKey = false
+                viewModel.removeMessagesListener()
             }
         }
     }

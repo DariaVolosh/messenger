@@ -1,7 +1,6 @@
 package com.example.messenger.presenter.messages
 
 import android.net.Uri
-import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +12,7 @@ import com.example.messenger.domain.image.GetImageByUserIdUseCase
 import com.example.messenger.domain.image.LoadImageUseCase
 import com.example.messenger.domain.messages.AddMessagesListenerUseCase
 import com.example.messenger.domain.messages.GetMessagesFlowUseCase
+import com.example.messenger.domain.messages.RemoveMessagesListenerUseCase
 import com.example.messenger.domain.messages.SendMessageUseCase
 import com.example.messenger.domain.user.EmitMessagesOnlineStatusUseCase
 import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
@@ -21,9 +21,7 @@ import com.example.messenger.domain.user.GetUserObjectByIdUseCase
 import com.example.messenger.domain.user.GetUserOnlineStatusUseCase
 import com.example.messenger.domain.userSettings.GetAndSaveMessagesColorUseCase
 import com.google.firebase.database.DatabaseReference
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MessagesViewModel @Inject constructor(
@@ -34,12 +32,11 @@ class MessagesViewModel @Inject constructor(
     private val getImageByUserIdUseCase: GetImageByUserIdUseCase,
     private val getConversationReferenceUseCase: GetConversationReferenceUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
-    private val loadImageUseCase: LoadImageUseCase,
-    private val getAndSaveMessagesColorUseCase: GetAndSaveMessagesColorUseCase,
     private val getMessagesFlowUseCase: GetMessagesFlowUseCase,
     private val getUserOnlineStatusUseCase: GetUserOnlineStatusUseCase,
     private val getOnlineStatusMessagesFlowUseCase: GetOnlineStatusMessagesFlowUseCase,
-    private val emitMessagesOnlineStatusUseCase: EmitMessagesOnlineStatusUseCase
+    private val emitMessagesOnlineStatusUseCase: EmitMessagesOnlineStatusUseCase,
+    private val removeMessagesListenerUseCase: RemoveMessagesListenerUseCase
 ): ViewModel() {
     val friendObject = MutableLiveData<User>()
     val friendPhotoUri = MutableLiveData<Uri>()
@@ -120,17 +117,6 @@ class MessagesViewModel @Inject constructor(
         }
     }
 
-    fun loadImage(uri: Uri, imageView: ImageView) {
-        viewModelScope.launch {
-            loadImageUseCase.loadImage(uri, imageView)
-        }
-    }
-
-    suspend fun getMessagesColor(key: String) =
-        withContext(Dispatchers.IO) {
-            getAndSaveMessagesColorUseCase.getMessagesColor(key)
-        }
-
     private fun collectOnlineStatus(id: String) {
         val flow = getOnlineStatusMessagesFlowUseCase.getOnlineStatusMessagesFlow()
         emitMessagesOnlineStatusUseCase.emitMessagesOnlineStatusUseCase(id)
@@ -140,6 +126,12 @@ class MessagesViewModel @Inject constructor(
             flow.collect {online ->
                 onlineStatus.value = online
             }
+        }
+    }
+
+    fun removeMessagesListener() {
+        existingMessagesPath.value?.let { path ->
+            removeMessagesListenerUseCase.removeMessagesListenerUseCase(path)
         }
     }
 }

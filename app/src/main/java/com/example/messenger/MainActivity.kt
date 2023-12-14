@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.messenger.presenter.addFriend.AddFriend
+import com.example.messenger.presenter.addFriend.AddFriendViewModel
 import com.example.messenger.presenter.chats.ChatsScreen
 import com.example.messenger.presenter.chats.ChatsViewModel
 import com.example.messenger.presenter.friendsAndRequests.FriendsAndRequestsScreen
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var chatsViewModel: ChatsViewModel
     @Inject lateinit var friendsViewModel: FriendsViewModel
     @Inject lateinit var messagesViewModel: MessagesViewModel
+    @Inject lateinit var addFriendViewModel: AddFriendViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +44,8 @@ class MainActivity : AppCompatActivity() {
                     signUpViewModel,
                     chatsViewModel,
                     friendsViewModel,
-                    messagesViewModel
+                    messagesViewModel,
+                    addFriendViewModel
                 )
             }
         }
@@ -54,7 +58,8 @@ fun MainScreen(
     signUpViewModel: SignUpViewModel,
     chatsViewModel: ChatsViewModel,
     friendsViewModel: FriendsViewModel,
-    messagesViewModel: MessagesViewModel
+    messagesViewModel: MessagesViewModel,
+    addFriendViewModel: AddFriendViewModel
 ) {
     val navController = rememberNavController()
 
@@ -83,9 +88,11 @@ fun MainScreen(
         composable("chats") {
             ChatsScreen(chatsViewModel, { route ->
                 navController.navigate(route)
-            }, { id, photoUri ->
-                navController.navigate("messages/$id/$photoUri")
-            })
+            }, { user ->
+                navController.navigate("messages/${user.userId}")
+            }) {
+                navController.navigate("addFriend")
+            }
         }
 
         composable("signUp") {
@@ -100,8 +107,11 @@ fun MainScreen(
                 messagesViewModel
             ) {
                 navController.popBackStack()
-
             }
+        }
+
+        composable("addFriend") {
+            AddFriend(addFriendViewModel)
         }
     }
 }

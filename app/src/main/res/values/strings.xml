@@ -16,7 +16,7 @@
     <string name="email_hint">Email</string>
     <string name="register_button_text">Register</string>
     <string name="chats_toolbar_header">Messages</string>
-    <string name="search_icon_title">search icon</string>
+    <string name="search_icon_title">Search icon</string>
     <string name="friends">friends</string>
     <string name="chats">chats</string>
     <string name="settings">settings</string>
