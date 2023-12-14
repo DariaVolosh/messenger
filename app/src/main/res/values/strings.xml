@@ -22,7 +22,7 @@
     <string name="settings">settings</string>
     <string name="write_a_message_hint">Write a message</string>
     <string name="send_content_description">Send</string>
-    <string name="main_photo">main photo</string>
+    <string name="main_photo">Main photo</string>
     <string name="add_friend_fab_text">Add friend</string>
     <string name="friends_toolbar_title">Friends</string>
     <string name="add_to_friends_button_text">Add to friends</string>

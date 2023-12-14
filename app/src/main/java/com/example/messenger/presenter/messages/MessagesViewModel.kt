@@ -9,7 +9,6 @@ import com.example.messenger.data.model.User
 import com.example.messenger.domain.chats.AddChatToChatsListUseCase
 import com.example.messenger.domain.chats.GetConversationReferenceUseCase
 import com.example.messenger.domain.image.GetImageByUserIdUseCase
-import com.example.messenger.domain.image.LoadImageUseCase
 import com.example.messenger.domain.messages.AddMessagesListenerUseCase
 import com.example.messenger.domain.messages.GetMessagesFlowUseCase
 import com.example.messenger.domain.messages.RemoveMessagesListenerUseCase
@@ -19,7 +18,6 @@ import com.example.messenger.domain.user.GetCurrentUserObjectUseCase
 import com.example.messenger.domain.user.GetOnlineStatusMessagesFlowUseCase
 import com.example.messenger.domain.user.GetUserObjectByIdUseCase
 import com.example.messenger.domain.user.GetUserOnlineStatusUseCase
-import com.example.messenger.domain.userSettings.GetAndSaveMessagesColorUseCase
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.launch
 import javax.inject.Inject

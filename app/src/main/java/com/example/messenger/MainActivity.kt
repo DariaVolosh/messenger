@@ -15,6 +15,8 @@ import com.example.messenger.presenter.friendsAndRequests.FriendsAndRequestsScre
 import com.example.messenger.presenter.friendsAndRequests.FriendsViewModel
 import com.example.messenger.presenter.messages.MessagesScreen
 import com.example.messenger.presenter.messages.MessagesViewModel
+import com.example.messenger.presenter.settings.SettingsScreen
+import com.example.messenger.presenter.settings.SettingsViewModel
 import com.example.messenger.presenter.signIn.SignInScreen
 import com.example.messenger.presenter.signIn.SignInViewModel
 import com.example.messenger.presenter.signUp.SignUpScreen
@@ -29,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var friendsViewModel: FriendsViewModel
     @Inject lateinit var messagesViewModel: MessagesViewModel
     @Inject lateinit var addFriendViewModel: AddFriendViewModel
+    @Inject lateinit var settingsViewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +48,8 @@ class MainActivity : AppCompatActivity() {
                     chatsViewModel,
                     friendsViewModel,
                     messagesViewModel,
-                    addFriendViewModel
+                    addFriendViewModel,
+                    settingsViewModel
                 )
             }
         }
@@ -59,7 +63,8 @@ fun MainScreen(
     chatsViewModel: ChatsViewModel,
     friendsViewModel: FriendsViewModel,
     messagesViewModel: MessagesViewModel,
-    addFriendViewModel: AddFriendViewModel
+    addFriendViewModel: AddFriendViewModel,
+    settingsViewModel: SettingsViewModel
 ) {
     val navController = rememberNavController()
 
@@ -79,10 +84,6 @@ fun MainScreen(
             FriendsAndRequestsScreen(friendsViewModel) { id, uri ->
                 navController.navigate("messages/$id")
             }
-        }
-
-        composable("settings") {
-            SettingsScreen()
         }
 
         composable("chats") {
@@ -113,10 +114,9 @@ fun MainScreen(
         composable("addFriend") {
             AddFriend(addFriendViewModel)
         }
+
+        composable("settings") {
+            SettingsScreen(settingsViewModel)
+        }
     }
-}
-
-@Composable
-fun SettingsScreen() {
-
 }
