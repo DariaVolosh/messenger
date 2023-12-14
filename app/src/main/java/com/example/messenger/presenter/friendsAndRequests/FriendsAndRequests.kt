@@ -37,21 +37,26 @@ fun FriendsAndRequestsScreen(
     friendsViewModel: FriendsViewModel,
     navigateToMessages: (String, Uri) -> Unit
 ) {
-    val images by friendsViewModel.images.observeAsState()
+    val requestsImages by friendsViewModel.requestsImages.observeAsState()
+    val friendsImages by friendsViewModel.friendsImages.observeAsState()
+    val currentUser by friendsViewModel.currentUser.observeAsState()
     val friend by friendsViewModel.friend.observeAsState()
     var initialized by rememberSaveable { mutableStateOf(false) }
 
     if (!initialized) {
         friendsViewModel.getCurrentUserObject()
+        friendsViewModel.emitFriendRequests()
         initialized = true
     }
 
     LaunchedEffect(friend) {
         friendsViewModel.currentUser.value?.let { currUser ->
             friend?.let { friendUser ->
-                friendUser.friends += currUser.userId
-                friendsViewModel.updateUser(friendUser)
-                friendsViewModel.getCurrentUserObject()
+                if (!friendUser.friends.contains(currUser.userId)) {
+                    friendUser.friends += currUser.userId
+                    friendsViewModel.updateUser(friendUser)
+                    friendsViewModel.getCurrentUserObject()
+                }
             }
         }
     }
@@ -91,15 +96,15 @@ fun FriendsAndRequestsScreen(
             verticalArrangement = Arrangement.spacedBy(15.dp),
             modifier = Modifier.padding(vertical = 15.dp)
         ) {
-            if (images != null &&
-                images?.size != 0
+            if (friendsImages != null &&
+                friendsImages?.size != 0
                 && friendsViewModel.friendsList.value != null
                 && friendsViewModel.friendsList.value?.size != 0
                 ) {
                 friendsViewModel.friendsList.value?.let {friends ->
                     itemsIndexed(friends) {index, user ->
                         Friend(
-                            photoUri = images?.get(index) ?: Uri.parse(""),
+                            photoUri = friendsImages?.get(index) ?: Uri.parse(""),
                             user,
                             navigateToMessages
                         )
@@ -107,28 +112,28 @@ fun FriendsAndRequestsScreen(
                 }
             }
 
-            if (friendsViewModel.currentUser.value != null) {
-                friendsViewModel.currentUser.value?.let {user ->
-                    item {
-                        Text(stringResource(
-                            R.string.requests_quantity_text, user.receivedFriendRequests.size),
+            if (currentUser != null) {
+                item {
+                    currentUser?.let {user ->
+                        Text(
+                            stringResource(
+                                R.string.requests_quantity_text, user.receivedFriendRequests.size
+                            ),
                             style = MaterialTheme.typography.displaySmall
                         )
                     }
                 }
             }
 
-            if (images != null &&
-                images?.size != 0
+            if (requestsImages != null &&
+                requestsImages?.size != 0
                 && friendsViewModel.requestsList.value != null
                 && friendsViewModel.requestsList.value?.size != 0
                 ) {
                 friendsViewModel.requestsList.value?.let {requests ->
                     itemsIndexed(requests) {index, user ->
                         FriendRequest(
-                            photoUri = friendsViewModel.friendsList.value?.let {list ->
-                                images?.get(index + list.size) ?: Uri.parse("")
-                            } ?: images?.get(index) ?: Uri.parse(""),
+                            photoUri = requestsImages?.get(index) ?: Uri.parse(""),
                             user
                         ) {
                             friendsViewModel.currentUser.value?.let { currUser ->

@@ -4,6 +4,7 @@ import android.net.Uri
 import com.example.messenger.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -40,9 +41,12 @@ interface UserRepository {
     suspend fun getOnlineStatus(id: String): Boolean
 
     fun getOnlineStatusChatsFlow(): Flow<List<Boolean>>
+    fun getFriendRequestsListFlow(): Flow<List<User>>
 
     fun emitChatsOnlineValues(users: List<User>, oldOnlineStatuses: MutableList<Boolean>)
     fun emitMessagesOnlineStatus(userId: String)
+
+    fun emitFriendRequests()
     fun getOnlineStatusMessagesFlow(): Flow<Boolean>
 }
 
@@ -54,6 +58,7 @@ class FirebaseUser @Inject constructor(
 
     private val chatsOnlineStatusFlow = MutableSharedFlow<List<Boolean>>()
     private val messagesOnlineStatusFlow = MutableSharedFlow<Boolean>()
+    private val friendRequestsFlow = MutableSharedFlow<List<User>>()
     override suspend fun getUserById(id: String): User {
         val userSnapshot = firebaseDatabase.getReference("users/$id").get().await()
 
@@ -184,6 +189,7 @@ class FirebaseUser @Inject constructor(
     }
 
     override fun getOnlineStatusChatsFlow(): Flow<List<Boolean>> = chatsOnlineStatusFlow
+    override fun getFriendRequestsListFlow(): Flow<List<User>> = friendRequestsFlow
 
     override fun emitMessagesOnlineStatus(userId: String) {
         val mutex = Mutex()
@@ -209,5 +215,54 @@ class FirebaseUser @Inject constructor(
 
 
     }
+
+    override fun emitFriendRequests() {
+        val list = mutableListOf<User>()
+        val mutex = Mutex()
+
+        firebaseDatabase.getReference("users/${getCurrentUserId()}/receivedFriendRequests")
+            .addChildEventListener(
+                object: ChildEventListener {
+                    override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val expectedQuantity =
+                                firebaseDatabase.getReference(
+                                    "users/${getCurrentUserId()}/receivedFriendRequests"
+                                ).get().await().children.count()
+
+                            val uId = snapshot.getValue(String::class.java)
+                            uId?.let { id ->
+                                val request = getUserById(id)
+
+                                mutex.withLock {
+                                    list.add(request)
+                                    if (list.size == expectedQuantity) {
+                                        friendRequestsFlow.emit(list)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?, ) {}
+                    override fun onChildRemoved(snapshot: DataSnapshot) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val id = snapshot.getValue(String::class.java)
+                            id?.let {
+                                val user = getUserById(it)
+
+                                mutex.withLock {
+                                    list.remove(user)
+                                    friendRequestsFlow.emit(list)
+                                }
+                            }
+                        }
+                    }
+                    override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+                    override fun onCancelled(error: DatabaseError) {}
+                }
+            )
+    }
+
     override fun getOnlineStatusMessagesFlow(): Flow<Boolean> = messagesOnlineStatusFlow
 }
